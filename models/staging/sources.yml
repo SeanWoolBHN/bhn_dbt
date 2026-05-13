@@ -1,0 +1,28 @@
+version: 2
+
+sources:
+  - name: raw_sandbox
+    database: "{% if target.name == 'prd' %}PRD_01_RAW_DB{% elif target.name == 'test' %}TEST_01_RAW_DB{% else %}DEV_01_RAW_DB{% endif %}"
+    schema: SANDBOX
+    tables:
+      - name: BETTER_IMPACT
+        description: "Raw volunteer activity data from Better Impact system"
+        columns:
+          - name: DATEVOLUNTEERED
+            description: "Date the volunteer activity took place"
+          - name: HOURSWORKED
+            description: "Number of hours worked by volunteer"
+          - name: ACTIVITYCATEGORYNAME
+            description: "Category of the volunteer activity"
+          - name: ACTIVITYNAME
+            description: "Name of the specific activity"
+          - name: DATABASEUSERID
+            description: "Unique identifier for the volunteer in the source system"
+          - name: FIRSTNAME
+            description: "Volunteer first name"
+          - name: LASTNAME
+            description: "Volunteer last name"
+          - name: USERNAME
+            description: "Volunteer username in source system"
+          - name: ACTIVITYREPORTGROUPNAME
+            description: "Grouping name for activity reports"
