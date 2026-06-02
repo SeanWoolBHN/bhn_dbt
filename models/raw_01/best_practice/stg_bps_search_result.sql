@@ -24,7 +24,7 @@ cleaned AS (
         TRIM(NULLIF(FULLADDRESS, ''))                          AS full_address,
 
         -- Demographics
-        TRY_TO_DATE(DOB, 'DD/MM/YYYY')                        AS date_of_birth,
+        TRY_TO_DATE(DOB, 'DD/MM/YY')                        AS date_of_birth,
         TRY_CAST(AGE AS NUMBER)                                AS age,
         TRIM(NULLIF(SEX, ''))                                  AS sex,
 

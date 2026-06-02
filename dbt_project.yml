@@ -18,11 +18,21 @@ clean-targets:
 
 models:
   my_project:
-    staging:
-      +materialized: view
-      +database: "{{ 'PRD_02_HIST_DB' if target.name == 'prd' else ('TEST_02_HIST_DB' if target.name == 'test' else 'DEV_02_HIST_DB') }}"
-      +schema: STAGING
+    raw_01:
+      best_practice:
+        +materialized: view
+        +database: "{{ 'PRD_02_HIST_DB' if target.name == 'prd' else ('TEST_02_HIST_DB' if target.name == 'test' else 'DEV_02_HIST_DB') }}"
+        +schema: STAGING
+      better_impact:
+        +materialized: view
+        +database: "{{ 'PRD_02_HIST_DB' if target.name == 'prd' else ('TEST_02_HIST_DB' if target.name == 'test' else 'DEV_02_HIST_DB') }}"
+        +schema: STAGING
 
 snapshots:
   my_project:
-    +target_database: "{{ 'PRD_02_HIST_DB' if target.name == 'prd' else ('TEST_02_HIST_DB' if target.name == 'test' else 'DEV_02_HIST_DB') }}"
+    hist_02:
+      +target_database: "{{ 'PRD_02_HIST_DB' if target.name == 'prd' else ('TEST_02_HIST_DB' if target.name == 'test' else 'DEV_02_HIST_DB') }}"
+      best_practice:
+        +target_schema: BEST_PRACTICE
+      better_impact:
+        +target_schema: BETTER_IMPACT

@@ -2,7 +2,6 @@
 
 {{
     config(
-        target_schema='BEST_PRACTICE',
         unique_key='internal_id',
         strategy='check',
         check_cols='all',
