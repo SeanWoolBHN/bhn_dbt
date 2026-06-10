@@ -30,6 +30,10 @@
     {%- if custom_database_name is none -%}
         {{ default_database }}
     {%- else -%}
-        {{ target.name | upper }}_{{ custom_database_name }}
+        {%- if target.name == 'default' -%}
+            DEV_{{ custom_database_name }}
+        {%- else -%}
+            {{ target.name | upper }}_{{ custom_database_name }}
+        {%- endif -%}
     {%- endif -%}
 {%- endmacro %}

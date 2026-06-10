@@ -18,9 +18,14 @@ clean-targets:
 
 snapshots:
   my_project:
-    hist_02:
-      +target_database: "02_HIST_DB"
-      best_practice:
-        +target_schema: BEST_PRACTICE
-      better_impact:
-        +target_schema: BETTER_IMPACT
+    +target_database: DEV_02_HIST_DB
+    best_practice:
+      +target_schema: BEST_PRACTICE
+    titanium:
+      +target_schema: TITANIUM
+    echidna:
+      +target_schema: ECHIDNA
+    trips:
+      +target_schema: TRIPS
+    e_tools:
+      +target_schema: E_TOOLS

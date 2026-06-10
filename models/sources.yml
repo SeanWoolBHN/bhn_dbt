@@ -1,0 +1,37 @@
+version: 2
+
+sources:
+  - name: raw_best_practice
+    database: DEV_01_RAW_DB
+    schema: BEST_PRACTICE
+    tables:
+      - name: BPS_SEARCH_RESULT
+        description: "Raw patient search result data from Best Practice system"
+
+  - name: raw_titanium
+    database: DEV_01_RAW_DB
+    schema: TITANIUM
+    tables:
+      - name: PATIENT_DETAIL_REPORT
+        description: "Raw patient detail data from Titanium system"
+
+  - name: raw_echidna
+    database: DEV_01_RAW_DB
+    schema: ECHIDNA
+    tables:
+      - name: ECHIDNA_CLIENTS
+        description: "Raw client data from Echidna system"
+
+  - name: raw_trips
+    database: DEV_01_RAW_DB
+    schema: TRIPS
+    tables:
+      - name: TRIPS_CLIENTS
+        description: "Raw client data from TRIPS system"
+
+  - name: raw_e_tools
+    database: DEV_01_RAW_DB
+    schema: E_TOOLS
+    tables:
+      - name: CUSTOMER_LIST
+        description: "Raw customer list data from E-Tools system"

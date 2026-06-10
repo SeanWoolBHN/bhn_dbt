@@ -39,34 +39,17 @@
     )
 }}
 
-WITH source AS (
-    SELECT
-        MD5(
-            COALESCE(CLIENT_FIRST_NAME, 'unknown') || '-' ||
-            COALESCE(CLIENT_SURNAME, 'unknown') || '-' ||
-            COALESCE(CAST(DATE_OF_BIRTH AS VARCHAR), 'unknown') || '-' ||
-            COALESCE(EMAIL, 'unknown')
-        )                               AS CLIENT_KEY,
-        *,
-        CURRENT_TIMESTAMP()             AS _stg_loaded_at,
-        ROW_NUMBER() OVER (
-            PARTITION BY
-                CLIENT_FIRST_NAME,
-                CLIENT_SURNAME,
-                DATE_OF_BIRTH,
-                EMAIL
-            ORDER BY
-                -- prioritise the most complete record
-                GENDER DESC NULLS LAST,
-                POSTCODE DESC NULLS LAST,
-                PHONE_NUMBER DESC NULLS LAST,
-                ADDRESS DESC NULLS LAST
-        ) AS row_num
-    FROM {{ source('raw_echidna', 'ECHIDNA_CLIENTS') }}
-)
+SELECT
+    MD5(
+        COALESCE(CLIENT_FIRST_NAME, 'unknown')              || '-' ||
+        COALESCE(CLIENT_SURNAME, 'unknown')                 || '-' ||
+        COALESCE(CAST(DATE_OF_BIRTH AS VARCHAR), 'unknown') || '-' ||
+        COALESCE(EMAIL, 'unknown')                          || '-' ||
+        COALESCE(ADDRESS, 'unknown')
+    )                                   AS CLIENT_KEY,
+    *,
+    CURRENT_TIMESTAMP()                 AS _stg_loaded_at
 
-SELECT * EXCLUDE (row_num)
-FROM source
-WHERE row_num = 1
+FROM {{ source('raw_echidna', 'ECHIDNA_CLIENTS') }}
 
 {% endsnapshot %}
