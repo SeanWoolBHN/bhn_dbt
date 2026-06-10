@@ -1,8 +1,8 @@
 version: 2
 
 sources:
-  - name: raw_best_practise
-    database: "{{ 'PRD_01_RAW_DB' if target.name == 'prd' else ('TEST_01_RAW_DB' if target.name == 'test' else 'DEV_01_RAW_DB') }}"
+  - name: best_practise
+    database: "{{(target.name~'_')}}01_RAW_DB"
     schema: BEST_PRACTICE
     tables:
       - name: BPS_SEARCH_RESULT
@@ -57,8 +57,8 @@ sources:
           - name: EMAIL
             description: "Patient email address"
 
-  - name: raw_better_impact
-    database: "{{ 'PRD_01_RAW_DB' if target.name == 'prd' else ('TEST_01_RAW_DB' if target.name == 'test' else 'DEV_01_RAW_DB') }}"
+  - name: better_impact
+    database: "{{(target.name~'_')}}01_RAW_DB"
     schema: BETTER_IMPACT
     tables:
       - name: PIVOTED_FEEDBACK_EXPORT
