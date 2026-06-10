@@ -2,7 +2,7 @@
 
 {{
     config(
-        unique_key='internalid',
+        unique_key='INTERNALID',
         strategy='check',
         check_cols=[
             'SURNAME',
@@ -34,6 +34,10 @@
     )
 }}
 
-SELECT * FROM {{ ref('stg_bps_search_result') }}
+SELECT 
+    *,
+    CURRENT_TIMESTAMP() AS _stg_loaded_at
+
+FROM {{ source('raw_best_practise', 'BPS_SEARCH_RESULT') }}
 
 {% endsnapshot %}

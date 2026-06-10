@@ -1,7 +1,35 @@
+{#-
+    This generates the target schema name based on the target dbt is running against
+    eg. `dbt run --target dev` will create objects under DEV_<SCHEMA_NAME>
+-#}
 {% macro generate_schema_name(custom_schema_name, node) -%}
+    {%- set default_schema = target.schema -%}
     {%- if custom_schema_name is none -%}
         {{ default_schema }}
     {%- else -%}
-        {{ custom_schema_name | trim }}
+        {%- if target.name == 'PROD' -%}
+            {{ custom_schema_name | trim }}
+        {%- elif target.name == 'TEST' -%}
+            {{ custom_schema_name | trim }}
+        {%- else -%}
+            {% if node.config.materialized == "snapshot" %}
+                {{ custom_schema_name | trim }}
+            {%- else -%}
+                {{ default_schema | upper }}_{{ custom_schema_name | trim }}
+            {% endif %}
+        {%- endif -%}
+    {%- endif -%}
+{%- endmacro %}
+
+{#-
+    This generates the target database name based on the target dbt is running against
+    eg. dbt run --target dev will create objects under DEV_<DATABASE_NAME>
+-#}
+{% macro generate_database_name(custom_database_name=none, node=none) -%}
+    {%- set default_database = target.database -%}
+    {%- if custom_database_name is none -%}
+        {{ default_database }}
+    {%- else -%}
+        {{ target.name | upper }}_{{ custom_database_name }}
     {%- endif -%}
 {%- endmacro %}

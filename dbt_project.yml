@@ -16,23 +16,11 @@ clean-targets:
   - "target"
   - "dbt_packages"
 
-models:
-  my_project:
-    raw_01:
-      best_practice:
-        +materialized: view
-        +database: "{{ 'PRD_02_HIST_DB' if target.name == 'prd' else ('TEST_02_HIST_DB' if target.name == 'test' else 'DEV_02_HIST_DB') }}"
-        +schema: STAGING
-      better_impact:
-        +materialized: view
-        +database: "{{ 'PRD_02_HIST_DB' if target.name == 'prd' else ('TEST_02_HIST_DB' if target.name == 'test' else 'DEV_02_HIST_DB') }}"
-        +schema: STAGING
-
 snapshots:
   my_project:
-    02_hist:
-      +database: 02_HIST_DB
+    hist_02:
+      +target_database: "02_HIST_DB"
       best_practice:
-        +schema: BEST_PRACTICE
+        +target_schema: BEST_PRACTICE
       better_impact:
-        +schema: BETTER_IMPACT
+        +target_schema: BETTER_IMPACT
