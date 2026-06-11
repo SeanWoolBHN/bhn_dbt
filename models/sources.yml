@@ -70,3 +70,31 @@ sources:
         description: "Raw client and personal contact list from Supportability system"
       - name: ACTIVITY_REPORT
         description: "Raw activity report FCT data from Supportability system"
+      - name: ALLOCATIONS_REPORT
+        description: "Raw allocations report FCT data from Supportability system loaded via Airbyte"
+
+    
+  - name: raw_gh_connect
+    database: DEV_01_RAW_DB
+    schema: GH_CONNECT
+    tables:
+      - name: TIMESHEETS
+        description: "Raw timesheet FCT data from GH Connect system loaded via Airbyte"
+      
+  - name: raw_connx
+    database: DEV_01_RAW_DB
+    schema: CONNX
+    tables:
+      - name: EMPLOYEE_DATA
+        description: "Raw employee data from CONNX system"
+      - name: EMPLOYEE_DEMOGRAPHICS
+        description: "Raw employee demographics from CONNX system"
+
+  - name: raw_micropay
+    database: DEV_01_RAW_DB
+    schema: MICROPAY
+    tables:
+      - name: EMPLOYEE_DETAILS
+        description: "Raw employee details from Micropay payroll system"
+      - name: EMPLOYEE_LEAVE
+        description: "Raw employee leave FCT data from Micropay payroll system"

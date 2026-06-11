@@ -33,3 +33,10 @@ snapshots:
       +target_schema: MICROPAY
     better_impact:
       +target_schema: BETTER_IMPACT
+    gh_connect:
+      +target_schema: GH_CONNECT
+    connx:
+      +target_schema: CONNX
+
+
+  
