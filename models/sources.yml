@@ -14,6 +14,10 @@ sources:
     tables:
       - name: PATIENT_DETAIL_REPORT
         description: "Raw patient detail data from Titanium system"
+      - name: PROVIDER_OUTPUT_SUMMARY
+        description: "Raw provider output summary FCT data from Titanium system"
+      - name: APPOINTMENT_DETAIL_REPORT
+        description: "Raw appointment detail report FCT data from Titanium system loaded via Airbyte"
 
   - name: raw_echidna
     database: DEV_01_RAW_DB
@@ -21,6 +25,8 @@ sources:
     tables:
       - name: ECHIDNA_CLIENTS
         description: "Raw client data from Echidna system"
+      - name: NDIS_CLIENT_HOURS
+        description: "Raw NDIS client hours FCT data from Echidna system loaded via Airbyte"
 
   - name: raw_trips
     database: DEV_01_RAW_DB
@@ -28,6 +34,8 @@ sources:
     tables:
       - name: TRIPS_CLIENTS
         description: "Raw client data from TRIPS system"
+      - name: SERVICE_EVENT_EXPORT
+        description: "Raw service event FCT data from TRIPS system loaded via Airbyte"
 
   - name: raw_e_tools
     database: DEV_01_RAW_DB
@@ -35,3 +43,30 @@ sources:
     tables:
       - name: CUSTOMER_LIST
         description: "Raw customer list data from E-Tools system"
+
+  - name: raw_micropay
+    database: DEV_01_RAW_DB
+    schema: MICROPAY
+    tables:
+      - name: EMPLOYEE_DETAILS
+        description: "Raw employee details from Micropay payroll system"
+    
+  - name: raw_better_impact
+    database: DEV_01_RAW_DB
+    schema: BETTER_IMPACT
+    tables:
+      - name: PROFILE_EXPORT
+        description: "Raw volunteer profile data from Better Impact system"
+      - name: VOLUNTEER_INFORMATION
+        description: "Raw volunteer information data from Better Impact system"
+      - name: PIVOTED_FEEDBACK_EXPORT
+        description: "Raw volunteer feedback FCT data from Better Impact system"
+    
+  - name: raw_supportability
+    database: DEV_01_RAW_DB
+    schema: SUPPORTABILITY
+    tables:
+      - name: CLIENT_LIST_INCL_PERSONAL_CONTACTS
+        description: "Raw client and personal contact list from Supportability system"
+      - name: ACTIVITY_REPORT
+        description: "Raw activity report FCT data from Supportability system"

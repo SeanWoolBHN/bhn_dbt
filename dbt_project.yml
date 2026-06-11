@@ -29,3 +29,7 @@ snapshots:
       +target_schema: TRIPS
     e_tools:
       +target_schema: E_TOOLS
+    micropay:
+      +target_schema: MICROPAY
+    better_impact:
+      +target_schema: BETTER_IMPACT

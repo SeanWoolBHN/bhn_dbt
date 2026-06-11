@@ -1,72 +1,45 @@
-{% snapshot HIST_ECHIDNA_CLIENTS %}
+{% snapshot HIST_BPS_SEARCH_RESULT %}
 
 {{
     config(
         target_database='DEV_02_HIST_DB',
-        target_schema='ECHIDNA',
-        unique_key='CLIENT_KEY',
+        target_schema='BEST_PRACTICE',
+        unique_key='INTERNALID',
         strategy='check',
         check_cols=[
-            'CLIENT_FIRST_NAME',
-            'CLIENT_MIDDLE_NAME',
-            'CLIENT_SURNAME',
-            'DATE_OF_BIRTH',
-            'DOB_ESTIMATED',
-            'AGE_YEARS',
-            'AGE_MONTHS',
-            'GENDER',
-            'MAIN_LANGUAGE_SPOKEN_AT_HOME_ID',
-            'PRIMARY_DIAGNOSIS',
-            'PHONE_NUMBER',
-            'EMAIL',
-            'ADDRESS',
-            'SUBURB',
+            'SURNAME',
+            'FIRSTNAME',
+            'MIDDLENAME',
+            'PREFERREDNAME',
+            'TITLE',
+            'ADDRESS1',
+            'ADDRESS2',
+            'CITY',
             'POSTCODE',
-            'STATE',
-            'CONTACT_FIRST_NAME',
-            'CONTACT_SURNAME',
-            'RELATIONSHIP_TO_CLIENT',
-            'MAIN_LANGUAGE_SPOKEN_AT_HOME',
-            'PHONE_NO',
-            'ADDRESS_2',
-            'SUBURNE_2',
-            'POSTCODE_2',
-            'STATE_2',
-            'DATE_OF_REFERRAL'
+            'FULLADDRESS',
+            'DOB',
+            'AGE',
+            'SEX',
+            'MEDICARENO',
+            'MEDICARELINENO',
+            'MEDICAREEXPIRY',
+            'RECORDNO',
+            'PENSIONNO',
+            'DVANO',
+            'HOMEPHONE',
+            'WORKPHONE',
+            'MOBILEPHONE',
+            'EMAIL'
         ],
         invalidate_hard_deletes=True,
         dbt_valid_to_current="to_date('9999-12-31')"
     )
 }}
 
-WITH source AS (
-    SELECT
-        MD5(
-            COALESCE(CLIENT_FIRST_NAME, 'unknown') || '-' ||
-            COALESCE(CLIENT_SURNAME, 'unknown') || '-' ||
-            COALESCE(CAST(DATE_OF_BIRTH AS VARCHAR), 'unknown') || '-' ||
-            COALESCE(EMAIL, 'unknown')
-        )                               AS CLIENT_KEY,
-        *,
-        CURRENT_TIMESTAMP()             AS _stg_loaded_at,
-        ROW_NUMBER() OVER (
-            PARTITION BY
-                CLIENT_FIRST_NAME,
-                CLIENT_SURNAME,
-                DATE_OF_BIRTH,
-                EMAIL
-            ORDER BY
-                -- prioritise the most complete record
-                GENDER DESC NULLS LAST,
-                POSTCODE DESC NULLS LAST,
-                PHONE_NUMBER DESC NULLS LAST,
-                ADDRESS DESC NULLS LAST
-        ) AS row_num
-    FROM {{ source('raw_echidna', 'ECHIDNA_CLIENTS') }}
-)
+SELECT
+    *,
+    CURRENT_TIMESTAMP() AS _stg_loaded_at
 
-SELECT * EXCLUDE (row_num)
-FROM source
-WHERE row_num = 1
+FROM {{ source('raw_best_practice', 'BPS_SEARCH_RESULT') }}
 
 {% endsnapshot %}
