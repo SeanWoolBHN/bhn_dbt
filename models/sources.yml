@@ -50,7 +50,9 @@ sources:
     tables:
       - name: EMPLOYEE_DETAILS
         description: "Raw employee details from Micropay payroll system"
-    
+      - name: EMPLOYEE_LEAVE
+        description: "Raw employee leave FCT data from Micropay payroll system"
+
   - name: raw_better_impact
     database: DEV_01_RAW_DB
     schema: BETTER_IMPACT
@@ -59,9 +61,9 @@ sources:
         description: "Raw volunteer profile data from Better Impact system"
       - name: VOLUNTEER_INFORMATION
         description: "Raw volunteer information data from Better Impact system"
-      - name: PIVOTED_FEEDBACK_EXPORT
+      - name: PIVOTED_FEEDBACK_REPORT
         description: "Raw volunteer feedback FCT data from Better Impact system"
-    
+
   - name: raw_supportability
     database: DEV_01_RAW_DB
     schema: SUPPORTABILITY
@@ -73,14 +75,13 @@ sources:
       - name: ALLOCATIONS_REPORT
         description: "Raw allocations report FCT data from Supportability system loaded via Airbyte"
 
-    
   - name: raw_gh_connect
     database: DEV_01_RAW_DB
     schema: GH_CONNECT
     tables:
       - name: TIMESHEETS
         description: "Raw timesheet FCT data from GH Connect system loaded via Airbyte"
-      
+
   - name: raw_connx
     database: DEV_01_RAW_DB
     schema: CONNX
@@ -89,12 +90,3 @@ sources:
         description: "Raw employee data from CONNX system"
       - name: EMPLOYEE_DEMOGRAPHICS
         description: "Raw employee demographics from CONNX system"
-
-  - name: raw_micropay
-    database: DEV_01_RAW_DB
-    schema: MICROPAY
-    tables:
-      - name: EMPLOYEE_DETAILS
-        description: "Raw employee details from Micropay payroll system"
-      - name: EMPLOYEE_LEAVE
-        description: "Raw employee leave FCT data from Micropay payroll system"

@@ -1,4 +1,4 @@
-{% snapshot HIST_CUSTOMER_LIST %}
+{% snapshot HIST_E_TOOLS_CUSTOMER_LIST %}
 
 {{
     config(

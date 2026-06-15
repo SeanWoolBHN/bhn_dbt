@@ -1,98 +1,67 @@
-{% snapshot HIST_BETTER_IMPACT_PIVOTED_FEEDBACK_EXPORT %}
+{% snapshot HIST_BETTER_IMPACT_PIVOTED_FEEDBACK_REPORT %}
 
 {{
     config(
         target_database='DEV_02_HIST_DB',
         target_schema='BETTER_IMPACT',
-        unique_key='FEEDBACK_KEY',
+        unique_key='_AIRBYTE_RAW_ID',
         strategy='check',
         check_cols=[
-            'DATABASEUSERID',
-            'DATEVOLUNTEERED',
-            'ACTIVITYCATEGORYNAME',
-            'ACTIVITYNAME',
-            'FIRSTNAME',
+            '"FF - KMS"',
             'LASTNAME',
             'USERNAME',
-            'ACTIVITYREPORTGROUPNAME',
+            'FIRSTNAME',
             'HOURSWORKED',
-            '"FF - Client concerns"',
-            '"FF - Client Concerns - 1"',
-            '"FF - Good news stories"',
-            '"FF - Good news stories - 1"',
-            '"FF - If no visits were made please indicate reason"',
-            '"FF - KMs"',
-            '"FF - Match end reason"',
-            '"FF - Name of resident"',
-            '"FF - No of visits"',
-            '"FF - Type of visit"'
+            'ACTIVITYNAME',
+            'DATABASEUSERID',
+            'DATEVOLUNTEERED',
+            '"FF - NO OF VISITS"',
+            '"FF - TYPE OF VISIT"',
+            'ACTIVITYCATEGORYNAME',
+            '"FF - CLIENT CONCERNS"',
+            '"FF - MATCH END REASON"',
+            '"FF - NAME OF RESIDENT"',
+            '"FF - GOOD NEWS STORIES"',
+            'ACTIVITYREPORTGROUPNAME',
+            '"FF - CLIENT CONCERNS - 1"',
+            '"FF - GOOD NEWS STORIES - 1"',
+            '"FF - IF NO VISITS WERE MADE PLEASE INDICATE REASON"',
+            '_AB_SOURCE_FILE_URL',
+            '_AB_SOURCE_FILE_LAST_MODIFIED'
         ],
         invalidate_hard_deletes=True,
         dbt_valid_to_current="to_date('9999-12-31')"
     )
 }}
 
-WITH source AS (
-    SELECT
-        DATABASEUSERID,
-        DATEVOLUNTEERED,
-        ACTIVITYCATEGORYNAME,
-        ACTIVITYNAME,
-        FIRSTNAME,
-        LASTNAME,
-        USERNAME,
-        ACTIVITYREPORTGROUPNAME,
-        HOURSWORKED,
-        "FF - Client concerns",
-        "FF - Client Concerns - 1",
-        "FF - Good news stories",
-        "FF - Good news stories - 1",
-        "FF - If no visits were made please indicate reason",
-        "FF - KMs",
-        "FF - Match end reason",
-        "FF - Name of resident",
-        "FF - No of visits",
-        "FF - Type of visit",
-        ROW_NUMBER() OVER (
-            PARTITION BY
-                DATABASEUSERID,
-                DATEVOLUNTEERED,
-                ACTIVITYNAME,
-                "FF - Name of resident"
-            ORDER BY HOURSWORKED
-        ) AS row_num
-    FROM {{ source('raw_better_impact', 'PIVOTED_FEEDBACK_EXPORT') }}
-)
-
 SELECT
-    MD5(
-        CAST(DATABASEUSERID AS VARCHAR)                     || '-' ||
-        CAST(DATEVOLUNTEERED AS VARCHAR)                    || '-' ||
-        COALESCE(ACTIVITYNAME, 'unknown')                   || '-' ||
-        COALESCE("FF - Name of resident", 'unknown')        || '-' ||
-        CAST(row_num AS VARCHAR)
-    )                                                       AS FEEDBACK_KEY,
-    DATABASEUSERID,
-    DATEVOLUNTEERED,
-    ACTIVITYCATEGORYNAME,
-    ACTIVITYNAME,
-    FIRSTNAME,
+    _AIRBYTE_RAW_ID,
+    _AIRBYTE_EXTRACTED_AT,
+    _AIRBYTE_META,
+    _AIRBYTE_GENERATION_ID,
+    "FF - KMS",
     LASTNAME,
     USERNAME,
-    ACTIVITYREPORTGROUPNAME,
+    FIRSTNAME,
     HOURSWORKED,
-    "FF - Client concerns",
-    "FF - Client Concerns - 1",
-    "FF - Good news stories",
-    "FF - Good news stories - 1",
-    "FF - If no visits were made please indicate reason",
-    "FF - KMs",
-    "FF - Match end reason",
-    "FF - Name of resident",
-    "FF - No of visits",
-    "FF - Type of visit",
-    CURRENT_TIMESTAMP()                                     AS _stg_loaded_at
+    ACTIVITYNAME,
+    DATABASEUSERID,
+    DATEVOLUNTEERED,
+    "FF - NO OF VISITS",
+    "FF - TYPE OF VISIT",
+    _AB_SOURCE_FILE_URL,
+    ACTIVITYCATEGORYNAME,
+    "FF - CLIENT CONCERNS",
+    "FF - MATCH END REASON",
+    "FF - NAME OF RESIDENT",
+    "FF - GOOD NEWS STORIES",
+    ACTIVITYREPORTGROUPNAME,
+    "FF - CLIENT CONCERNS - 1",
+    "FF - GOOD NEWS STORIES - 1",
+    _AB_SOURCE_FILE_LAST_MODIFIED,
+    "FF - IF NO VISITS WERE MADE PLEASE INDICATE REASON",
+    CURRENT_TIMESTAMP() AS _stg_loaded_at
 
-FROM source
+FROM {{ source('raw_better_impact', 'PIVOTED_FEEDBACK_REPORT') }}
 
 {% endsnapshot %}

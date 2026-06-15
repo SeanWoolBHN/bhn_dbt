@@ -4,7 +4,7 @@
     config(
         target_database='DEV_02_HIST_DB',
         target_schema='BETTER_IMPACT',
-        unique_key='DATABASEUSERID',
+        unique_key='_AIRBYTE_RAW_ID',
         strategy='check',
         check_cols=[
             'FIRSTNAME',
@@ -14,9 +14,11 @@
             'VOLUNTEERDATEJOINED',
             'VOLUNTEERSTATUS',
             'DATEOFLASTVOLUNTEERSTATUSCHANGE',
-            '"CF - About you - Please indicate your gender"',
-            '"CF - Special needs groups (this information is requested by the Dept. of Health) - Does the recipient identify as being from a special needs group?"',
-            '"CF - Special needs groups (this information is requested by the Dept. of Health) - If more than one special need applies please list here"'
+            '"CF - ABOUT YOU - PLEASE INDICATE YOUR GENDER"',
+            '"CF - SPECIAL NEEDS GROUPS (THIS INFORMATION IS REQUESTED BY THE DEPT. OF HEALTH) - DOES THE RECIPIENT IDENTIFY AS BEING FROM A SPECIAL NEEDS GROUP?"',
+            '"CF - SPECIAL NEEDS GROUPS (THIS INFORMATION IS REQUESTED BY THE DEPT. OF HEALTH) - IF MORE THAN ONE SPECIAL NEED APPLIES PLEASE LIST HERE"',
+            '_AB_SOURCE_FILE_URL',
+            '_AB_SOURCE_FILE_LAST_MODIFIED'
         ],
         invalidate_hard_deletes=True,
         dbt_valid_to_current="to_date('9999-12-31')"
@@ -24,7 +26,23 @@
 }}
 
 SELECT
-    *,
+    _AIRBYTE_RAW_ID,
+    _AIRBYTE_EXTRACTED_AT,
+    _AIRBYTE_META,
+    _AIRBYTE_GENERATION_ID,
+    BIRTHDAY,
+    LASTNAME,
+    FIRSTNAME,
+    POSTALCODE,
+    DATABASEUSERID,
+    VOLUNTEERSTATUS,
+    VOLUNTEERDATEJOINED,
+    _AB_SOURCE_FILE_URL,
+    _AB_SOURCE_FILE_LAST_MODIFIED,
+    DATEOFLASTVOLUNTEERSTATUSCHANGE,
+    "CF - ABOUT YOU - PLEASE INDICATE YOUR GENDER",
+    "CF - SPECIAL NEEDS GROUPS (THIS INFORMATION IS REQUESTED BY THE DEPT. OF HEALTH) - IF MORE THAN ONE SPECIAL NEED APPLIES PLEASE LIST HERE",
+    "CF - SPECIAL NEEDS GROUPS (THIS INFORMATION IS REQUESTED BY THE DEPT. OF HEALTH) - DOES THE RECIPIENT IDENTIFY AS BEING FROM A SPECIAL NEEDS GROUP?",
     CURRENT_TIMESTAMP() AS _stg_loaded_at
 
 FROM {{ source('raw_better_impact', 'VOLUNTEER_INFORMATION') }}

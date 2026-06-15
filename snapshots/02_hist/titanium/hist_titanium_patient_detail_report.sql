@@ -1,4 +1,4 @@
-{% snapshot HIST_PATIENT_DETAIL_REPORT %}
+{% snapshot HIST_TITANIUM_PATIENT_DETAIL_REPORT %}
 
 {{
     config(
