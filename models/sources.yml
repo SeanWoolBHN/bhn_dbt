@@ -90,3 +90,5 @@ sources:
         description: "Raw employee data from CONNX system"
       - name: EMPLOYEE_DEMOGRAPHICS
         description: "Raw employee demographics from CONNX system"
+      - name: LICENCE_REGISTRATION
+        description: "Raw licence registration data from CONNX system"

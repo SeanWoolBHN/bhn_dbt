@@ -1,4 +1,4 @@
-{% snapshot HIST_BETTER_IMPACT_PIVOTED_FEEDBACK_REPORT %}
+{% snapshot HIST_BETTER_IMPACT_PIVOTED_FEEDBACK %}
 
 {{
     config(

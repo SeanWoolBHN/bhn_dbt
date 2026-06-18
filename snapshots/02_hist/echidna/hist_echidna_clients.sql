@@ -1,4 +1,4 @@
-{% snapshot HIST_ECHIDNA_CLIPS %}
+{% snapshot HIST_ECHIDNA_CLIENTS %}
 
 {{
     config(

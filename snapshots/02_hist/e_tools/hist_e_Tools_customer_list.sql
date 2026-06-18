@@ -4,29 +4,38 @@
     config(
         target_database='DEV_02_HIST_DB',
         target_schema='E_TOOLS',
-        unique_key='ROW_KEY',
+        unique_key='_AIRBYTE_RAW_ID',
         strategy='check',
         check_cols=[
-            'CONSUMER_ID',
-            'TITLE',
-            'FIRST_NAME',
-            'LAST_NAME',
-            'CARE_MANAGER',
-            'DATE_OF_BIRTH',
+            '"NO."',
             'AGE',
+            'TITLE',
             'PROVIDER',
-            'START_DATE',
-            'PACKAGE_LEVEL',
-            'INCOME_TESTED_FEE',
-            'PKG_MGMT_COST',
-            'CARE_MGMT_COST',
-            'BDGT_IN_$',
+            '"SUPPLMT."',
+            '"BDGT IN $"',
+            '"LAST NAME"',
+            '"FIRST NAME"',
+            '"START DATE"',
+            '"CARE REC.ID"',
+            '"CONSUMER ID"',
             'CONTINGENCY',
-            'ACTIVE_PACKAGE_START_DATE',
-            'PACKAGE_DISCHARGE_DATE',
-            'DISCHARGE_REASON',
-            'CONSUMER_STATUS',
-            'IS_VULNERABLE'
+            '"CARE MANAGER"',
+            '"CONS. CONTR."',
+            '"DATE OF BIRTH"',
+            '"IS VULNERABLE"',
+            '"PACKAGE LEVEL"',
+            '"PKG MGMT COST"',
+            '"RE-ASSMT DATE"',
+            '"CARE MGMT COST"',
+            '"PKG MGMT PERC%"',
+            '"CARE MGMT PERC%"',
+            '"CONSUMER STATUS"',
+            '"DISCHARGE REASON"',
+            '"INCOME TESTED FEE"',
+            '"PACKAGE DISCHARGE DATE"',
+            '"ACTIVE PACKAGE START DATE"',
+            '_AB_SOURCE_FILE_URL',
+            '_AB_SOURCE_FILE_LAST_MODIFIED'
         ],
         invalidate_hard_deletes=True,
         dbt_valid_to_current="to_date('9999-12-31')"
@@ -34,20 +43,40 @@
 }}
 
 SELECT
-    MD5(
-        COALESCE(CONSUMER_ID, 'unknown')                || '-' ||
-        COALESCE(FIRST_NAME, 'unknown')                 || '-' ||
-        COALESCE(LAST_NAME, 'unknown')                  || '-' ||
-        COALESCE(DATE_OF_BIRTH, 'unknown')              || '-' ||
-        COALESCE(CAST(AGE AS VARCHAR), 'unknown')       || '-' ||
-        COALESCE(PROVIDER, 'unknown')                   || '-' ||
-        COALESCE(START_DATE, 'unknown')                 || '-' ||
-        COALESCE(PACKAGE_LEVEL, 'unknown')              || '-' ||
-        COALESCE(CONSUMER_STATUS, 'unknown')            || '-' ||
-        COALESCE(CAST(IS_VULNERABLE AS VARCHAR), 'unknown')
-    )                                                   AS ROW_KEY,
-    *,
-    CURRENT_TIMESTAMP()                                 AS _stg_loaded_at
+    _AIRBYTE_RAW_ID,
+    _AIRBYTE_EXTRACTED_AT,
+    _AIRBYTE_META,
+    _AIRBYTE_GENERATION_ID,
+    AGE,
+    "NO.",
+    TITLE,
+    PROVIDER,
+    "SUPPLMT.",
+    "BDGT IN $",
+    "LAST NAME",
+    "FIRST NAME",
+    "START DATE",
+    "CARE REC.ID",
+    "CONSUMER ID",
+    CONTINGENCY,
+    "CARE MANAGER",
+    "CONS. CONTR.",
+    "DATE OF BIRTH",
+    "IS VULNERABLE",
+    "PACKAGE LEVEL",
+    "PKG MGMT COST",
+    "RE-ASSMT DATE",
+    "CARE MGMT COST",
+    "PKG MGMT PERC%",
+    "CARE MGMT PERC%",
+    "CONSUMER STATUS",
+    "DISCHARGE REASON",
+    "INCOME TESTED FEE",
+    _AB_SOURCE_FILE_URL,
+    "PACKAGE DISCHARGE DATE",
+    "ACTIVE PACKAGE START DATE",
+    _AB_SOURCE_FILE_LAST_MODIFIED,
+    CURRENT_TIMESTAMP() AS _stg_loaded_at
 
 FROM {{ source('raw_e_tools', 'CUSTOMER_LIST') }}
 

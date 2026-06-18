@@ -1,4 +1,4 @@
-{% snapshot HIST_BPS_SEARCH_RESULT %}
+{% snapshot HIST_BEST_PRACTICE_BPS_SEARCH_RESULT %}
 
 {{
     config(
