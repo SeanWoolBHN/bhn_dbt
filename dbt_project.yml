@@ -37,6 +37,14 @@ snapshots:
       +target_schema: GH_CONNECT
     connx:
       +target_schema: CONNX
+    trakcare:
+      +target_schema: TRAKCARE
 
 
-  
+models:
+  my_project:
+    03_prep:
+      stg:
+        +materialized: view
+        +database: DEV_03_PREP_DB
+        +schema: STG

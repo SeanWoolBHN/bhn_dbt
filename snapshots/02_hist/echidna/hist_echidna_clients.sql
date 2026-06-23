@@ -4,82 +4,27 @@
     config(
         target_database='DEV_02_HIST_DB',
         target_schema='ECHIDNA',
-        unique_key='CLIENT_KEY',
+        unique_key='_AIRBYTE_RAW_ID',
         strategy='check',
         check_cols=[
-            '"CLIENT FIRST NAME"',
-            '"CLIENT MIDDLE NAME"',
-            '"CLIENT SURNAME"',
-            '"DATE OF BIRTH"',
-            '"DOB ESTIMATED"',
-            '"AGE YEARS"',
-            '"AGE MONTHS"',
-            'GENDER',
-            '"PRIMARY DIAGNOSIS"',
-            '"PHONE NUMBER"',
-            'EMAIL',
-            'ADDRESS',
-            'SUBURB',
-            'POSTCODE',
-            'STATE',
-            '"CONTACT FIRST NAME"',
-            '"CONTACT SURNAME"',
-            '"RELATIONSHIP TO CLIENT"',
-            '"MAIN LANGUAGE SPOKEN AT HOME"',
-            '"PHONE NO"',
-            'SUBURNE',
-            '"DATE OF REFERRAL"'
+            'EMAIL', 'STATE', 'GENDER', 'SUBURB', 'ADDRESS', 'SUBURNE',
+            'PHONE_NO', 'POSTCODE', 'AGE_YEARS', 'AGE_MONTHS',
+            'PHONE_NUMBER', 'DOB_ESTIMATED', 'DATE_OF_BIRTH',
+            'CLIENT_SURNAME', 'CONTACT_SURNAME', 'DATE_OF_REFERRAL',
+            'CLIENT_FIRST_NAME', 'PRIMARY_DIAGNOSIS', 'CLIENT_MIDDLE_NAME',
+            'CONTACT_FIRST_NAME', 'RELATIONSHIP_TO_CLIENT',
+            'MAIN_LANGUAGE_SPOKEN_AT_HOME',
+            '_AB_SOURCE_FILE_URL', '_AB_SOURCE_FILE_LAST_MODIFIED'
         ],
         invalidate_hard_deletes=True,
         dbt_valid_to_current="to_date('9999-12-31')"
     )
 }}
 
-WITH source AS (
-    SELECT
-        _AIRBYTE_RAW_ID,
-        _AIRBYTE_EXTRACTED_AT,
-        _AIRBYTE_META,
-        _AIRBYTE_GENERATION_ID,
-        "CLIENT FIRST NAME",
-        "CLIENT MIDDLE NAME",
-        "CLIENT SURNAME",
-        "DATE OF BIRTH",
-        "DOB ESTIMATED",
-        "AGE YEARS",
-        "AGE MONTHS",
-        GENDER,
-        "PRIMARY DIAGNOSIS",
-        "PHONE NUMBER",
-        EMAIL,
-        ADDRESS,
-        SUBURB,
-        POSTCODE,
-        STATE,
-        "CONTACT FIRST NAME",
-        "CONTACT SURNAME",
-        "RELATIONSHIP TO CLIENT",
-        "MAIN LANGUAGE SPOKEN AT HOME",
-        "PHONE NO",
-        SUBURNE,
-        "DATE OF REFERRAL",
-        _AB_SOURCE_FILE_URL,
-        _AB_SOURCE_FILE_LAST_MODIFIED
-    FROM {{ source('raw_echidna', 'ECHIDNA_CLIENTS') }}
-)
-
 SELECT
-    MD5(
-        COALESCE("CLIENT FIRST NAME", 'unknown')    || '-' ||
-        COALESCE("CLIENT SURNAME", 'unknown')       || '-' ||
-        COALESCE("DATE OF BIRTH", 'unknown')        || '-' ||
-        COALESCE(EMAIL, 'unknown')                  || '-' ||
-        COALESCE(ADDRESS, 'unknown')                || '-' ||
-        COALESCE("CONTACT FIRST NAME", 'unknown')
-    )                                               AS CLIENT_KEY,
     *,
-    CURRENT_TIMESTAMP()                             AS _stg_loaded_at
+    CURRENT_TIMESTAMP() AS _stg_loaded_at
 
-FROM source
+FROM {{ source('raw_echidna', 'ECHIDNA_CLIENTS') }}
 
 {% endsnapshot %}
