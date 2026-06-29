@@ -2,8 +2,7 @@
 
 {{
     config(
-        target_database='DEV_02_HIST_DB',
-        target_schema='ECHIDNA',
+        schema= 'ECHIDNA',
         unique_key='_AIRBYTE_RAW_ID',
         strategy='check',
         check_cols=[
@@ -22,9 +21,7 @@
 }}
 
 SELECT
-    *,
-    CURRENT_TIMESTAMP() AS _stg_loaded_at
-
+    *
 FROM {{ source('raw_echidna', 'ECHIDNA_CLIENTS') }}
 
 {% endsnapshot %}

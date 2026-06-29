@@ -2,8 +2,7 @@
 
 {{
     config(
-        target_database='DEV_02_HIST_DB',
-        target_schema='TRAKCARE',
+        schema='TRAKCARE',
         unique_key='CTCOU_ROWID',
         strategy='check',
         check_cols=[
@@ -52,8 +51,7 @@ SELECT
     CTCOU_ISO3166ALPHA2CODE,
     CTCOU_ISO3166ALPHA3CODE,
     CTCOU_CODETRANSLATED,
-    CTCOU_DESCTRANSLATED,
-    CURRENT_TIMESTAMP() AS _stg_loaded_at
+    CTCOU_DESCTRANSLATED
 
 FROM {{ source('raw_trakcare', 'CT_COUNTRY') }}
 

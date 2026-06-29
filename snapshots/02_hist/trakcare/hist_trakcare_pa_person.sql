@@ -2,8 +2,7 @@
 
 {{
     config(
-        target_database='DEV_02_HIST_DB',
-        target_schema='TRAKCARE',
+        schema='TRAKCARE',
         unique_key='PAPER_ROWID',
         strategy='check',
         check_cols=[
@@ -141,9 +140,7 @@
 }}
 
 SELECT
-    *,
-    CURRENT_TIMESTAMP() AS _stg_loaded_at
-
+    *
 FROM {{ source('raw_trakcare', 'PA_PERSON') }}
 
 {% endsnapshot %}

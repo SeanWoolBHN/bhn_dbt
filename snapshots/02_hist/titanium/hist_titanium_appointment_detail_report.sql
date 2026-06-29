@@ -2,8 +2,7 @@
 
 {{
     config(
-        target_database='DEV_02_HIST_DB',
-        target_schema='TITANIUM',
+        schema = 'TITANIUM',
         unique_key='_AIRBYTE_RAW_ID',
         strategy='check',
         check_cols=[
@@ -63,9 +62,7 @@ SELECT
     APPOINTMENTTIME,
     INDIGENOUSSTATUS,
     _AB_SOURCE_FILE_URL,
-    _AB_SOURCE_FILE_LAST_MODIFIED,
-    CURRENT_TIMESTAMP() AS _stg_loaded_at
-
+    _AB_SOURCE_FILE_LAST_MODIFIED
 FROM {{ source('raw_titanium', 'APPOINTMENT_DETAIL_REPORT') }}
 
 {% endsnapshot %}

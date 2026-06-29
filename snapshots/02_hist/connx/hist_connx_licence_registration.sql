@@ -2,8 +2,7 @@
 
 {{
     config(
-        target_database='DEV_02_HIST_DB',
-        target_schema='CONNX',
+        schema = 'CONNX',
         unique_key='_AIRBYTE_RAW_ID',
         strategy='check',
         check_cols=[
@@ -18,9 +17,7 @@
 }}
 
 SELECT
-    *,
-    CURRENT_TIMESTAMP() AS _stg_loaded_at
-
+    *
 FROM {{ source('raw_connx', 'LICENCE_REGISTRATION') }}
 
 {% endsnapshot %}

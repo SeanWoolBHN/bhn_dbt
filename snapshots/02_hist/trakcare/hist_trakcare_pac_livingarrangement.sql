@@ -2,8 +2,7 @@
 
 {{
     config(
-        target_database='DEV_02_HIST_DB',
-        target_schema='TRAKCARE',
+        schema='TRAKCARE',
         unique_key='LIVARR_ROWID',
         strategy='check',
         check_cols=[
@@ -19,8 +18,7 @@
 }}
 
 SELECT
-    *,
-    CURRENT_TIMESTAMP() AS _stg_loaded_at
+    *
 
 FROM {{ source('raw_trakcare', 'PAC_LIVINGARRANGEMENT') }}
 

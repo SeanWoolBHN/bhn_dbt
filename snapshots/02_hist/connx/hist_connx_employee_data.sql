@@ -2,8 +2,7 @@
 
 {{
     config(
-        target_database='DEV_02_HIST_DB',
-        target_schema='CONNX',
+        schema = 'CONNX',
         unique_key='_AIRBYTE_RAW_ID',
         strategy='check',
         check_cols=[
@@ -12,10 +11,10 @@
             'CONTRACT_HOURS', 'PREFERRED_NAME', 'EMPLOYMENT_TYPE',
             'CURRENT_POSITION', 'TERMINATION_DATE', 'PROBATION_END_DATE',
             'TIL_LEAVE_APPROVED', 'WORK_EMAIL_ADDRESS', 'FIXED_TERM_END_DATE',
-            'RDO_BALANCE_ACCRUED', '"REPORTS_TO(POSITION)"',
+            'RDO_BALANCE_ACCRUED', 'REPORTS_TO_POSITION_',
             'ANNUAL_LEAVE_APPROVED', 'FIXED_TERM_START_DATE',
             'PERSONAL_LEAVE_APPROVED', 'POSITION_ALLOCATED_HOURS',
-            '"REPORTS_TO_(MANAGER_NAME)"', 'TIL_LEAVE_BALANCE_ACCRUED',
+            'REPORTS_TO_MANAGER_NAME_', 'TIL_LEAVE_BALANCE_ACCRUED',
             'ANNUAL_LEAVE_BALANCE_ACCRUED', 'PERSONAL_LEAVE_BALANCE_ACCRUED',
             'TERMINATION_REASON_FOR_LEAVING',
             'USED_DEFINED_PURCHASED_LEAVE_ACCRUED',
@@ -28,8 +27,7 @@
 }}
 
 SELECT
-    *,
-    CURRENT_TIMESTAMP() AS _stg_loaded_at
+    *
 
 FROM {{ source('raw_connx', 'EMPLOYEE_DATA') }}
 

@@ -2,8 +2,7 @@
 
 {{
     config(
-        target_database='DEV_02_HIST_DB',
-        target_schema='BETTER_IMPACT',
+        schema = 'BETTER_IMPACT',
         unique_key='_AIRBYTE_RAW_ID',
         strategy='check',
         check_cols=[
@@ -23,8 +22,7 @@
 }}
 
 SELECT
-    *,
-    CURRENT_TIMESTAMP() AS _stg_loaded_at
+    *
 
 FROM {{ source('raw_better_impact', 'PIVOTED_FEEDBACK_REPORT') }}
 

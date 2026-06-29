@@ -43,6 +43,8 @@ sources:
     tables:
       - name: CUSTOMER_LIST
         description: "Raw customer list data from E-Tools system"
+      - name: PROVIDER_STATEMENT
+        description: "Raw provider list data from E-Tools system"
 
   - name: raw_micropay
     database: DEV_01_RAW_DB
@@ -68,7 +70,7 @@ sources:
     database: DEV_01_RAW_DB
     schema: SUPPORTABILITY
     tables:
-      - name: CLIENT_LIST_INCL_PERSONAL_CONTACTS
+      - name: CLIENT_LIST_INC_PERSONAL_CONTACTS
         description: "Raw client and personal contact list from Supportability system"
       - name: ACTIVITY_REPORT
         description: "Raw activity report FCT data from Supportability system"

@@ -2,13 +2,12 @@
 
 {{
     config(
-        target_database='DEV_02_HIST_DB',
-        target_schema='CONNX',
+        schema = 'CONNX',
         unique_key='_AIRBYTE_RAW_ID',
         strategy='check',
         check_cols=[
             'DOB', 'GENDER', 'POSTCODE', 'DEPARTMENT', 'NATIONALITY',
-            'LANGUAGES_SPOKEN', '"ETHNICITY_(AU/NZ)"',
+            'LANGUAGES_SPOKEN', '"ETHNICITY_AU/NZ_"',
             '_AB_SOURCE_FILE_URL', '_AB_SOURCE_FILE_LAST_MODIFIED'
         ],
         invalidate_hard_deletes=True,
@@ -17,8 +16,7 @@
 }}
 
 SELECT
-    *,
-    CURRENT_TIMESTAMP() AS _stg_loaded_at
+    *
 
 FROM {{ source('raw_connx', 'EMPLOYEE_DEMOGRAPHICS') }}
 

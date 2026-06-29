@@ -2,8 +2,7 @@
 
 {{
     config(
-        target_database='DEV_02_HIST_DB',
-        target_schema='TRIPS',
+        schema = 'TRIPS',
         unique_key='_AIRBYTE_RAW_ID',
         strategy='check',
         check_cols=[
@@ -32,8 +31,7 @@ SELECT
     TRC, TRN, SYSID, FULLNAME, RECORDTYPE,
     LETTERSOFNAME,
     _AB_SOURCE_FILE_URL,
-    _AB_SOURCE_FILE_LAST_MODIFIED,
-    CURRENT_TIMESTAMP() AS _stg_loaded_at
+    _AB_SOURCE_FILE_LAST_MODIFIED
 
 FROM {{ source('raw_trips', 'SERVICE_EVENT_EXPORT') }}
 

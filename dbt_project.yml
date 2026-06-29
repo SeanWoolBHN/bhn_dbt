@@ -1,4 +1,4 @@
-name: 'my_project'
+name: 'BHN_Updated_DW'
 version: '1.0.0'
 config-version: 2
 
@@ -17,32 +17,33 @@ clean-targets:
   - "dbt_packages"
 
 snapshots:
-  my_project:
-    +target_database: DEV_02_HIST_DB
+  BHN_Updated_DW:
+    +database: DEV_02_HIST_DB
     best_practice:
-      +target_schema: BEST_PRACTICE
+      +schema: BEST_PRACTICE
     titanium:
-      +target_schema: TITANIUM
+      +schema: TITANIUM
     echidna:
-      +target_schema: ECHIDNA
+      +schema: ECHIDNA
     trips:
-      +target_schema: TRIPS
+      +schema: TRIPS
     e_tools:
-      +target_schema: E_TOOLS
+      +schema: E_TOOLS
+    supportability:
+      +schema: SUPPORTABILITY
     micropay:
-      +target_schema: MICROPAY
+      +schema: MICROPAY
     better_impact:
-      +target_schema: BETTER_IMPACT
+      +schema: BETTER_IMPACT
     gh_connect:
-      +target_schema: GH_CONNECT
+      +schema: GH_CONNECT
     connx:
-      +target_schema: CONNX
+      +schema: CONNX
     trakcare:
-      +target_schema: TRAKCARE
-
+      +schema: TRAKCARE
 
 models:
-  my_project:
+  BHN_Updated_DW:
     03_prep:
       stg:
         +materialized: view

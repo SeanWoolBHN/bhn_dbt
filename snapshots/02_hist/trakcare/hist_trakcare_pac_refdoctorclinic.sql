@@ -2,8 +2,7 @@
 
 {{
     config(
-        target_database='DEV_02_HIST_DB',
-        target_schema='TRAKCARE',
+        schema='TRAKCARE',
         unique_key='CLN_KEY',
         strategy='check',
         check_cols=[
@@ -78,8 +77,7 @@ SELECT
     CLN_VEMD, CLN_DATEFROM, CLN_DATETO, CLN_CLINIC_DR, CLN_ALIAS,
     CLN_LOCATION, CLN_SYSTEM, CLN_DEFAULTSEND, CLN_CREATEDDATE,
     CLN_CREATEDTIME, CLN_CREATEDUSER_DR, CLN_UPDATEDDATE, CLN_UPDATEDTIME,
-    CLN_UPDATEDUSER_DR, CLN_CONFIDENTIALFAX, CLN_TEXT1, CLN_TEXT2,
-    CURRENT_TIMESTAMP() AS _stg_loaded_at
+    CLN_UPDATEDUSER_DR, CLN_CONFIDENTIALFAX, CLN_TEXT1, CLN_TEXT2
 
 FROM source
 
