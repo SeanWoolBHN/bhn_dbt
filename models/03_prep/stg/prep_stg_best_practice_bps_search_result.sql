@@ -7,8 +7,8 @@ SELECT
     {{ format_name('PREFERREDNAME') }}  AS PREF_NAME,
     {{ format_name('TITLE') }}          AS TITLE,
 
-    {{ format_name('ADDRESS1') }}       AS ADDRESS1,
-    {{ format_name('ADDRESS2') }}       AS ADDRESS2,
+    {{ format_name('ADDRESS1') }}       AS ADDRESS_1,
+    {{ format_name('ADDRESS2') }}       AS ADDRESS_2,
     {{ format_name('CITY') }}           AS CITY,
     TRIM(POSTCODE)                      AS POSTCODE,
     TRIM(FULLADDRESS)                   AS FULL_ADDRESS,
