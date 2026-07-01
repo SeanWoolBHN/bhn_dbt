@@ -24,7 +24,7 @@ SELECT
     TRIM(POSTCODE)                                 AS POSTCODE,
     {{ format_name('PREFNAME') }}                  AS PREF_NAME,
     TRIM(PRIORITY)                                 AS PRIORITY,
-    TRIM(UNIQUEID)                                 AS UNIQUE_ID,
+    TRIM(UNIQUEID)                                 AS TRIPS_ID,
     {{ format_date('ENTRYDATE') }}                 AS ENTRY_DATE,
     {{ format_name('GIVENNAME') }}                 AS FIRST_NAME,
     TRIM(NEWSLCODE)                                AS NEWSL_CODE,

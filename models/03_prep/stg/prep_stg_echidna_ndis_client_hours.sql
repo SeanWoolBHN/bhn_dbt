@@ -1,7 +1,7 @@
 SELECT
-    TRIM("TO")                                   AS "TO",
-    {{ format_date('"DATE"') }}                  AS "DATE",
-    TRIM("FROM")                                 AS "FROM",
+    TRIM("TO")                                   AS TIME_TO,
+    {{ format_date('"DATE"') }}                  AS APPOINTMENT_DATE,
+    TRIM("FROM")                                 AS TIME_FROM,
     TRIM(RATE)                                   AS RATE,
     TRIM(HOURS)                                  AS HOURS,
     TRIM(VALUE)                                  AS VALUE,

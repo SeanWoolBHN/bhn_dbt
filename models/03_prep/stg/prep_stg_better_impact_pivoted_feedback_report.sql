@@ -2,7 +2,7 @@ SELECT
     {{ format_name('LASTNAME') }}          AS LAST_NAME,
     TRIM(USERNAME)                         AS USER_NAME,
     {{ format_name('FIRSTNAME') }}         AS FIRST_NAME,
-    CAST(HOURSWORKED AS TEXT)              AS WORKED_HOURS,
+    CAST(HOURSWORKED AS INT)               AS WORKED_HOURS,
     {{ format_name('ACTIVITYNAME') }}      AS ACTIVITY_NAME,
     CAST(DATABASEUSERID AS TEXT)           AS BETTER_IMPACT_USER_ID,
     CAST(DATEVOLUNTEERED AS DATE)          AS VOLUNTEERED_DATE,
