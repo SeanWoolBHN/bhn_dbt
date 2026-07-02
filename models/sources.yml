@@ -157,3 +157,9 @@ sources:
         description: "Person master data from TrakCare system"
       - name: RT_MASTER
         description: "Record tracking master data from TrakCare system"
+      - name: ARC_AUXILINSURTYPE
+        description: "Reference table of auxiliary insurance types from TrakCare system"
+      - name: ARC_ITEMCAT
+        description: "Reference table of item categories from TrakCare system"
+      - name: ARC_ITMMAST
+        description: "Reference table of item master records from TrakCare system"
