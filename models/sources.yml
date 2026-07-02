@@ -151,9 +151,3 @@ sources:
         description: "Person master data from TrakCare system"
       - name: RT_MASTER
         description: "Record tracking master data from TrakCare system"
-      - name: PA_PATMAS
-        description: "Patient master data from TrakCare system"
-      - name: PA_PERSON
-        description: "Person master data from TrakCare system"
-      - name: RT_MASTER
-        description: "Record tracking master data from TrakCare system"

@@ -22,29 +22,30 @@ clean-targets:        # directories to be removed by "dbt clean"
 
 snapshots:
   BHN_Updated_DW:
-    +database: DEV_02_HIST_DB
-    best_practice:
-      +schema: BEST_PRACTICE
-    titanium:
-      +schema: TITANIUM
-    echidna:
-      +schema: ECHIDNA
-    trips:
-      +schema: TRIPS
-    e_tools:
-      +schema: E_TOOLS
-    supportability:
-      +schema: SUPPORTABILITY
-    micropay:
-      +schema: MICROPAY
-    better_impact:
-      +schema: BETTER_IMPACT
-    gh_connect:
-      +schema: GH_CONNECT
-    connx:
-      +schema: CONNX
-    trakcare:
-      +schema: TRAKCARE
+    02_hist:
+      +database: DEV_02_HIST_DB
+      best_practice:
+        +schema: BEST_PRACTICE
+      titanium:
+        +schema: TITANIUM
+      echidna:
+        +schema: ECHIDNA
+      trips:
+        +schema: TRIPS
+      e_tools:
+        +schema: E_TOOLS
+      supportability:
+        +schema: SUPPORTABILITY
+      micropay:
+        +schema: MICROPAY
+      better_impact:
+        +schema: BETTER_IMPACT
+      gh_connect:
+        +schema: GH_CONNECT
+      connx:
+        +schema: CONNX
+      trakcare:
+        +schema: TRAKCARE
 
 
 # Configuring models
@@ -61,7 +62,7 @@ snapshots:
 models:
   BHN_Updated_DW:
     03_prep:
+      +database: DEV_03_PREP_DB
       stg:
         +materialized: view
-        +database: DEV_03_PREP_DB
         +schema: STG
