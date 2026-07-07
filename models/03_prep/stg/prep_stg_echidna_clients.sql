@@ -4,7 +4,7 @@ SELECT
     UPPER(TRIM(GENDER))                          AS GENDER,
     {{ format_name('SUBURB') }}                  AS CITY,
     {{ format_name('ADDRESS') }}                 AS ADDRESS,
-    TRIM(SUBURNE)                                AS SUBURNE,
+    TRIM(SUBURNE)                                AS CITY_2,
     {{ format_phone('PHONE_NO') }}               AS PHONE_NO,
     TRIM(POSTCODE)                                AS POSTCODE,
     TRIM(AGE_YEARS)                               AS AGE_YEARS,

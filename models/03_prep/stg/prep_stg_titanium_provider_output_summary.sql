@@ -1,18 +1,18 @@
 SELECT
-    TRIM(COC)                                     AS COC,
-    TRIM(AMOUNT)                                   AS AMOUNT,
-    TRIM(VISITS)                                   AS NO_OF_VISITS,
-    TRIM(FTAAPPT)                                  AS NO_OF_FTA_APPT,
-    TRIM(PATIENTS)                                 AS NO_OF_PATIENTS,
+    TRIM(COC)                                      AS COC,
+    TRY_TO_NUMBER(TRIM(AMOUNT),18,6)               AS AMOUNT,
+    TRY_TO_NUMBER(TRIM(VISITS),18,6)               AS NO_OF_VISITS,
+    TRY_TO_NUMBER(TRIM(FTAAPPT),18,6)              AS NO_OF_FTA_APPT,
+    TRY_TO_NUMBER(TRIM(PATIENTS),18,6)             AS NO_OF_PATIENTS,
     {{ format_name('PROVIDER') }}                  AS PROVIDER_CODE,
-    TRIM(TEXTBOX62)                                AS TEXTBOX62,
-    TRIM(TOTALAPPT)                                AS TOTAL_APPT,
+    TRIM(TEXTBOX62)                                AS FTA_PCT,
+    TRY_TO_NUMBER(TRIM(TOTALAPPT),18,6)            AS TOTAL_APPT,
     TRIM(APPTNOTREAT)                              AS APPT_NOT_TREAT,
     {{ format_name('PROVIDERNAME') }}              AS PROVIDER_NAME,
     TRIM(PROVIDERTYPE)                             AS PROVIDER_TYPE,
     TRIM(FTALENGTHHOURS)                           AS FTA_DURATION_HOURS,
     TRIM(PROVIDERREGTYPE)                          AS PROVIDER_REG_TYPE,
-    TRIM(APPTLENGTHHOURS1)                         AS APPT_DURATION_HOURS,
+    TRY_TO_NUMBER(TRIM(APPTLENGTHHOURS1),18, 6)    AS APPT_DURATION_HOURS,
 
     _AIRBYTE_EXTRACTED_AT                           AS AIRBYTE_EXTRACTED_TS
 

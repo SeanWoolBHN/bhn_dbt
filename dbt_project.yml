@@ -23,7 +23,7 @@ clean-targets:        # directories to be removed by "dbt clean"
 snapshots:
   BHN_Updated_DW:
     02_hist:
-      +database: DEV_02_HIST_DB
+      +database: 02_HIST_DB
       best_practice:
         +schema: BEST_PRACTICE
       titanium:
@@ -62,7 +62,7 @@ snapshots:
 models:
   BHN_Updated_DW:
     03_prep:
-      +database: DEV_03_PREP_DB
+      +database: 03_PREP_DB
       stg:
         +materialized: view
         +schema: STG

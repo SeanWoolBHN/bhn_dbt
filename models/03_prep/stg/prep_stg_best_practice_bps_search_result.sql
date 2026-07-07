@@ -17,12 +17,12 @@ SELECT
     AGE,
     UPPER(TRIM(SEX))                    AS GENDER,
 
-    TRIM(MEDICARENO)                    AS MEDICARE_NO,
-    TRIM(MEDICARELINENO)                AS MEDICARE_IRN,
-    {{ format_date('MEDICAREEXPIRY') }} AS MEDICARE_EXPIRY_DATE,
-    TRIM(RECORDNO)                      AS RECORD_NO,
-    TRIM(PENSIONNO)                     AS PENSION_NO,
-    TRIM(DVANO)                         AS DVA_NO,
+    TRY_TO_NUMBER(TRIM(MEDICARENO),18,6)    AS MEDICARE_NO,
+    TRY_TO_NUMBER(TRIM(MEDICARELINENO),18,6)AS MEDICARE_IRN,
+    {{ format_date('MEDICAREEXPIRY') }}     AS MEDICARE_EXPIRY_DATE,
+    TRY_TO_NUMBER(TRIM(RECORDNO),18,6)      AS RECORD_NO,
+    TRY_TO_NUMBER(TRIM(PENSIONNO),18,6)     AS PENSION_NO,
+    TRY_TO_NUMBER(TRIM(DVANO),18,6)     AS DVA_NO,
 
     {{ format_phone('HOMEPHONE') }}     AS HOME_PHONE,
     {{ format_phone('WORKPHONE') }}     AS WORK_PHONE,

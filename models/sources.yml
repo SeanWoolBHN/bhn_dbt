@@ -149,21 +149,13 @@ sources:
         description: "Patient master data from TrakCare system"
       - name: PA_PERSON
         description: "Person master data from TrakCare system"
-      - name: RT_MASTER
-<<<<<<< HEAD
-        description: "Record tracking master data from TrakCare system"
-      - name: PA_PATMAS
-        description: "Patient master data from TrakCare system"
-      - name: PA_PERSON
-        description: "Person master data from TrakCare system"
-      - name: RT_MASTER
-        description: "Record tracking master data from TrakCare system"
-      - name: ARC_AUXILINSURTYPE
-        description: "Reference table of auxiliary insurance types from TrakCare system"
-      - name: ARC_ITEMCAT
-        description: "Reference table of item categories from TrakCare system"
       - name: ARC_ITMMAST
         description: "Reference table of item master records from TrakCare system"
-=======
-        description: "Record tracking master data from TrakCare system"
->>>>>>> 6d4db5f6de037f4bb2d4e923f9974c5fba34c6f8
+      - name: ARC_ITEMCAT
+        description: "Reference table of item categories from TrakCare system"
+      - name: ARC_AUXILINSURTYPE
+        description: "Reference table of auxiliary insurance types from TrakCare system"
+      - name: RT_MASTER
+        description: "Master Data Table"
+      - name: CT_ZIP
+        description: "Reference table of zip/postcode codes from TrakCare system"

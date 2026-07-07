@@ -1,5 +1,5 @@
 SELECT
-    ACCOMS_ROWID                                  AS ROWID,
+    ACCOMS_ROWID                                  AS ROW_ID,
     TRIM(ACCOMS_CODE)                             AS CODE,
     TRIM(ACCOMS_DESC)                             AS DESC,
     ACCOMS_DATEFROM                               AS DATE_FROM,
