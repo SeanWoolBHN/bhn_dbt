@@ -45,6 +45,8 @@ sources:
         description: "Raw customer list data from E-Tools system"
       - name: PROVIDER_STATEMENT
         description: "Raw provider list data from E-Tools system"
+      - name: ESAH_CLIENTS
+        description: "Raw ESAH client data from E-Tools system"
 
   - name: raw_micropay
     database: DEV_01_RAW_DB
@@ -159,3 +161,33 @@ sources:
         description: "Master Data Table"
       - name: CT_ZIP
         description: "Reference table of zip/postcode codes from TrakCare system"
+      - name: PAC_REFERRALTYPE
+        description: "Reference table of referral types from TrakCare system"
+      - name: CT_CAREPROV
+        description: "Reference table of care providers from TrakCare system"
+      - name: PAC_SOURCEOFATTENDANCE
+        description: "Reference table of source of attendance codes from TrakCare system"
+      - name: PAC_NONGOVORG
+        description: "Reference table of non-government organisations from TrakCare system"
+      - name: PAC_REFERREDDEPARTURE
+        description: "Reference table of referred departure codes from TrakCare system"
+      - name: RBC_REASONFORCANCEL
+        description: "Reference table of cancellation reasons from TrakCare system"
+      - name: RBC_REASONFORNOTSHOW
+        description: "Reference table of not-show reasons from TrakCare system"
+      - name: RB_RESOURCE
+        description: "Reference table of booking resources from TrakCare system"
+      - name: RB_EVENT
+        description: "Reference table of events from TrakCare system"
+      - name: RBC_APPOINTTRANSPORT
+        description: "Reference table of appointment transport options from TrakCare system"
+      - name: RBC_SERVICES
+        description: "Reference table of services from TrakCare system"
+      - name: RBC_EVENTTYPE
+        description: "Reference table of event types from TrakCare system"
+      - name: RBC_EVENTSUBTYPE
+        description: "Reference table of event subtypes from TrakCare system"
+      - name: RB_APPTSCHEDULE
+        description: "Appointment schedule data from TrakCare system"
+      - name: SS_USER
+        description: "System user reference table from TrakCare system"

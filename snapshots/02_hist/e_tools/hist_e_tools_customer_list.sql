@@ -2,7 +2,6 @@
 
 {{
     config(
-        schema = 'E_TOOLS',
         unique_key='_AIRBYTE_RAW_ID',
         strategy='check',
         check_cols=[
