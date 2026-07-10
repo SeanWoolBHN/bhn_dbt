@@ -210,3 +210,11 @@ sources:
         description: "Reference table of NFMI categories from TrakCare system"
       - name: RB_APPOINTMENT
         description: "Appointment bookings from TrakCare system"
+      - name: QAUXXADVADC
+        description: "VADC questionnaire response table from TrakCare system"
+      - name: QAUXXADOUT
+        description: "VADC outcome questionnaire response table from TrakCare system"
+      - name: QAUXXADOUTQQVADCOUTDOC
+        description: "VADC outcome document child table from TrakCare system"
+      - name: QAUXXADVADCQQVADCPROGREF
+        description: "VADC program referral child table from TrakCare system"
