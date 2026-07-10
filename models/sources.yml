@@ -96,6 +96,13 @@ sources:
         description: "Raw employee demographics from CONNX system"
       - name: LICENCE_REGISTRATION
         description: "Raw licence registration data from CONNX system"
+  
+  - name: raw_reference_data
+    database: DEV_01_RAW_DB
+    schema: REFERENCE_DATA
+    tables:
+      - name: LOCATION_MAPPING
+        description: "Manual location mapping reference table linking TrakCare location codes to reporting values"
     
   - name: raw_trakcare
     database: DEV_01_RAW_DB
@@ -191,3 +198,15 @@ sources:
         description: "Appointment schedule data from TrakCare system"
       - name: SS_USER
         description: "System user reference table from TrakCare system"
+      - name: CT_NFMI_CATEGDEPART
+        description: "Reference table of NFMI category departments from TrakCare system"
+      - name: CT_HOSPITAL
+        description: "Reference table of hospitals from TrakCare system"
+      - name: CT_LOC
+        description: "Reference table of locations from TrakCare system"
+      - name: PA_ADM
+        description: "Patient admission/episode FCT table from TrakCare system"
+      - name: CT_NFMI_CATEGORY
+        description: "Reference table of NFMI categories from TrakCare system"
+      - name: RB_APPOINTMENT
+        description: "Appointment bookings from TrakCare system"

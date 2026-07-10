@@ -46,6 +46,8 @@ snapshots:
         +schema: CONNX
       trakcare:
         +schema: TRAKCARE
+      reference_data:
+        +schema: REFERENCE_DATA
 
 
 # Configuring models
@@ -66,3 +68,9 @@ models:
       stg:
         +materialized: view
         +schema: STG
+      src:
+        +materialized: view
+        +schema: SRC
+      ref:
+        +materialized: view
+        +schema: REF

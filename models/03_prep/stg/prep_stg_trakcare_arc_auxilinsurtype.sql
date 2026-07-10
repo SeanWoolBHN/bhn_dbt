@@ -1,0 +1,37 @@
+SELECT
+    AUXIT_ROWID                                                           AS ROW_ID,
+    NULLIF(TRIM(AUXIT_CODE), 'NULL')                                      AS CODE,
+    NULLIF(TRIM(AUXIT_DESC), 'NULL')                                      AS DESCRIPTION,
+    NULLIF(TRIM(AUXIT_CODE1), 'NULL')                                     AS CODE_1,
+    NULLIF(TRIM(AUXIT_CODE2), 'NULL')                                     AS CODE_2,
+    NULLIF(TRIM(AUXIT_OWNER), 'NULL')                                     AS OWNER,
+    AUXIT_DATETO                                                          AS DATE_TO,
+    NULLIF(TRIM(AUXIT_CATEGORY), 'NULL')                                  AS CATEGORY,
+    AUXIT_DATEFROM                                                        AS DATE_FROM,
+    AUXIT_PRIORITY                                                        AS PRIORITY,
+    AUXIT_INSTYPE_DR                                                      AS INS_TYPE_DR,
+    NULLIF(TRIM(AUXIT_PLANGROUP1), 'NULL')                                AS PLAN_GROUP_1,
+    NULLIF(TRIM(AUXIT_PLANGROUP2), 'NULL')                                AS PLAN_GROUP_2,
+    NULLIF(TRIM(AUXIT_PLANGROUP3), 'NULL')                                AS PLAN_GROUP_3,
+    NULLIF(TRIM(AUXIT_PLANGROUP4), 'NULL')                                AS PLAN_GROUP_4,
+    NULLIF(TRIM(AUXIT_PLANGROUP5), 'NULL')                                AS PLAN_GROUP_5,
+    NULLIF(TRIM(AUXIT_PLANGROUP6), 'NULL')                                AS PLAN_GROUP_6,
+    AUXIT_CREATEDDATE                                                     AS CREATED_DATE,
+    AUXIT_CREATEDTIME                                                     AS CREATED_TIME,
+    AUXIT_UPDATEDDATE                                                     AS UPDATED_DATE,
+    AUXIT_UPDATEDTIME                                                     AS UPDATED_TIME,
+    NULLIF(TRIM(AUXIT_NATIONALCODE), 'NULL')                              AS NATIONAL_CODE,
+    AUXIT_SUBREGION_DR                                                    AS SUB_REGION_DR,
+    NULLIF(TRIM(AUXIT_CODETABLETAGS), 'NULL')                             AS CODE_TABLE_TAGS,
+    NULLIF(TRIM(AUXIT_CODETRANSLATED), 'NULL')                            AS CODE_TRANSLATED,
+    AUXIT_CREATEDUSER_DR                                                  AS CREATED_USER_DR,
+    NULLIF(TRIM(AUXIT_DESCTRANSLATED), 'NULL')                            AS DESC_TRANSLATED,
+    AUXIT_UPDATEDUSER_DR                                                  AS UPDATED_USER_DR,
+    NULLIF(TRIM(AUXIT_GENSEPARATEBATCH), 'NULL')                          AS GEN_SEPARATE_BATCH,
+    NULLIF(TRIM(AUXIT_EXCLFROMBATCHINVOICE), 'NULL')                      AS EXCL_FROM_BATCH_INVOICE,
+    AUXIT_QUALIFICATIONSTATUSDR                                           AS QUALIFICATION_STATUS_DR,
+
+    _AIRBYTE_EXTRACTED_AT                                                 AS AIRBYTE_EXTRACTED_TS
+
+FROM {{ ref('HIST_TRAKCARE_ARC_AUXILINSURTYPE') }}
+WHERE dbt_valid_to = TO_DATE('9999-12-31')

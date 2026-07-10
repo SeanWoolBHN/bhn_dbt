@@ -9,7 +9,7 @@ SELECT
     {{ format_name('SUBURB') }}                     AS CITY,
     {{ format_name('ADDRESS') }}                    AS ADDRESS,
     {{ format_name('LANGUAGE') }}                   AS LANGUAGE,
-    TRIM(POSTCODE)                                  AS POSTCODE,
+    CAST(TRIM(POSTCODE) AS TEXT)                    AS POSTCODE,
     TRIM(RELATIONSHIP)                              AS RELATIONSHIP,
     {{ format_date('END_DATE') }}                   AS END_DATE,
     TRY_TO_NUMBER(TRIM(DEBTOR_ID),18,6)             AS DEBTOR_ID,

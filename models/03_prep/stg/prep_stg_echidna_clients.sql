@@ -6,7 +6,7 @@ SELECT
     {{ format_name('ADDRESS') }}                 AS ADDRESS,
     TRIM(SUBURNE)                                AS CITY_2,
     {{ format_phone('PHONE_NO') }}               AS PHONE_NO,
-    TRIM(POSTCODE)                                AS POSTCODE,
+    CAST(TRIM(POSTCODE) AS TEXT)                 AS POSTCODE,
     TRIM(AGE_YEARS)                               AS AGE_YEARS,
     TRIM(AGE_MONTHS)                              AS AGE_MONTHS,
     {{ format_phone('PHONE_NUMBER') }}            AS PHONE_NO_2,
