@@ -74,3 +74,6 @@ models:
       ref:
         +materialized: view
         +schema: REF
+      model:
+        +materialized: view
+        +schema: MODEL

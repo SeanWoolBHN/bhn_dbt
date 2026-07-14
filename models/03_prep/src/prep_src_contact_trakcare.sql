@@ -1,0 +1,170 @@
+SELECT
+    -- ── Natural keys ────────────────────────────────────────────────
+    ENQ.CONTACT_ID                                        AS CONTACT_ID,
+    PAT.PATIENT_NO                                        AS UR,
+    ADM.ADM_NO                                            AS EPISODE_ID,
+
+    -- OEOrdItem_Ref — bridge key linking contact to appointment
+    ENQ.OE_ORD_ITEM_DR                                    AS OEORDI_REF,
+
+    -- ── Program stream ──────────────────────────────────────────────
+    'PROGRAM_STREAM_CODE'                                 AS PROGRAM_STREAM_CODE,
+    'PROGRAM_STREAM_DESC'                                 AS PROGRAM_STREAM_DESC,
+
+    -- ── Location ────────────────────────────────────────────────────
+    LOC.DESCRIPTION                                       AS LOCATION,
+    LOC.CODE                                              AS LOCATION_CODE,
+    HOSP.DESCRIPTION                                      AS HOSPITAL,
+    HOSP.CODE                                             AS HOSPITAL_CODE,
+
+    -- ── Order item and subcategory ──────────────────────────────────
+    IM.DESCRIPTION                                        AS ORD_ITEM,
+    IM.CODE                                               AS ORD_ITEM_CODE,
+    IC.DESCRIPTION                                        AS ORD_SUB_CAT,
+    IC.CODE                                               AS ORD_SUB_CAT_CODE,
+
+    -- ── Care provider — CP coalesce ─────────────────────────────────
+    CONCAT_WS(' ',
+        NULLIF(TRIM(CP_CONTACT.FIRST_NAME), ''),
+        NULLIF(TRIM(CP_CONTACT.LAST_NAME),  '')
+    )                                                     AS CONTACT_CP,
+
+    CONCAT_WS(' ',
+        NULLIF(TRIM(CP_EPISODE.FIRST_NAME), ''),
+        NULLIF(TRIM(CP_EPISODE.LAST_NAME),  '')
+    )                                                     AS EPISODE_CP,
+
+    COALESCE(
+        NULLIF(CONCAT_WS(' ',
+            NULLIF(TRIM(CP_CONTACT.FIRST_NAME), ''),
+            NULLIF(TRIM(CP_CONTACT.LAST_NAME),  '')
+        ), ''),
+        NULLIF(CONCAT_WS(' ',
+            NULLIF(TRIM(CP_EPISODE.FIRST_NAME), ''),
+            NULLIF(TRIM(CP_EPISODE.LAST_NAME),  '')
+        ), ''),
+        'Unknown'
+    )                                                     AS CP,
+
+    -- ── Contact date ────────────────────────────────────────────────
+    ENQ.CONTACT_DATE                                      AS CONTACT_DATE,
+    ENQ.CONTACT_TIME                                      AS CONTACT_TIME,
+
+    -- ── Hours — raw minutes + pre-converted ─────────────────────────
+    ENQ.DURATION                                          AS DIRECT_MINUTES,
+    ENQ.INDIRECT_TIME                                     AS INDIRECT_MINUTES,
+    ENQ.TRAVEL_TIME                                       AS TRAVEL_MINUTES,
+    COALESCE(ENQ.DURATION / 60.0, 0.00)                   AS DIRECT_HOURS,
+    COALESCE(ENQ.INDIRECT_TIME / 60.0, 0.00)              AS INDIRECT_HOURS,
+    COALESCE(ENQ.TRAVEL_TIME / 60.0, 0.00)                AS TRAVEL_HOURS,
+
+    -- ── Contact type ────────────────────────────────────────────────
+    ENQ.CONTACT_TYPE                                      AS CONTACT_TYPE,
+    CASE
+        WHEN ENQ.CONTACT_TYPE = 'A'
+            THEN 'Non Registered / Org client'
+        ELSE 'client'
+    END                                                   AS CONTACT_TYPE_DESC,
+
+    -- ── Contact method and status ───────────────────────────────────
+    ENQ.CONT_METHOD_DR                                    AS CONTACT_METHOD_DR_RAW,
+    ENQ.CONT_DELIV_MODE_DR                                AS DELIVERY_MODE_DR_RAW,
+    ENQ.REQUEST_STATUS_DR                                 AS REQUEST_STATUS_DR_RAW,
+
+    -- ── Contact name (anonymous/org contacts) ───────────────────────
+    ENQ.CONTACT_NAME                                      AS ENQ_CONTACT_NAME,
+
+    -- ── Interpreter ─────────────────────────────────────────────────
+    ENQ.INTERPRETER_REQUIRED                              AS INTERPRETER_REQUIRED,
+
+    -- ── Payor and plan ──────────────────────────────────────────────
+    'PAYOR_PENDING'                                       AS PAYOR,
+    'PLAN_PENDING'                                        AS PLAN,
+
+    -- ── Financial ───────────────────────────────────────────────────
+    ENQ.FEE                                               AS COST,
+    OI.COST                                               AS UNIT_PRICE,
+
+    -- ── Interventions ───────────────────────────────────────────────
+    ENQ.CONTACT_INTERVENTIONS                             AS INTERVENTIONS,
+
+    -- ── Group event fields ──────────────────────────────────────────
+    ENQ.RB_EVENT_DR                                       AS RB_EVENT_DR_RAW,
+    EV.NUMBER                                             AS EV_NUMBER,
+    EV.NAME                                               AS EV_NAME,
+    EV.VENUE                                              AS EV_VENUE,
+    EV.DURATION                                           AS EV_DURATION,
+    EV.MAX_NO_OF_PARTICIPANTS                             AS EV_MAX_PARTICIPANTS,
+
+    -- ── Additional fields ───────────────────────────────────────────
+    ENQ.URGENT_CONTACT                                    AS URGENT_CONTACT,
+    ENQ.INPATIENT_FLAG                                    AS INPATIENT_FLAG,
+    ENQ.VOLUNTEER_SER                                     AS VOLUNTEER_SER,
+    ENQ.TEXT_1                                            AS TEXT_1,
+    ENQ.TEXT_2                                            AS TEXT_2,
+    ENQ.YES_NO_1                                          AS YES_NO_1,
+    ENQ.YES_NO_2                                          AS YES_NO_2,
+    ENQ.UPDATED_DATE                                      AS DATE_ENTERED,
+
+    -- ── Reporting quarter ───────────────────────────────────────────
+    CASE
+        WHEN MONTH(ENQ.CONTACT_DATE) >= 7
+            THEN YEAR(ENQ.CONTACT_DATE)::VARCHAR
+                 || '-' || (YEAR(ENQ.CONTACT_DATE) + 1)::VARCHAR
+                 || ' Q'
+                 || CASE
+                        WHEN MONTH(ENQ.CONTACT_DATE) IN (7,8,9)    THEN '1'
+                        WHEN MONTH(ENQ.CONTACT_DATE) IN (10,11,12) THEN '2'
+                        WHEN MONTH(ENQ.CONTACT_DATE) IN (1,2,3)    THEN '3'
+                        ELSE '4'
+                    END
+        ELSE (YEAR(ENQ.CONTACT_DATE) - 1)::VARCHAR
+             || '-' || YEAR(ENQ.CONTACT_DATE)::VARCHAR
+             || ' Q'
+             || CASE
+                    WHEN MONTH(ENQ.CONTACT_DATE) IN (7,8,9)    THEN '1'
+                    WHEN MONTH(ENQ.CONTACT_DATE) IN (10,11,12) THEN '2'
+                    WHEN MONTH(ENQ.CONTACT_DATE) IN (1,2,3)    THEN '3'
+                    ELSE '4'
+                END
+    END                                                   AS REPORTING_QTR,
+
+    -- ── Source system ───────────────────────────────────────────────
+    'TRAKCARE'                                            AS SOURCE_SYSTEM
+
+FROM {{ ref('prep_stg_trakcare_pa_enquirycontact') }}     AS ENQ
+
+LEFT JOIN {{ ref('prep_stg_trakcare_pa_person') }}        AS PER
+    ON ENQ.PERSON_DR = CAST(PER.PERSON_ID AS NUMBER(18,0))
+
+LEFT JOIN {{ ref('prep_stg_trakcare_pa_patmas') }}        AS PAT
+    ON CAST(PER.PATIENT_DR AS NUMBER(18,0)) = CAST(PAT.PATIENT_ID AS NUMBER(18,0))
+
+LEFT JOIN {{ ref('prep_stg_trakcare_oe_orditem') }}       AS OI
+    ON CAST(ENQ.OE_ORD_ITEM_DR AS VARCHAR) = CAST(OI.ROW_ID AS VARCHAR)
+
+LEFT JOIN {{ ref('prep_stg_trakcare_pa_adm') }}           AS ADM
+    ON CAST(OI.OE_ORD_PAR_REF AS VARCHAR) = CAST(ADM.ADM_ID AS VARCHAR)
+
+LEFT JOIN {{ ref('prep_stg_trakcare_ct_loc') }}           AS LOC
+    ON CAST(ENQ.LOCATION_DR AS VARCHAR) = CAST(LOC.ROW_ID AS VARCHAR)
+
+LEFT JOIN {{ ref('prep_stg_trakcare_ct_hospital') }}      AS HOSP
+    ON CAST(ENQ.HOSPITAL_DR AS VARCHAR) = CAST(HOSP.ROW_ID AS VARCHAR)
+
+LEFT JOIN {{ ref('prep_stg_trakcare_ct_careprov') }}      AS CP_CONTACT
+    ON CAST(ENQ.CT_CP_DR AS VARCHAR) = CAST(CP_CONTACT.ROW_ID AS VARCHAR)
+
+LEFT JOIN {{ ref('prep_stg_trakcare_ct_careprov') }}      AS CP_EPISODE
+    ON CAST(ADM.HCP_DR AS VARCHAR) = CAST(CP_EPISODE.ROW_ID AS VARCHAR)
+
+LEFT JOIN {{ ref('prep_stg_trakcare_arc_itmmast') }}      AS IM
+    ON CAST(OI.ITM_MAST_DR AS VARCHAR) = CAST(IM.ROW_ID AS VARCHAR)
+
+LEFT JOIN {{ ref('prep_stg_trakcare_arc_itemcat') }}      AS IC
+    ON CAST(OI.CATEG_DR AS VARCHAR) = CAST(IC.ROW_ID AS VARCHAR)
+
+LEFT JOIN {{ ref('prep_stg_trakcare_rb_event') }}         AS EV
+    ON CAST(ENQ.RB_EVENT_DR AS VARCHAR) = CAST(EV.ROW_ID AS VARCHAR)
+
+WHERE ENQ.CONTACT_ID IS NOT NULL

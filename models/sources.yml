@@ -218,3 +218,9 @@ sources:
         description: "VADC outcome document child table from TrakCare system"
       - name: QAUXXADVADCQQVADCPROGREF
         description: "VADC program referral child table from TrakCare system"
+      - name: PA_ENQUIRYCONTACT
+        description: "Service contact/enquiry contact records from TrakCare system"
+      - name: OE_ORDITEM
+        description: "Order item records from TrakCare system"
+      - name: RTC_MRECORDTYPE
+        description: "Reference table of medical record types from TrakCare system"

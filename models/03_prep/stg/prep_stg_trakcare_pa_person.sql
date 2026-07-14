@@ -1,5 +1,5 @@
 SELECT
-    TRY_TO_NUMBER(NULLIF(TRIM(PAPER_ROWID), 'NULL'), 18, 6)               AS PERSON_ID,
+    NULLIF(TRIM(PAPER_ROWID), 'NULL')                                     AS PERSON_ID,
     NULLIF(TRIM(PAPER_ID), 'NULL')                                        AS PERSON_NO,
     NULLIF(INITCAP(TRIM(PAPER_NAME)), 'NULL')                             AS LAST_NAME,
     NULLIF(INITCAP(TRIM(PAPER_NAME2)), 'NULL')                            AS FIRST_NAME,

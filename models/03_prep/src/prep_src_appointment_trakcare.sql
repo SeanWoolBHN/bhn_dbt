@@ -1,22 +1,24 @@
 SELECT
     -- ── Surrogate keys (placeholders) ──────────────────────────────
-    'APPOINTMENT_KEY'                                   AS APPOINTMENT_KEY,
-    'CLIENT_KEY'                                        AS CLIENT_KEY,
-    'EPISODE_KEY'                                       AS EPISODE_KEY,
-    'ORGANISATION_KEY'                                  AS ORGANISATION_KEY,
-    'LOCATION_KEY'                                      AS LOCATION_KEY,
-    'CARE_PROVIDER_KEY'                                 AS CARE_PROVIDER_KEY,
-    'PROGRAM_KEY'                                       AS PROGRAM_KEY,
+    --'APPOINTMENT_KEY'                                   AS APPOINTMENT_KEY,
+    --'CLIENT_KEY'                                        AS CLIENT_KEY,
+    --'EPISODE_KEY'                                       AS EPISODE_KEY,
+    --'ORGANISATION_KEY'                                  AS ORGANISATION_KEY,
+    --'LOCATION_KEY'                                      AS LOCATION_KEY,
+    --'CARE_PROVIDER_KEY'                                 AS CARE_PROVIDER_KEY,
+    --'PROGRAM_KEY'                                       AS PROGRAM_KEY,
 
     -- ── Natural keys ────────────────────────────────────────────────
-    APPT.ROW_ID                                         AS APPOINTMENT_ID,
-    PAT.PATIENT_NO                                      AS UR,
+    APPT.ROW_ID                                         AS APPOINTMENT_ID, --ApptRowID
+    PAT.PATIENT_NO                                      AS UR,--UR
     APPT.ADM_DR                                         AS EPISODE_DR_RAW,
+    APPT.OE_ORI_DR                                      AS OEORDI_REF, --OEOrdItem_Ref
+
 
     -- ── Appointment dates and times ─────────────────────────────────
     APPT.BOOKED_DATE                                    AS BOOKED_DATE,
     APPT.BOOKED_TIME                                    AS BOOKED_TIME,
-    APPT.COMPLETION_DATE                                AS APPOINTMENT_DATE,
+    APPT.COMPLETION_DATE                                AS APPOINTMENT_DATE, --ApptDate
     APPT.COMPLETION_TIME                                AS APPOINTMENT_TIME,
     APPT.ARRIVAL_DATE                                   AS ARRIVAL_DATE,
     APPT.ARRIVAL_TIME                                   AS ARRIVAL_TIME,

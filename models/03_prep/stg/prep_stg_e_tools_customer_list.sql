@@ -8,7 +8,7 @@ SELECT
     {{ format_name('LAST_NAME') }}                AS LAST_NAME,
     {{ format_name('FIRST_NAME') }}               AS FIRST_NAME,
     {{ format_date('START_DATE') }}               AS START_DATE,
-    CAST(TRIM(CARE_REC_ID) AS TEXT)                             AS CARE_RECIPIENT_ID,
+    CAST(TRIM(CARE_REC_ID) AS TEXT)               AS CARE_RECIPIENT_ID,
     TRIM(CONSUMER_ID)                             AS CONSUMER_ID,
     TRIM(CONTINGENCY)                             AS CONTINGENCY,
     {{ format_name('CARE_MANAGER') }}             AS CARE_MANAGER,
@@ -30,4 +30,4 @@ SELECT
     _AIRBYTE_EXTRACTED_AT                          AS AIRBYTE_EXTRACTED_TS
 
 FROM {{ ref('HIST_E_TOOLS_CUSTOMER_LIST') }}
-WHERE dbt_valid_to = TO_DATE('9999-12-31')
+WHERE dbt_valid_to = TO_DATE('9999-12-31') AND UPPER(CLIENT_STATUS) IN ('ACTIVE','DISCHARGED')

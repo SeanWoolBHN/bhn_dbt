@@ -1,20 +1,21 @@
 SELECT
     -- ── Surrogate keys (placeholders) ──────────────────────────────
-    'EPISODE_KEY'                                       AS EPISODE_KEY,
-    'CLIENT_KEY'                                        AS CLIENT_KEY,
-    'ORGANISATION_KEY'                                  AS ORGANISATION_KEY,
-    'PROGRAM_KEY'                                       AS PROGRAM_KEY,
-    'REFERRAL_SOURCE_KEY'                               AS REFERRAL_SOURCE_KEY,
-    'LOCATION_KEY'                                      AS LOCATION_KEY,
-    'CARE_PROVIDER_KEY'                                 AS CARE_PROVIDER_KEY,
+    --'EPISODE_KEY'                                       AS EPISODE_KEY,
+    --'CLIENT_KEY'                                        AS CLIENT_KEY,
+    --'ORGANISATION_KEY'                                  AS ORGANISATION_KEY,
+    --'PROGRAM_KEY'                                       AS PROGRAM_KEY,
+    --'REFERRAL_SOURCE_KEY'                               AS REFERRAL_SOURCE_KEY,
+    --'LOCATION_KEY'                                      AS LOCATION_KEY,
+    --'CARE_PROVIDER_KEY'                                 AS CARE_PROVIDER_KEY,
 
     -- ── Identity ────────────────────────────────────────────────────
-    PAT.PATIENT_NO                                      AS UR,
-    ADM.ADM_NO                                          AS EPISODE_ID,
+    PAT.PATIENT_NO                                      AS UR, --UR
+    ADM.ADM_NO                                          AS EPISODE_ID,--EPISODEID
 
     -- ── Episode dates ───────────────────────────────────────────────
-    ADM.ADM_DATE                                        AS EPISODE_DT,
-    ADM.DISCHARGE_DATE                                  AS DISCHARGE_DT,
+    ADM.ADM_DATE                                        AS EPISODE_DT,--EPISODEDT
+    ADM.DISCHARGE_DATE                                  AS DISCHARGE_DT,--DISCHARGEDT
+    'PROGRAMSTREAMCODE'                                 AS PROGRAM_STREAM_CODE_PENDING,
 
     -- ── Derived date fields ─────────────────────────────────────────
     DATEDIFF(
@@ -36,7 +37,7 @@ SELECT
     ADM.REMARK                                          AS PRESENTING_ISSUE,
 
     -- ── Location / team ─────────────────────────────────────────────
-    LOC.DESCRIPTION                                     AS EPISODE_TEAM,
+    LOC.DESCRIPTION                                     AS EPISODE_TEAM, --EPISODETEAM
     LOC.CODE                                            AS EPISODE_TEAM_CODE,
 
     -- ── Service / hospital ──────────────────────────────────────────
@@ -51,7 +52,7 @@ SELECT
     CONCAT_WS(' ',
         NULLIF(TRIM(CP.FIRST_NAME), ''),
         NULLIF(TRIM(CP.LAST_NAME), '')
-    )                                                   AS EPISODE_CP,
+    )                                                   AS EPISODE_CP, 
     CP.CODE                                             AS EPISODE_CP_CODE,
 
     -- ── Referral details ────────────────────────────────────────────

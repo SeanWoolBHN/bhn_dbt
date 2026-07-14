@@ -1,0 +1,17 @@
+SELECT
+    DEPCHL_ROWID                                                          AS ROW_ID,
+    NULLIF(TRIM(DEPCHL_CODE), 'NULL')                                     AS CODE,
+    NULLIF(TRIM(DEPCHL_DESC), 'NULL')                                     AS DESCRIPTION,
+    TRY_TO_DATE(NULLIF(TRIM(DEPCHL_DATEFROM), 'NULL'))                    AS DATE_FROM,
+    TRY_TO_DATE(NULLIF(TRIM(DEPCHL_DATETO), 'NULL'))                      AS DATE_TO,
+    NULLIF(TRIM(DEPCHL_OWNER), 'NULL')                                    AS OWNER,
+    NULLIF(TRIM(DEPCHL_CODETABLETAGS), 'NULL')                            AS CODE_TABLE_TAGS,
+    TRY_TO_DATE(NULLIF(TRIM(DEPCHL_CREATEDDATE), 'NULL'))                 AS CREATED_DATE,
+    NULLIF(TRIM(DEPCHL_CREATEDTIME), 'NULL')                              AS CREATED_TIME,
+    TRY_TO_NUMBER(NULLIF(TRIM(DEPCHL_CREATEDUSER_DR), 'NULL'), 18, 6)     AS CREATED_USER_DR,
+    TRY_TO_DATE(NULLIF(TRIM(DEPCHL_UPDATEDDATE), 'NULL'))                 AS UPDATED_DATE,
+    NULLIF(TRIM(DEPCHL_UPDATEDTIME), 'NULL')                              AS UPDATED_TIME,
+    TRY_TO_NUMBER(NULLIF(TRIM(DEPCHL_UPDATEDUSER_DR), 'NULL'), 18, 6)     AS UPDATED_USER_DR
+
+FROM {{ ref('HIST_TRAKCARE_PAC_DEPENDENTCHILDREN') }}
+WHERE dbt_valid_to = TO_DATE('9999-12-31')

@@ -1,14 +1,7 @@
 SELECT
-    -- ── Surrogate keys (placeholders) ──────────────────────────────
-    'ADS_EPISODE_KEY'                                     AS ADS_EPISODE_KEY,
-    'CLIENT_KEY'                                          AS CLIENT_KEY,
-    'EPISODE_KEY'                                         AS EPISODE_KEY,
-    'ORGANISATION_KEY'                                    AS ORGANISATION_KEY,
-    'CARE_PROVIDER_KEY'                                   AS CARE_PROVIDER_KEY,
-
     -- ── Natural keys ────────────────────────────────────────────────
-    VADC.VADC_ID                                          AS ADS_EPISODE_ID,
-    VADC.ADM_DR                                           AS EPISODE_DR_RAW,
+    VADC.VADC_ID                                          AS VADC_EPISODE_ID,
+    VADC.ADM_DR                                           AS EPISODE_ID,
     VADC.PATIENT_DR                                       AS PATIENT_DR_RAW,
     PAT.PATIENT_NO                                        AS UR,
 
@@ -28,6 +21,16 @@ SELECT
         NULLIF(TRIM(CP.LAST_NAME), '')
     )                                                     AS EPISODE_CP,
     CP.CODE                                               AS EPISODE_CP_CODE,
+
+    -- ── ATSI status ─────────────────────────────────────────────────
+    -- Joined via PA_PATMAS.PAPMI_INDIGSTAT_DR → PAC_INDIGSTATUS
+    -- Required for VADC government reporting — DTAU stream depends on ATSI
+    INDST.DESCRIPTION                                     AS ATSI_STATUS,
+    CASE
+        WHEN PAT.INDIGENOUS_STATUS_DR IN ('4', '5', '6')
+            THEN 'ATSI'
+        ELSE 'Non-ATSI'
+    END                                                   AS ATSI,
 
     -- ── VADC treatment fields ───────────────────────────────────────
     VADC.VADC_FOR_TYP                                     AS FORENSIC_TYPE,
@@ -69,6 +72,10 @@ FROM {{ ref('prep_stg_trakcare_qauxxadvadc') }}           AS VADC
 
 LEFT JOIN {{ ref('prep_stg_trakcare_pa_patmas') }}        AS PAT
     ON CAST(VADC.PATIENT_DR AS VARCHAR) = CAST(PAT.PATIENT_ID AS VARCHAR)
+
+-- ATSI lookup via patient master indigenous status reference
+LEFT JOIN {{ ref('prep_stg_trakcare_pac_indig_status') }}  AS INDST
+    ON CAST(PAT.INDIGENOUS_STATUS_DR AS VARCHAR) = CAST(INDST.ROW_ID AS VARCHAR)
 
 LEFT JOIN {{ ref('prep_stg_trakcare_ct_careprov') }}      AS CP
     ON CAST(VADC.CONSULT_DR AS VARCHAR) = CAST(CP.ROW_ID AS VARCHAR)

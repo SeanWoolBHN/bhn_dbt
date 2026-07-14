@@ -64,4 +64,4 @@ SELECT
     _AIRBYTE_EXTRACTED_AT                                                  AS AIRBYTE_EXTRACTED_TS
 
 FROM {{ ref('HIST_TRAKCARE_PA_PATMAS') }}
-WHERE dbt_valid_to = TO_DATE('9999-12-31')
+WHERE dbt_valid_to = TO_DATE('9999-12-31') AND PATIENT_NO IS NOT NULL

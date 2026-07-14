@@ -1,13 +1,11 @@
 SELECT
-    -- ── Surrogate keys (placeholders) ──────────────────────────────
-    'ADS_OUTCOME_KEY'                                     AS ADS_OUTCOME_KEY,
-    'ADS_EPISODE_KEY'                                     AS ADS_EPISODE_KEY,
-    'CLIENT_KEY'                                          AS CLIENT_KEY,
-
     -- ── Natural keys ────────────────────────────────────────────────
-    OUT.VADC_OUT_ID                                       AS ADS_OUTCOME_ID,
-    OUT.ADM_DR                                            AS EPISODE_DR_RAW,
+    OUT.VADC_OUT_ID                                       AS VADC_OUTCOME_ID,
+    OUT.ADM_DR                                            AS EPISODE_ID,
     OUT.PATIENT_DR                                        AS PATIENT_DR_RAW,
+
+    -- ── UR resolved from PA_PATMAS ──────────────────────────────────
+    PAT.PATIENT_NO                                        AS UR,
 
     -- ── Outcome measurement dates ───────────────────────────────────
     OUT.QUES_DATE                                         AS OUTCOME_DATE,
@@ -85,6 +83,10 @@ SELECT
     'TRAKCARE'                                            AS SOURCE_SYSTEM
 
 FROM {{ ref('prep_stg_trakcare_qauxxadout') }}            AS OUT
+
+-- UR resolution via patient master
+LEFT JOIN {{ ref('prep_stg_trakcare_pa_patmas') }}        AS PAT
+    ON CAST(OUT.PATIENT_DR AS VARCHAR) = CAST(PAT.PATIENT_ID AS VARCHAR)
 
 LEFT JOIN {{ ref('prep_stg_trakcare_ss_user') }}          AS USR
     ON CAST(OUT.CREATED_USER_DR AS VARCHAR) = CAST(USR.ROW_ID AS VARCHAR)
