@@ -1,18 +1,7 @@
 SELECT
-    -- Keys
-    'PROGRAM_KEY'                                       AS PROGRAM_KEY,
-    'LEGACY_ORG_ID'                                     AS LEGACY_ORG_ID,
-
     -- Program stream code and description
     DEP.CODE                                            AS PROGRAM_STREAM_CODE,
     LTRIM(DEP.DESCRIPTION)                              AS PROGRAM_STREAM_DESC,
-
-    -- Funding source
-    CAT.ROW_ID                                          AS FUNDING_SOURCE,
-
-    -- Parent stream grouping
-    CAT.CODE                                            AS PARENT_STREAM,
-
     -- Stream derived from program code
     CASE
         WHEN DEP.CODE LIKE 'HACC%'                      THEN 'HACC'
@@ -78,10 +67,7 @@ SELECT
     CASE
         WHEN DEP.CODE LIKE 'HACC%' THEN TRUE
         ELSE FALSE
-    END                                                 AS AGE_SPLIT_APPLIES,
-
-    -- Source system
-    'TRAKCARE'                                          AS SOURCE_SYSTEM
+    END                                                 AS AGE_SPLIT_APPLIES
 
 FROM {{ ref('prep_stg_trakcare_ct_nfmi_categdepart') }} AS DEP
 

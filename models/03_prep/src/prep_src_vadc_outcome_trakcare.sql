@@ -77,10 +77,7 @@ SELECT
     CONCAT_WS(' ',
         NULLIF(TRIM(USR.FIRST_NAME), ''),
         NULLIF(TRIM(USR.LAST_NAME), '')
-    )                                                     AS CREATED_BY_USER,
-
-    -- ── Source system ───────────────────────────────────────────────
-    'TRAKCARE'                                            AS SOURCE_SYSTEM
+    )                                                     AS CREATED_BY_USER
 
 FROM {{ ref('prep_stg_trakcare_qauxxadout') }}            AS OUT
 

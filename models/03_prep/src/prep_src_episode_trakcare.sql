@@ -1,14 +1,4 @@
 SELECT
-    -- ── Surrogate keys (placeholders) ──────────────────────────────
-    --'EPISODE_KEY'                                       AS EPISODE_KEY,
-    --'CLIENT_KEY'                                        AS CLIENT_KEY,
-    --'ORGANISATION_KEY'                                  AS ORGANISATION_KEY,
-    --'PROGRAM_KEY'                                       AS PROGRAM_KEY,
-    --'REFERRAL_SOURCE_KEY'                               AS REFERRAL_SOURCE_KEY,
-    --'LOCATION_KEY'                                      AS LOCATION_KEY,
-    --'CARE_PROVIDER_KEY'                                 AS CARE_PROVIDER_KEY,
-
-    -- ── Identity ────────────────────────────────────────────────────
     PAT.PATIENT_NO                                      AS UR, --UR
     ADM.ADM_NO                                          AS EPISODE_ID,--EPISODEID
 
@@ -96,10 +86,7 @@ SELECT
     END                                                 AS EPISODE_REF_QTR,
 
     -- ── Misc ────────────────────────────────────────────────────────
-    ADM.TYPE                                            AS ANON_CLIENT_ORG,
-
-    -- ── Source system ───────────────────────────────────────────────
-    'TRAKCARE'                                          AS SOURCE_SYSTEM
+    ADM.TYPE                                            AS ANON_CLIENT_ORG
 
 FROM {{ ref('prep_stg_trakcare_pa_patmas') }}           AS PAT
 

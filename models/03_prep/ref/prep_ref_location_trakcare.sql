@@ -1,44 +1,25 @@
 SELECT
-    -- Keys
-    'LOCATION_KEY'                                      AS LOCATION_KEY,
-    'LEGACY_ORG_ID'                                     AS LEGACY_ORG_ID,
-    'ORGANISATION_KEY'                                  AS ORGANISATION_KEY,
+    LOC.CODE                                              AS LOCATION_CODE,
+    LOC.DESCRIPTION                                       AS LOCATION_DESC,
 
-    -- Location code and description
-    LOC.CODE                                            AS LOCATION_CODE,
-    LOC.DESCRIPTION                                     AS LOCATION_DESC,
+    -- From PAC_NationalCodes — not yet in Snowflake
+    NULL::VARCHAR                                         AS MAPPED_VALUE,
+    NULL::NUMBER                                          AS NATC_REPORTING_TYPE_DR,
 
-    -- Hospital/service category
-    HOSP.DESCRIPTION                                    AS HOSPITAL,
+    -- From PAC_ReportingType — not yet in Snowflake
+    NULL::VARCHAR                                         AS REPTYPE_DESC,
 
-    -- Episode team
-    CASE
-        WHEN LOC.TYPE IN ('TEAM', 'WARD', 'UNIT')
-            THEN LOC.DESCRIPTION
-        ELSE NULL
-    END                                                 AS EPISODE_TEAM,
+FROM {{ ref('prep_stg_trakcare_ct_loc') }}                AS LOC
 
-    -- Site
-    CASE
-        WHEN LOC.TYPE IN ('CLINIC', 'SITE', 'FACILITY')
-            THEN LOC.DESCRIPTION
-        ELSE LOC.DESCRIPTION
-    END                                                 AS SITE,
+-- PAC_NationalCodes join — pending
+-- INNER JOIN PAC_NationalCodes AS NAT
+--     ON NAT.NATC_ACTUAL_VALUE = LOC.CODE
+--     AND NAT.NATC_TABLE_NAME = 'CT_LOC'
+--     AND NAT.NATC_DATE_TO IS NULL
 
-    -- Mapped value from location mapping
-    LM.NATC_MAPPED_VALUE                                AS MAPPED_VALUE,
-    LM.REPORTING_TYPE_DESC                              AS REPORTING_TYPE,
-    LM.CAMPUS                                           AS CAMPUS,
-
-    -- Source system
-    'TRAKCARE'                                          AS SOURCE_SYSTEM
-
-FROM {{ ref('prep_stg_trakcare_ct_loc') }}              AS LOC
-
-LEFT JOIN {{ ref('prep_stg_trakcare_ct_hospital') }}    AS HOSP
-    ON LOC.HOSPITAL_DR = HOSP.ROW_ID
-
-LEFT JOIN {{ ref('prep_stg_reference_data_location_mapping') }} AS LM
-    ON LOC.CODE = LM.NATC_ACTUAL_VALUE
+-- PAC_ReportingType join — pending
+-- INNER JOIN PAC_ReportingType AS RT
+--     ON RT.REPTYPE_ROWID = NAT.NATC_REPORTING_TYPE_DR
+--     AND RT.REPTYPE_DATE_TO IS NULL
 
 WHERE LOC.CODE IS NOT NULL

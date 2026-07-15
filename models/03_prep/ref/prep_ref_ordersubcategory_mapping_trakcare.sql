@@ -1,27 +1,26 @@
--- ============================================================
--- PREP_REF_ORDERSUBCATEGORY_MAPPING_TRAKCARE
--- Replaces: dbo.OrderSubcategory_Mapping SSIS table
--- Grain: one row per order subcategory
--- Source: ARC_ITEMCAT only (self-join for parent category)
--- ============================================================
-
 SELECT
-    IC.ROW_ID                                             AS SUBCAT_ROW_ID,
-    IC.CODE                                               AS ORD_SUB_CAT_CODE,
-    IC.DESCRIPTION                                        AS ORD_SUB_CAT_DESC,
-    IC.DATE_FROM                                          AS DATE_FROM,
-    IC.DATE_TO                                            AS DATE_TO,
-    IC.ORD_CAT_DR                                         AS PARENT_CAT_DR,
-    PARENT.CODE                                           AS PARENT_CAT_CODE,
-    PARENT.DESCRIPTION                                    AS PARENT_CAT_DESC,
-    IC.ORDER_TYPE                                         AS ORDER_TYPE,
-    IC.BILLING_TYPE                                       AS BILLING_TYPE,
-    IC.IS_TEST                                            AS IS_TEST
+    IC.CODE                                               AS ARCIC_CODE,
+    IC.DESCRIPTION                                        AS ARCIC_DESC,
+    -- Parent category — via self-join on ORD_CAT_DR
+    PARENT.CODE                                           AS CATEGORY,
+    -- Program stream code — via CT_NFMI_CATEGDEPART
+    PROG.CODE                                             AS DEP_CODE,
+    -- Location mapping fields
+    LM.NATC_ACTUAL_VALUE                                  AS NATC_ACTUAL_VALUE,
+    LM.NATC_MAPPED_VALUE                                  AS NATC_MAPPED_VALUE,
+    LM.REPORTING_TYPE_DR                                  AS NATC_REPORTING_TYPE_DR,
+    LM.REPORTING_TYPE_DESC                                AS REPTYPE_DESC
 
 FROM {{ ref('prep_stg_trakcare_arc_itemcat') }}           AS IC
-
+-- Parent category via self-join
 LEFT JOIN {{ ref('prep_stg_trakcare_arc_itemcat') }}      AS PARENT
-    ON CAST(IC.ORD_CAT_DR AS NUMBER(18,0)) = CAST(PARENT.ROW_ID AS NUMBER(18,0))
+    ON CAST(IC.ORD_CAT_DR AS NUMBER(18,0)) = PARENT.ROW_ID
+-- Program stream code via CT_NFMI_CATEGDEPART
+LEFT JOIN {{ ref('prep_stg_trakcare_ct_nfmi_categdepart') }} AS PROG
+    ON CAST(IC.ORD_CAT_DR AS NUMBER(18,0)) = CAST(PROG.CHILD_SUB AS NUMBER(18,0))
+-- Location mapping — join on ARCIC_CODE = NATC_ACTUAL_VALUE
+LEFT JOIN {{ ref('prep_stg_reference_data_location_mapping') }} AS LM
+    ON IC.CODE = LM.NATC_ACTUAL_VALUE
 
 WHERE IC.CODE IS NOT NULL
   AND IC.DATE_TO IS NULL

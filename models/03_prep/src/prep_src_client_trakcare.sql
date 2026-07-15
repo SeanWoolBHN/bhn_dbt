@@ -138,10 +138,7 @@ SELECT
     PAT.REMARK                                            AS PMI_NOTES,
     PAT.ALLERGY                                           AS ALLERGY,
     PAT.VIP_FLAG                                          AS VIP_FLAG,
-    PAT.BLACKLIST                                         AS BLACKLIST,
-
-    -- ── Source system ───────────────────────────────────────────────
-    'TRAKCARE'                                            AS SOURCE_SYSTEM
+    PAT.BLACKLIST                                         AS BLACKLIST
 
 FROM {{ ref('prep_stg_trakcare_pa_patmas') }}             AS PAT
 
