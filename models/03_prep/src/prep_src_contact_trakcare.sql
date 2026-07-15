@@ -74,6 +74,9 @@ SELECT
     -- ── Contact name (anonymous/org contacts) ───────────────────────
     ENQ.CONTACT_NAME                                      AS ENQ_CONTACT_NAME,
 
+    ENQ.INTERPRETING_TIME                                 AS INTERPRETER,
+    ENQ.DISTANCE_TRAVELLED                                AS KM,
+
     -- ── Interpreter ─────────────────────────────────────────────────
     ENQ.INTERPRETER_REQUIRED                              AS INTERPRETER_REQUIRED,
 
@@ -127,10 +130,7 @@ SELECT
                     WHEN MONTH(ENQ.CONTACT_DATE) IN (1,2,3)    THEN '3'
                     ELSE '4'
                 END
-    END                                                   AS REPORTING_QTR,
-
-    -- ── Source system ───────────────────────────────────────────────
-    'TRAKCARE'                                            AS SOURCE_SYSTEM
+    END                                                   AS REPORTING_QTR
 
 FROM {{ ref('prep_stg_trakcare_pa_enquirycontact') }}     AS ENQ
 

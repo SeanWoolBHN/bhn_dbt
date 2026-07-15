@@ -1,9 +1,4 @@
 SELECT
-    -- ── Surrogate keys (placeholders) ──────────────────────────────
-    --'ADS_DRUG_KEY'                                        AS ADS_DRUG_KEY,
-    --'ADS_OUTCOME_KEY'                                     AS ADS_OUTCOME_KEY,
-    --'ADS_EPISODE_KEY'                                     AS ADS_EPISODE_KEY,
-
     -- ── Natural keys ────────────────────────────────────────────────
     DOC.VADC_OUT_DOC_KEY                                  AS VADC_DOC_ID,--RowID
     DOC.VADC_OUT_ID                                       AS VADC_OUTCOME_ID,
@@ -17,10 +12,7 @@ SELECT
     DOC.VADC_OUT_DOC_Q4                                   AS IS_PRINCIPAL_DRUG,--IsPrincipleDOC
     DOC.VADC_OUT_DOC_Q5                                   AS AGE_OF_FIRST_USE,
     DOC.VADC_OUT_DOC_Q6                                   AS INJECTION_FLAG,
-    DOC.VADC_OUT_DOC_Q7                                   AS ADDITIONAL_FLAGS,
-
-    -- ── Source system ───────────────────────────────────────────────
-    'TRAKCARE'                                            AS SOURCE_SYSTEM
+    DOC.VADC_OUT_DOC_Q7                                   AS ADDITIONAL_FLAGS
 
 FROM {{ ref('prep_stg_trakcare_qauxxadoutqqvadcoutdoc') }} AS DOC
 

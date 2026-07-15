@@ -224,3 +224,9 @@ sources:
         description: "Order item records from TrakCare system"
       - name: RTC_MRECORDTYPE
         description: "Reference table of medical record types from TrakCare system"
+      - name: PAC_REPORTINGTYPE
+        description: "Reference table of reporting types from TrakCare system"
+      - name: PAC_NATIONALCODES
+        description: "National codes mapping table from TrakCare system"
+      - name: CT_GOVERNSUBCAT
+        description: "Reference table of government subcategories from TrakCare system"

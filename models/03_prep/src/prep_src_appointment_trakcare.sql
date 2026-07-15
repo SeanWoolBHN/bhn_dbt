@@ -1,14 +1,4 @@
 SELECT
-    -- ── Surrogate keys (placeholders) ──────────────────────────────
-    --'APPOINTMENT_KEY'                                   AS APPOINTMENT_KEY,
-    --'CLIENT_KEY'                                        AS CLIENT_KEY,
-    --'EPISODE_KEY'                                       AS EPISODE_KEY,
-    --'ORGANISATION_KEY'                                  AS ORGANISATION_KEY,
-    --'LOCATION_KEY'                                      AS LOCATION_KEY,
-    --'CARE_PROVIDER_KEY'                                 AS CARE_PROVIDER_KEY,
-    --'PROGRAM_KEY'                                       AS PROGRAM_KEY,
-
-    -- ── Natural keys ────────────────────────────────────────────────
     APPT.ROW_ID                                         AS APPOINTMENT_ID, --ApptRowID
     PAT.PATIENT_NO                                      AS UR,--UR
     APPT.ADM_DR                                         AS EPISODE_DR_RAW,
@@ -18,8 +8,8 @@ SELECT
     -- ── Appointment dates and times ─────────────────────────────────
     APPT.BOOKED_DATE                                    AS BOOKED_DATE,
     APPT.BOOKED_TIME                                    AS BOOKED_TIME,
-    APPT.COMPLETION_DATE                                AS APPOINTMENT_DATE, --ApptDate
-    APPT.COMPLETION_TIME                                AS APPOINTMENT_TIME,
+    APPT.COMPLETION_DATE                                AS COMPLETION_DATE, --ApptDate
+    APPT.COMPLETION_TIME                                AS COMPLETION_TIME,
     APPT.ARRIVAL_DATE                                   AS ARRIVAL_DATE,
     APPT.ARRIVAL_TIME                                   AS ARRIVAL_TIME,
     APPT.END_DATE                                       AS END_DATE,
@@ -32,7 +22,7 @@ SELECT
     APPT.STATUS                                         AS APPOINTMENT_STATUS,
 
     -- ── Care provider ───────────────────────────────────────────────
-    APPT.CARE_PROVIDER                                  AS APPOINTMENT_CP,
+    APPT.CARE_PROVIDER                                  AS APPOINTMENT_CARE_PROVIDER,
     CONCAT_WS(' ',
         NULLIF(TRIM(CP.FIRST_NAME), ''),
         NULLIF(TRIM(CP.LAST_NAME),  '')
@@ -103,10 +93,7 @@ SELECT
                     WHEN MONTH(APPT.COMPLETION_DATE) IN (1,2,3)    THEN '3'
                     ELSE '4'
                 END
-    END                                                 AS APPOINTMENT_REF_QTR,
-
-    -- ── Source system ───────────────────────────────────────────────
-    'TRAKCARE'                                          AS SOURCE_SYSTEM
+    END                                                 AS APPOINTMENT_REF_QTR
 
 FROM {{ ref('prep_stg_trakcare_rb_appointment') }}      AS APPT
 
