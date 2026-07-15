@@ -230,3 +230,5 @@ sources:
         description: "National codes mapping table from TrakCare system"
       - name: CT_GOVERNSUBCAT
         description: "Reference table of government subcategories from TrakCare system"
+      - name: PA_ADMINSURANCE
+        description: "Admission insurance/payor records from TrakCare system"
