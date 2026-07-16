@@ -2,7 +2,7 @@
 
 {{
     config(
-        unique_key="\"DATE\"||'-'||\"FROM\"||'-'||\"TO\"||'-'||CLIENT_ID||'-'||CONSULTANT_ID||'-'||ITEM_NO",
+        unique_key="_AIRBYTE_RAW_ID",
         strategy='check',
         check_cols=[
             '"TO"', '"DATE"', '"FROM"', 'RATE', 'HOURS', 'VALUE',
@@ -16,10 +16,17 @@
         dbt_valid_to_current="to_date('9999-12-31')"
     )
 }}
+WITH cte_max_gen AS (
+    SELECT MAX(_AIRBYTE_GENERATION_ID) AS MAX_GEN
+    FROM {{ source('raw_echidna', 'NDIS_CLIENT_HOURS') }}
+)
+
 
 SELECT
     *
-FROM {{ source('raw_echidna', 'NDIS_CLIENT_HOURS') }}
-QUALIFY ROW_NUMBER() OVER (PARTITION BY "DATE", "FROM", "TO", CLIENT_ID, CONSULTANT_ID, ITEM_NO ORDER BY _AIRBYTE_GENERATION_ID DESC) = 1
+FROM {{ source('raw_echidna', 'NDIS_CLIENT_HOURS') }} ch
+INNER JOIN cte_max_gen mg
+    ON mg.MAX_GEN = ch._AIRBYTE_GENERATION_ID
+
 
 {% endsnapshot %}
