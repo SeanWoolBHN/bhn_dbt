@@ -2,7 +2,6 @@
 
 {{
     config(
-        schema='TRAKCARE',
         unique_key='ACCOMS_ROWID',
         strategy='check',
         check_cols=[

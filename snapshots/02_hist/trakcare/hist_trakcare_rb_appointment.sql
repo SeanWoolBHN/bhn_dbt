@@ -1,7 +1,6 @@
 {% snapshot HIST_TRAKCARE_RB_APPOINTMENT %}
 {{
     config(
-        schema='TRAKCARE',
         unique_key='APPT_ROWID',
         strategy='check',
         check_cols=[

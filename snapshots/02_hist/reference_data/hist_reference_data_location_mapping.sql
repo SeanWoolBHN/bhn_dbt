@@ -2,7 +2,6 @@
 
 {{
     config(
-        schema='REFERENCE_DATA',
         unique_key='LOCATION_MAPPING_KEY',
         strategy='check',
         check_cols=[

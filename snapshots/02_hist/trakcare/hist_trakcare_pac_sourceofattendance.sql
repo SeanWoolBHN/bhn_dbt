@@ -1,7 +1,6 @@
 {% snapshot HIST_TRAKCARE_PAC_SOURCEOFATTENDANCE %}
 {{
     config(
-        schema='TRAKCARE',
         unique_key='ATTEND_ROWID',
         strategy='check',
         check_cols=[

@@ -2,7 +2,6 @@
 
 {{
     config(
-        schema='TRAKCARE',
         unique_key='PREFL_ROWID',
         strategy='check',
         check_cols=[

@@ -1,7 +1,6 @@
 {% snapshot HIST_TRAKCARE_PAC_NONGOVORG %}
 {{
     config(
-        schema='TRAKCARE',
         unique_key='NGO_ROWID',
         strategy='check',
         check_cols=[

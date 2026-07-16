@@ -1,7 +1,6 @@
 {% snapshot HIST_TRAKCARE_RB_RESOURCE %}
 {{
     config(
-        schema='TRAKCARE',
         unique_key='RES_ROWID',
         strategy='check',
         check_cols=[

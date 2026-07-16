@@ -2,7 +2,6 @@
 
 {{
     config(
-        schema = 'CONNX',
         unique_key='_AIRBYTE_RAW_ID',
         strategy='check',
         check_cols=[
@@ -15,9 +14,16 @@
     )
 }}
 
-SELECT
-    *
+WITH cte_max_gen AS (
+    SELECT MAX(_AIRBYTE_GENERATION_ID) AS MAX_GEN
+    FROM {{ source('raw_connx', 'EMPLOYEE_DEMOGRAPHICS') }}
+)
 
-FROM {{ source('raw_connx', 'EMPLOYEE_DEMOGRAPHICS') }}
+SELECT
+    ed.*
+
+FROM {{ source('raw_connx', 'EMPLOYEE_DEMOGRAPHICS') }} ed
+INNER JOIN cte_max_gen mg
+    ON mg.MAX_GEN = ed._AIRBYTE_GENERATION_ID
 
 {% endsnapshot %}

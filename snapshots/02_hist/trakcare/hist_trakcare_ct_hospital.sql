@@ -1,7 +1,6 @@
 {% snapshot HIST_TRAKCARE_CT_HOSPITAL %}
 {{
     config(
-        schema='TRAKCARE',
         unique_key='HOSP_ROWID',
         strategy='check',
         check_cols=[

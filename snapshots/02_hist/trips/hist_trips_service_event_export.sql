@@ -2,8 +2,7 @@
 
 {{
     config(
-        schema = 'TRIPS',
-        unique_key='_AIRBYTE_RAW_ID',
+        unique_key='SYSID',
         strategy='check',
         check_cols=[
             'ACL', 'ACR', 'AHC', 'AHH', 'CCL', 'CCR', 'CDC', 'CMG',
@@ -22,5 +21,6 @@
 SELECT
     *
 FROM {{ source('raw_trips', 'SERVICE_EVENT_EXPORT') }}
+QUALIFY ROW_NUMBER() OVER (PARTITION BY SYSID ORDER BY _AIRBYTE_GENERATION_ID DESC) = 1
 
 {% endsnapshot %}

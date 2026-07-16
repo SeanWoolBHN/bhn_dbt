@@ -2,8 +2,7 @@
 
 {{
     config(
-        schema = 'MICROPAY',
-        unique_key='_AIRBYTE_RAW_ID',
+        unique_key="IDEMPLOYEELEAVE||'-'||POSTENTDATE",
         strategy='check',
         check_cols=[
             'EMPCODE',
@@ -23,7 +22,9 @@
 }}
 
 SELECT
-    *
+    {# * #}
+    IDEMPLOYEELEAVE,POSTENTDATE
 FROM {{ source('raw_micropay', 'EMPLOYEE_LEAVE') }}
+QUALIFY ROW_NUMBER() OVER (PARTITION BY IDEMPLOYEELEAVE,POSTENTDATE ORDER BY _AIRBYTE_GENERATION_ID DESC) = 1
 
 {% endsnapshot %}

@@ -2,8 +2,7 @@
 
 {{
     config(
-        schema = 'BETTER_IMPACT',
-        unique_key='_AIRBYTE_RAW_ID',
+        unique_key="DATABASEUSERID||'-'||DATEVOLUNTEERED||'-'||FF_NAME_OF_RESIDENT",
         strategy='check',
         check_cols=[
             'LASTNAME', 'USERNAME', 'FIRSTNAME', 'HOURSWORKED',
@@ -25,5 +24,6 @@ SELECT
     *
 
 FROM {{ source('raw_better_impact', 'PIVOTED_FEEDBACK_REPORT') }}
+QUALIFY ROW_NUMBER() OVER (PARTITION BY DATABASEUSERID, DATEVOLUNTEERED, FF_NAME_OF_RESIDENT ORDER BY _AIRBYTE_GENERATION_ID DESC) = 1
 
 {% endsnapshot %}

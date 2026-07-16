@@ -2,7 +2,6 @@
 
 {{
     config(
-        schema='TRAKCARE',
         unique_key='REFT_ROWID',
         strategy='check',
         check_cols=[

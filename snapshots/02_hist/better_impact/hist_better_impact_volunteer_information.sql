@@ -2,8 +2,7 @@
 
 {{
     config(
-        schema = 'BETTER_IMPACT',
-        unique_key='_AIRBYTE_RAW_ID',
+        unique_key='DATABASEUSERID',
         strategy='check',
         check_cols=[
             'BIRTHDAY', 'LASTNAME', 'FIRSTNAME', 'POSTALCODE',
@@ -23,5 +22,6 @@ SELECT
     *
 
 FROM {{ source('raw_better_impact', 'VOLUNTEER_INFORMATION') }}
+QUALIFY ROW_NUMBER() OVER (PARTITION BY DATABASEUSERID ORDER BY _AIRBYTE_GENERATION_ID DESC) = 1
 
 {% endsnapshot %}

@@ -2,7 +2,7 @@
 
 {{
     config(
-        unique_key='_AIRBYTE_RAW_ID',
+        unique_key='SYSID',
         strategy='check',
         check_cols=[
             'AGE', 'LGA', 'SEX', 'TOWN', 'ZONE', 'HOIST', 'PHONE',
@@ -30,5 +30,6 @@
 SELECT
     *
 FROM {{ source('raw_trips', 'TRIPS_CLIENTS') }}
+QUALIFY ROW_NUMBER() OVER (PARTITION BY SYSID ORDER BY _AIRBYTE_GENERATION_ID DESC) = 1
 
 {% endsnapshot %}

@@ -2,8 +2,7 @@
 
 {{
     config(
-        schema = 'TITANIUM',
-        unique_key='_AIRBYTE_RAW_ID',
+        unique_key='PROVIDER',
         strategy='check',
         check_cols=[
             'COC',
@@ -31,5 +30,6 @@
 SELECT
 *
 FROM {{ source('raw_titanium', 'PROVIDER_OUTPUT_SUMMARY') }}
+QUALIFY ROW_NUMBER() OVER (PARTITION BY PROVIDER ORDER BY _AIRBYTE_GENERATION_ID DESC) = 1
 
 {% endsnapshot %}

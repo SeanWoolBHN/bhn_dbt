@@ -1,7 +1,6 @@
 {% snapshot HIST_TRAKCARE_RTC_MRECORDTYPE %}
 {{
     config(
-        schema='TRAKCARE',
         unique_key='TYP_ROWID',
         strategy='check',
         check_cols=[

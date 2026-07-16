@@ -1,7 +1,6 @@
 {% snapshot HIST_TRAKCARE_PA_ADM %}
 {{
     config(
-        schema='TRAKCARE',
         unique_key='PAADM_ROWID',
         strategy='check',
         check_cols=[

@@ -1,7 +1,6 @@
 {% snapshot HIST_TRAKCARE_PAC_REPORTINGTYPE %}
 {{
     config(
-        schema='TRAKCARE',
         unique_key='REPTYPE_ROWID',
         strategy='check',
         check_cols=[

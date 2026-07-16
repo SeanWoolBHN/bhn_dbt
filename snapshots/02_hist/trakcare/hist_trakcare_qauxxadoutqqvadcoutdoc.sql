@@ -1,7 +1,6 @@
 {% snapshot HIST_TRAKCARE_QAUXXADOUTQQVADCOUTDOC %}
 {{
     config(
-        schema='TRAKCARE',
         unique_key='VADC_OUT_DOC_KEY',
         strategy='check',
         check_cols=[

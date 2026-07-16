@@ -1,7 +1,6 @@
 {% snapshot HIST_TRAKCARE_PAC_REFERREDDEPARTURE %}
 {{
     config(
-        schema='TRAKCARE',
         unique_key='REFDEP_ROWID',
         strategy='check',
         check_cols=[

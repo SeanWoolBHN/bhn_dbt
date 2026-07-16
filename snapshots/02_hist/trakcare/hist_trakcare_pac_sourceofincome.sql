@@ -2,7 +2,6 @@
 
 {{
     config(
-        schema='TRAKCARE',
         unique_key='SRCINC_ROWID',
         strategy='check',
         check_cols=[

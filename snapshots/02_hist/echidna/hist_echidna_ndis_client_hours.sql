@@ -2,10 +2,7 @@
 
 {{
     config(
-        schema = 'ECHIDNA',
-        target_database='DEV_02_HIST_DB',
-        target_schema='ECHIDNA',
-        unique_key='_AIRBYTE_RAW_ID',
+        unique_key="\"DATE\"||'-'||\"FROM\"||'-'||\"TO\"||'-'||CLIENT_ID||'-'||CONSULTANT_ID||'-'||ITEM_NO",
         strategy='check',
         check_cols=[
             '"TO"', '"DATE"', '"FROM"', 'RATE', 'HOURS', 'VALUE',
@@ -23,5 +20,6 @@
 SELECT
     *
 FROM {{ source('raw_echidna', 'NDIS_CLIENT_HOURS') }}
+QUALIFY ROW_NUMBER() OVER (PARTITION BY "DATE", "FROM", "TO", CLIENT_ID, CONSULTANT_ID, ITEM_NO ORDER BY _AIRBYTE_GENERATION_ID DESC) = 1
 
 {% endsnapshot %}

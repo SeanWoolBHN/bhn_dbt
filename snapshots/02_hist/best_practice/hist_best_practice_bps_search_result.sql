@@ -2,7 +2,6 @@
 
 {{
     config(
-        schema = 'BEST_PRACTICE',
         unique_key='INTERNALID',
         strategy='check',
         check_cols=[
@@ -40,5 +39,6 @@
 SELECT
     *
 FROM {{ source('raw_best_practice', 'BPS_SEARCH_RESULT') }}
+QUALIFY ROW_NUMBER() OVER (PARTITION BY INTERNALID ORDER BY _AIRBYTE_GENERATION_ID DESC) = 1
 
 {% endsnapshot %}
