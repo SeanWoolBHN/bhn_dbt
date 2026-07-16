@@ -2,7 +2,7 @@
 
 {{
     config(
-        unique_key="IDEMPLOYEELEAVE||'-'||POSTENTDATE",
+        unique_key="IDEMPLOYEELEAVE||'-'||COALESCE(POSTENTDATE,'1900-01-01')",
         strategy='check',
         check_cols=[
             'EMPCODE',
