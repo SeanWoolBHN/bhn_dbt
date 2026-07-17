@@ -13,7 +13,7 @@ SELECT
     CTLOC_OTC_DR                                                          AS OTC_DR,
     NULLIF(TRIM(CTLOC_PERIOD), 'NULL')                                    AS PERIOD,
     CTLOC_ZIP_DR                                                          AS ZIP_DR,
-    NULLIF(TRIM(CTLOC_ADDRESS), 'NULL')                                   AS ADDRESS,
+    NULLIF(TRIM(CTLOC_ADDRESS), 'NULL')                                   AS ADDRESS_1,
     CTLOC_AGEFROM                                                         AS AGE_FROM,
     CTLOC_CITY_DR                                                         AS CITY_DR,
     NULLIF(TRIM(CTLOC_DRGTYPE), 'NULL')                                   AS DRG_TYPE,

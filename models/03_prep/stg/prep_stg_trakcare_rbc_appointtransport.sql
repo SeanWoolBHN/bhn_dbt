@@ -8,7 +8,7 @@ SELECT
     LOWER(NULLIF(TRIM(APTR_EMAIL), 'NULL'))                               AS EMAIL,
     NULLIF(TRIM(APTR_FAX), 'NULL')                                        AS FAX,
     NULLIF(TRIM(APTR_PHONE), 'NULL')                                      AS PHONE,
-    NULLIF(TRIM(APTR_ADRESS), 'NULL')                                     AS ADDRESS,
+    NULLIF(TRIM(APTR_ADRESS), 'NULL')                                     AS ADDRESS_1,
     NULLIF(TRIM(APTR_OWNER), 'NULL')                                      AS OWNER,
     NULLIF(TRIM(APTR_CODETABLETAGS), 'NULL')                              AS CODE_TABLE_TAGS,
     TRY_TO_DATE(NULLIF(TRIM(APTR_CREATEDDATE), 'NULL'))                   AS CREATED_DATE,

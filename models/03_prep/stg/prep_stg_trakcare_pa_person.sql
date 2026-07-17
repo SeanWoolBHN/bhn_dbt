@@ -32,6 +32,7 @@ SELECT
     NULLIF(TRIM(PAPER_SECONDPHONE), 'NULL')                               AS SECOND_PHONE,
     NULLIF(TRIM(PAPER_STNAME), 'NULL')                                    AS STREET_NAME,
     NULLIF(TRIM(PAPER_STNAMELINE1), 'NULL')                               AS STREET_NAME_LINE_1,
+    NULL                                                                  AS ADDRESS_1,
     NULLIF(TRIM(PAPER_ADDRESS2), 'NULL')                                  AS ADDRESS_2,
     NULLIF(TRIM(PAPER_POSTCODE), 'NULL')                                  AS POSTCODE,
     TRY_TO_NUMBER(NULLIF(TRIM(PAPER_ZIP_DR), 'NULL'), 18, 6)              AS ZIP_DR,
