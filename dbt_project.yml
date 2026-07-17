@@ -77,3 +77,8 @@ models:
       model:
         +materialized: view
         +schema: MODEL
+    04_rpt:
+      +database: 04_RPT_DB
+      rpt:
+        +materialized: view
+        +schema: RPT
