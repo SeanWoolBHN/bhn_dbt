@@ -2,8 +2,7 @@
 
 {{
     config(
-        schema='E_TOOLS',
-        unique_key='_AIRBYTE_RAW_ID',
+        unique_key="COALESCE(NO_,-1)||'-'||FIRST_NAME",
         strategy='check',
         check_cols=[
             'NO_', 'SERVICE', 'FIRST_NAME', 'LAST_NAME', 'SUPPLEMENTS',
@@ -26,5 +25,6 @@
 SELECT
     *
 FROM {{ source('raw_e_tools', 'PROVIDER_STATEMENT') }}
+QUALIFY ROW_NUMBER() OVER (PARTITION BY NO_, FIRST_NAME ORDER BY _AIRBYTE_GENERATION_ID DESC) = 1
 
 {% endsnapshot %}

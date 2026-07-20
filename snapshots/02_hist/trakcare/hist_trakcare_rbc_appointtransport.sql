@@ -1,7 +1,6 @@
 {% snapshot HIST_TRAKCARE_RBC_APPOINTTRANSPORT %}
 {{
     config(
-        schema='TRAKCARE',
         unique_key='APTR_ROWID',
         strategy='check',
         check_cols=[

@@ -1,7 +1,6 @@
 {% snapshot HIST_TRAKCARE_RBC_EVENTTYPE %}
 {{
     config(
-        schema='TRAKCARE',
         unique_key='EVT_ROWID',
         strategy='check',
         check_cols=[

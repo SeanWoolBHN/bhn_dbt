@@ -2,7 +2,6 @@
 
 {{
     config(
-        schema='E_TOOLS',
         unique_key='EPISODE_ID',
         strategy='check',
         check_cols=[
@@ -32,5 +31,6 @@ SELECT
     *
 
 FROM {{ source('raw_e_tools', 'ESAH_CLIENTS') }}
+{# QUALIFY ROW_NUMBER() OVER (PARTITION BY EPISODE_ID ORDER BY _AIRBYTE_GENERATION_ID DESC) = 1 #}
 
 {% endsnapshot %}

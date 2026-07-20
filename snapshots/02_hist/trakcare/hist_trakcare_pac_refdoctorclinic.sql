@@ -2,7 +2,6 @@
 
 {{
     config(
-        schema='TRAKCARE',
         unique_key='CLN_KEY',
         strategy='check',
         check_cols=[

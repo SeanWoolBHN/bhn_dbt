@@ -1,7 +1,6 @@
 {% snapshot HIST_TRAKCARE_PA_ENQUIRYCONTACT %}
 {{
     config(
-        schema='TRAKCARE',
         unique_key='ENQ_ROWID',
         strategy='check',
         check_cols=[

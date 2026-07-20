@@ -1,7 +1,6 @@
 {% snapshot HIST_TRAKCARE_QAUXXADVADCQQVADCPROGREF %}
 {{
     config(
-        schema='TRAKCARE',
         unique_key='VADC_PROG_REF_KEY',
         strategy='check',
         check_cols=[

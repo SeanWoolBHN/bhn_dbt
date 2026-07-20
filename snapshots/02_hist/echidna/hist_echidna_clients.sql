@@ -2,7 +2,6 @@
 
 {{
     config(
-        schema= 'ECHIDNA',
         unique_key='_AIRBYTE_RAW_ID',
         strategy='check',
         check_cols=[
@@ -20,8 +19,15 @@
     )
 }}
 
+WITH cte_max_gen AS (
+    SELECT MAX(_AIRBYTE_GENERATION_ID) AS MAX_GEN
+    FROM {{ source('raw_echidna', 'ECHIDNA_CLIENTS') }}
+)
+
 SELECT
-    *
-FROM {{ source('raw_echidna', 'ECHIDNA_CLIENTS') }}
+    ec.*
+FROM {{ source('raw_echidna', 'ECHIDNA_CLIENTS') }} ec
+INNER JOIN cte_max_gen mg
+    ON mg.MAX_GEN = ec._AIRBYTE_GENERATION_ID
 
 {% endsnapshot %}

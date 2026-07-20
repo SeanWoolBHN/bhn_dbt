@@ -7,3 +7,4 @@ dbt_internal_packages/
 .dbt-env/
 .vscode/
 .user.yml
+profiles.yml

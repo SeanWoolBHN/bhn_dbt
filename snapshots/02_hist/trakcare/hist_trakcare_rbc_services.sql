@@ -1,7 +1,6 @@
 {% snapshot HIST_TRAKCARE_RBC_SERVICES %}
 {{
     config(
-        schema='TRAKCARE',
         unique_key='SER_ROWID',
         strategy='check',
         check_cols=[

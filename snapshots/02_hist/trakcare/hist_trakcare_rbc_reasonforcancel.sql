@@ -1,7 +1,6 @@
 {% snapshot HIST_TRAKCARE_RBC_REASONFORCANCEL %}
 {{
     config(
-        schema='TRAKCARE',
         unique_key='RFC_ROWID',
         strategy='check',
         check_cols=[

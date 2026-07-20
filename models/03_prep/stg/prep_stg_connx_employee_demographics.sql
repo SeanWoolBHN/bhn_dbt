@@ -5,7 +5,7 @@ SELECT
     {{ format_name('DEPARTMENT') }}              AS DEPARTMENT,
     {{ format_name('NATIONALITY') }}             AS NATIONALITY,
     TRIM(LANGUAGES_SPOKEN)                        AS LANGUAGES_SPOKEN,
-    TRIM("ETHNICITY_AU/NZ_")                      AS ETHNICITY,
+    TRIM(ETHNICITY)                      AS ETHNICITY,
 
     _AIRBYTE_EXTRACTED_AT                          AS AIRBYTE_EXTRACTED_TS
 

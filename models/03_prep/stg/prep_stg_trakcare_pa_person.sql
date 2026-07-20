@@ -40,6 +40,7 @@ SELECT
     {{ format_phone('PAPER_SECONDPHONE') }}                                   AS SECOND_PHONE,
     {{ format_address('PAPER_STNAME') }}                                      AS STREET_NAME,
     {{ format_address('PAPER_STNAMELINE1') }}                                 AS STREET_NAME_LINE_1,
+    NULL                                                                      AS ADDRESS_1,
     NULLIF(TRIM(PAPER_ADDRESS2), 'NULL')                                      AS ADDRESS_2,
     NULLIF(TRIM(PAPER_FOREIGNADDRESS), 'NULL')                                AS FOREIGN_ADDRESS,
     NULLIF(TRIM(PAPER_POSTCODE), 'NULL')                                      AS POSTCODE,

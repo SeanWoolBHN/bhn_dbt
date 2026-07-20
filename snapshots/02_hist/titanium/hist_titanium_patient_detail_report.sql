@@ -2,8 +2,7 @@
 
 {{
     config(
-        schema = 'TITANIUM',
-        unique_key='_AIRBYTE_RAW_ID',
+        unique_key="SLK||'-'||DR_",
         strategy='check',
         check_cols=[
             'DR_',
@@ -52,5 +51,6 @@
 SELECT
     *
 FROM {{ source('raw_titanium', 'PATIENT_DETAIL_REPORT') }}
+QUALIFY ROW_NUMBER() OVER (PARTITION BY SLK,DR_ ORDER BY _AIRBYTE_GENERATION_ID DESC) = 1
 
 {% endsnapshot %}

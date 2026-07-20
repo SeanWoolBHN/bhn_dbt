@@ -2,7 +2,7 @@ SELECT
     NGO_ROWID                                                             AS ROW_ID,
     NULLIF(TRIM(NGO_CODE), 'NULL')                                        AS CODE,
     NULLIF(TRIM(NGO_DESC), 'NULL')                                        AS DESCRIPTION,
-    NULLIF(TRIM(NGO_ADDRESS), 'NULL')                                     AS ADDRESS,
+    NULLIF(TRIM(NGO_ADDRESS), 'NULL')                                     AS ADDRESS_1,
     NULLIF(TRIM(NGO_CITY_DR), 'NULL')                                     AS CITY_DR,
     NULLIF(TRIM(NGO_ZIP_DR), 'NULL')                                      AS ZIP_DR,
     NULLIF(TRIM(NGO_PROVINCE_DR), 'NULL')                                 AS PROVINCE_DR,

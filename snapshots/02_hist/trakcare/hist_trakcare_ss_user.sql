@@ -1,7 +1,6 @@
 {% snapshot HIST_TRAKCARE_SS_USER %}
 {{
     config(
-        schema='TRAKCARE',
         unique_key='SSUSR_ROWID',
         strategy='check',
         check_cols=[

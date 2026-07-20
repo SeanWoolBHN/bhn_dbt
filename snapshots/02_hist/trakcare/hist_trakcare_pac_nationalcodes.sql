@@ -1,7 +1,6 @@
 {% snapshot HIST_TRAKCARE_PAC_NATIONALCODES %}
 {{
     config(
-        schema='TRAKCARE',
         unique_key='NATC_ROWID',
         strategy='check',
         check_cols=[

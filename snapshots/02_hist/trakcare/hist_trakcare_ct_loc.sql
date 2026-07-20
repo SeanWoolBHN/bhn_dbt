@@ -1,7 +1,6 @@
 {% snapshot HIST_TRAKCARE_CT_LOC %}
 {{
     config(
-        schema='TRAKCARE',
         unique_key='CTLOC_ROWID',
         strategy='check',
         check_cols=[

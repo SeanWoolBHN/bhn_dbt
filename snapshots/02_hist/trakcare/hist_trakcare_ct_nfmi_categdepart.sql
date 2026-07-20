@@ -1,7 +1,6 @@
 {% snapshot HIST_TRAKCARE_CT_NFMI_CATEGDEPART %}
 {{
     config(
-        schema='TRAKCARE',
         unique_key='DEP_ROWID',
         strategy='check',
         check_cols=[

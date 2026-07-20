@@ -1,7 +1,6 @@
 {% snapshot HIST_TRAKCARE_OE_ORDITEM %}
 {{
     config(
-        schema='TRAKCARE',
         unique_key='OEORI_ROWID',
         strategy='check',
         check_cols=[

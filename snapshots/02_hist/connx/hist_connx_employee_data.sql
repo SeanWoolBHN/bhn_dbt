@@ -2,8 +2,7 @@
 
 {{
     config(
-        schema = 'CONNX',
-        unique_key='_AIRBYTE_RAW_ID',
+        unique_key='EMPLOYEE_NO',
         strategy='check',
         check_cols=[
             'SURNAME', 'DATE_HIRED', 'DEPARTMENT', 'FIRST_NAME',
@@ -30,5 +29,6 @@ SELECT
     *
 
 FROM {{ source('raw_connx', 'EMPLOYEE_DATA') }}
+QUALIFY ROW_NUMBER() OVER (PARTITION BY EMPLOYEE_NO ORDER BY _AIRBYTE_GENERATION_ID DESC) = 1
 
 {% endsnapshot %}

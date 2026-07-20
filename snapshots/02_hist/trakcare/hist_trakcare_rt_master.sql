@@ -2,7 +2,6 @@
 
 {{
     config(
-        schema='TRAKCARE',
         unique_key='RTMAS_ROWID',
         strategy='check',
         check_cols=[

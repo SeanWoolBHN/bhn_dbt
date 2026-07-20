@@ -2,7 +2,7 @@
 
 {{
     config(
-        unique_key='_AIRBYTE_RAW_ID',
+        unique_key='NO_',
         strategy='check',
         check_cols=[
             'AGE', 'NO_', 'TITLE', 'PROVIDER', 'SUPPLMT',
@@ -24,5 +24,6 @@ SELECT
     *
 
 FROM {{ source('raw_e_tools', 'CUSTOMER_LIST') }}
+QUALIFY ROW_NUMBER() OVER (PARTITION BY NO_ ORDER BY _AIRBYTE_GENERATION_ID DESC) = 1
 
 {% endsnapshot %}

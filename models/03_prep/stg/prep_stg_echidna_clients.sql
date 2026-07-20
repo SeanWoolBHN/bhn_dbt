@@ -3,7 +3,7 @@ SELECT
     UPPER(TRIM(STATE))                                                      AS STATE,
     UPPER(TRIM(GENDER))                                                     AS GENDER,
     {{ format_name('SUBURB') }}                                             AS CITY,
-    {{ format_name('ADDRESS') }}                                            AS ADDRESS,
+    {{ format_name('ADDRESS') }}                                            AS ADDRESS_1,
     TRIM(SUBURNE)                                                           AS CITY_2,
     {{ format_phone('PHONE_NO') }}                                          AS PHONE_NO,
     CAST(TRIM(POSTCODE) AS TEXT)                                            AS POSTCODE,
