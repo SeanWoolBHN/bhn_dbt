@@ -11,7 +11,7 @@ WITH funding_source AS (
             PARTITION BY DEP_CODE, ARCIC_DESC
             ORDER BY ARCIC_CODE
         )                                                 AS RN
-    FROM {{ ref('prep_ref_natcodesfundmapping_trakcare') }}
+    FROM {{ ref('prep_ref_national_codes_fund_mapping') }}
     WHERE ARCIC_CODE IS NOT NULL
 ),
 
@@ -249,7 +249,7 @@ base AS (
     LEFT JOIN {{ ref('prep_src_episode_trakcare') }}      AS EP
         ON CO.EPISODE_ID = EP.EPISODE_ID::VARCHAR
 
-    LEFT JOIN {{ ref('prep_src_client_trakcare') }}       AS CL
+    LEFT JOIN {{ ref('prep_src_client_trakcare_sean') }}       AS CL
         ON CO.UR = CL.UR
 
     LEFT JOIN funding_source                              AS FS

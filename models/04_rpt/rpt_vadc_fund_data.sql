@@ -395,11 +395,11 @@ LEFT JOIN {{ ref('prep_src_vadc_form_trakcare') }}        AS FORM
     ON EP.EPISODE_ID = FORM.EPISODE_ID
 
 -- Client demographics
-LEFT JOIN {{ ref('prep_src_client_trakcare') }}           AS CL
+LEFT JOIN {{ ref('prep_src_client_trakcare_sean') }}           AS CL
     ON EP.UR = CL.UR
 
 -- Program stream
-LEFT JOIN {{ ref('prep_ref_program_trakcare') }}          AS PROG
+LEFT JOIN {{ ref('prep_ref_program') }}          AS PROG
     ON EP.EPISODE_ID = PROG.PROGRAM_STREAM_CODE
 
 -- Outcome — latest per episode

@@ -5,8 +5,8 @@ WITH ordsubcat_lookup AS (
         MAP.DEP_CODE,
         MAP.ARCIC_DESC,
         SUBCAT.ARCIM_DESC                                 AS ARCIM_DESC
-    FROM {{ ref('prep_ref_natcodesfundmapping_trakcare') }} AS MAP
-    INNER JOIN {{ ref('prep_ref_orditem_ordsubcatmap_trakcare') }} AS SUBCAT
+    FROM {{ ref('prep_ref_national_codes_fund_mapping') }} AS MAP
+    INNER JOIN {{ ref('prep_ref_order_item_subcategory_mapping') }} AS SUBCAT
         ON SUBCAT.ARCIC_CODE = MAP.ARCIC_CODE
         AND SUBCAT.ARCIC_CODE IS NOT NULL
     WHERE MAP.DEP_CODE = 'CHSP'
@@ -22,7 +22,7 @@ funding_source AS (
             PARTITION BY DEP_CODE, ARCIC_DESC
             ORDER BY ARCIC_CODE
         )                                                 AS RN
-    FROM {{ ref('prep_ref_natcodesfundmapping_trakcare') }}
+    FROM {{ ref('prep_ref_national_codes_fund_mapping') }}
     WHERE ARCIC_CODE IS NOT NULL
 ),
 
@@ -270,7 +270,7 @@ FROM contacts_with_ordsubcat                              AS CO
 LEFT JOIN {{ ref('prep_src_episode_trakcare') }}          AS EP
     ON CAST(CO.EPISODE_ID AS VARCHAR) = CAST(EP.EPISODE_ID AS VARCHAR)
 
-LEFT JOIN {{ ref('prep_src_client_trakcare') }}           AS CL
+LEFT JOIN {{ ref('prep_src_client_trakcare_sean') }}           AS CL
     ON CO.UR = CL.UR
 
 LEFT JOIN funding_source                                  AS FS

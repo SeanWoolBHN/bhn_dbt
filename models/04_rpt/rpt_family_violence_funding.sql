@@ -5,8 +5,8 @@ WITH ordsubcat_lookup AS (
         SUBCAT.ARCIM_CODE                                 AS ARCIM_CODE,
         SUBCAT.ARCIM_DESC                                 AS ARCIM_DESC,
         1                                                 AS LEGACY_ORGANISATION_ID
-    FROM {{ ref('prep_ref_natcodesfundmapping_trakcare') }} AS MAP
-    INNER JOIN {{ ref('prep_ref_orditem_ordsubcatmap_trakcare') }} AS SUBCAT
+    FROM {{ ref('prep_ref_national_codes_fund_mapping') }} AS MAP
+    INNER JOIN {{ ref('prep_ref_order_item_subcategory_mapping') }} AS SUBCAT
         ON SUBCAT.ARCIC_CODE = MAP.ARCIC_CODE
         AND SUBCAT.ARCIC_CODE IS NOT NULL
     WHERE MAP.NFMI_CODE = 'IFAMVIO'
@@ -207,7 +207,7 @@ FROM contacts_with_ordsubcat                              AS B
 LEFT JOIN {{ ref('prep_src_episode_trakcare') }}          AS EP
     ON B.EPISODE_ID = EP.EPISODE_ID::VARCHAR
 
-LEFT JOIN {{ ref('prep_src_client_trakcare') }}           AS CL
+LEFT JOIN {{ ref('prep_src_client_trakcare_sean') }}           AS CL
     ON B.UR = CL.UR
 
 LEFT JOIN first_contact_fvcc                              AS FC_FVCC
