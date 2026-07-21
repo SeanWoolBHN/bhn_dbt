@@ -1,6 +1,7 @@
 {% snapshot HIST_TRAKCARE_PA_ENQUIRYCONTACT %}
 {{
     config(
+        schema='TRAKCARE',
         unique_key='ENQ_ROWID',
         strategy='check',
         check_cols=[
@@ -28,5 +29,13 @@
         dbt_valid_to_current="to_date('9999-12-31')"
     )
 }}
-SELECT * FROM {{ source('raw_trakcare', 'PA_ENQUIRYCONTACT') }}
+
+SELECT *
+FROM {{ source('raw_trakcare', 'PA_ENQUIRYCONTACT') }}
+QUALIFY ROW_NUMBER() OVER (
+    PARTITION BY ENQ_ROWID
+    ORDER BY ENQ_DATEUPDATE DESC NULLS LAST,
+             ENQ_TIMEUPDATE DESC NULLS LAST
+) = 1
+
 {% endsnapshot %}

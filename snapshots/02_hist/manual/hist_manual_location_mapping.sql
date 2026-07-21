@@ -1,4 +1,4 @@
-{% snapshot HIST_REFERENCE_DATA_LOCATION_MAPPING %}
+{% snapshot HIST_MANUAL_LOCATION_MAPPING %}
 
 {{
     config(
@@ -24,7 +24,7 @@ WITH source AS (
                 NATC_MAPPEDVALUE,
                 CTLOC_DESC
         ) AS row_num
-    FROM {{ source('raw_reference_data', 'LOCATION_MAPPING') }}
+    FROM {{ source('raw_manual', 'LOCATION_MAPPING') }}
 )
 
 SELECT

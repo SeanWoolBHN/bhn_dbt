@@ -97,12 +97,14 @@ sources:
       - name: LICENCE_REGISTRATION
         description: "Raw licence registration data from CONNX system"
   
-  - name: raw_reference_data
+  - name: raw_manual
     database: DEV_01_RAW_DB
-    schema: REFERENCE_DATA
+    schema: MANUAL
     tables:
       - name: LOCATION_MAPPING
         description: "Manual location mapping reference table linking TrakCare location codes to reporting values"
+      - name: FUNDSOURCETARGETS
+        description: "Fund source targets reference table"
     
   - name: raw_trakcare
     database: DEV_01_RAW_DB
@@ -232,3 +234,11 @@ sources:
         description: "Reference table of government subcategories from TrakCare system"
       - name: PA_ADMINSURANCE
         description: "Admission insurance/payor records from TrakCare system"
+      - name: OE_ORDSTATUS
+        description: "Order status records from TrakCare system"
+      - name: PAC_REQUESTSTATUS
+        description: "Reference table of request status codes from TrakCare system"
+      - name: PA_ADM2
+        description: "Extended admission data from TrakCare system"
+      - name: OE_ORDITEM2
+        description: "Extended order item data from TrakCare system"

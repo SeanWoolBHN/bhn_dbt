@@ -146,7 +146,7 @@ SELECT
     -- ── Referral org ────────────────────────────────────────────────
     NGO.DESCRIPTION                                       AS REFERRAL_ORG,
     NGO.CODE                                              AS REFERRAL_ORG_CODE,
-    NGO.ADDRESS                                           AS REFERRAL_ORG_ADDRESS,
+    NGO.ADDRESS_1                                           AS REFERRAL_ORG_ADDRESS,
     NGO.PHONE                                             AS REFERRAL_ORG_PHONE,
     NGO.EMAIL                                             AS REFERRAL_ORG_EMAIL,
     NGO_ZIP.POSTCODE                                      AS REFERRAL_ORG_POSTCODE,

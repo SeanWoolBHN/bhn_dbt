@@ -36,8 +36,8 @@ SELECT
     -- ── Contact date ────────────────────────────────────────────────
     ENQ.CONTACT_DATE                                      AS CONTACT_DATE,
     ENQ.CONTACT_TIME                                      AS CONTACT_TIME,
-    TO_TIMESTAMP(
-        ENQ.CONTACT_DATE::VARCHAR || ' ' || ENQ.CONTACT_TIME::VARCHAR
+    TRY_TO_TIMESTAMP(
+        CAST(ENQ.CONTACT_DATE AS VARCHAR) || ' ' || CAST(ENQ.CONTACT_TIME AS VARCHAR)
     )                                                     AS CONTACT_DATE_TIME,
 
     -- ── Hours — raw minutes + pre-converted ─────────────────────────
