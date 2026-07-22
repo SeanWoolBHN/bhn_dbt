@@ -1,15 +1,14 @@
 WITH ordsubcat_lookup AS (
     SELECT DISTINCT
-        MAP.DEP_CODE,
-        MAP.ARCIC_DESC,
+        MAP.DEPARTMENT_CODE,
+        MAP.ITEM_CATEGORY_DESC,
         SUBCAT.ARCIM_CODE                                 AS ARCIM_CODE,
-        SUBCAT.ARCIM_DESC                                 AS ARCIM_DESC,
-        1                                                 AS LEGACY_ORGANISATION_ID
-    FROM {{ ref('prep_ref_national_codes_fund_mapping') }} AS MAP
+        SUBCAT.ARCIM_DESC                                 AS ARCIM_DESC
+    FROM {{ ref('prep_ref_funding_category_national_code_mapping') }} AS MAP
     INNER JOIN {{ ref('prep_ref_order_item_subcategory_mapping') }} AS SUBCAT
-        ON SUBCAT.ARCIC_CODE = MAP.ARCIC_CODE
+        ON SUBCAT.ARCIC_CODE = MAP.ITEM_CATEGORY_CODE
         AND SUBCAT.ARCIC_CODE IS NOT NULL
-    WHERE MAP.NFMI_CODE = 'IFAMVIO'
+    WHERE MAP.FUNDING_CATEGORY_CODE = 'IFAMVIO'
 ),
 
 contacts_with_ordsubcat AS (
@@ -17,13 +16,12 @@ contacts_with_ordsubcat AS (
         CO.*,
         COALESCE(
             CO.ORD_SUB_CAT,
-            OL.ARCIC_DESC
+            OL.ITEM_CATEGORY_DESC
         )                                                 AS ORD_SUB_CAT_RESOLVED
     FROM {{ ref('prep_src_contact_trakcare') }}           AS CO
     LEFT JOIN ordsubcat_lookup                            AS OL
         ON OL.ARCIM_DESC = CO.ORD_ITEM
-        AND OL.DEP_CODE = CO.PROGRAM_STREAM_CODE
-        AND OL.LEGACY_ORGANISATION_ID = 1
+        AND OL.DEPARTMENT_CODE = CO.PROGRAM_STREAM_CODE
 ),
 
 first_contact_fvcc AS (
@@ -74,9 +72,6 @@ SELECT
         )   THEN FC_IFV.FIRST_CONTACT_DT
     END                                                   AS FIRST_CONTACT_DT,
 
-    -- ── Legacy org ──────────────────────────────────────────────────
-    1                                                     AS LEGACY_ORGANISATION_ID,
-    'Star Health'                                         AS LEGACY_ORGANISATION_NAME,
 
     -- ── Client demographics ─────────────────────────────────────────
     CL.AGE                                                AS AGE,
@@ -196,7 +191,7 @@ SELECT
     B.EV_NUMBER                                           AS EV_NUMBER,
     B.EV_NAME                                             AS EV_NAME,
     B.EVT_DESC                                            AS EVT_DESC,
-    B.EVST_SUB_DESC                                       AS SUB_DESC,
+    B.EVST_SUB_DESC                                       AS GOVERNMENT_SUBCATEGORY_DESC,
     B.EV_VENUE                                            AS EV_VENUE,
     B.EV_DURATION                                         AS EV_DURATION,
     B.EV_PREPARATION_TIME                                 AS EV_PREPARATION_TIME,
@@ -229,6 +224,3 @@ AND B.PROGRAM_STREAM_CODE IN (
     'IFVMHCP183', 'FVCC', 'FVMCMH', 'IFVPROV'
 )
 AND LEFT(B.REPORTING_QTR, 4)::NUMBER >= 2020
--- ⚠️ Status filter removed — ORDER_STATUS and REQUEST_STATUS are NULL
--- Reinstate once OE_OrdStatus and PAC_RequestStatus land in Snowflake:
--- AND (ORDER_STATUS = 'Executed' OR REQUEST_STATUS = 'completed')

@@ -2,28 +2,28 @@ WITH ordsubcat_lookup AS (
     -- Resolve OrdSubCat when NULL via NatCodesFundMapping + Orditem_OrdSubcatMapTable
     -- Filtered to CHSP program only
     SELECT DISTINCT
-        MAP.DEP_CODE,
-        MAP.ARCIC_DESC,
+        MAP.DEPARTMENT_CODE,
+        MAP.ITEM_CATEGORY_DESC,
         SUBCAT.ARCIM_DESC                                 AS ARCIM_DESC
-    FROM {{ ref('prep_ref_national_codes_fund_mapping') }} AS MAP
+    FROM {{ ref('prep_ref_funding_category_national_code_mapping') }} AS MAP
     INNER JOIN {{ ref('prep_ref_order_item_subcategory_mapping') }} AS SUBCAT
-        ON SUBCAT.ARCIC_CODE = MAP.ARCIC_CODE
+        ON SUBCAT.ARCIC_CODE = MAP.ITEM_CATEGORY_CODE
         AND SUBCAT.ARCIC_CODE IS NOT NULL
-    WHERE MAP.DEP_CODE = 'CHSP'
-      AND MAP.ARCIC_CODE IS NOT NULL
+    WHERE MAP.DEPARTMENT_CODE = 'CHSP'
+      AND MAP.ITEM_CATEGORY_CODE IS NOT NULL
 ),
 
 funding_source AS (
     SELECT
-        DEP_CODE,
-        ARCIC_DESC,
-        NFMI_DESC,
+        DEPARTMENT_CODE,
+        ITEM_CATEGORY_DESC,
+        FUNDING_CATEGORY_DESC,
         ROW_NUMBER() OVER (
-            PARTITION BY DEP_CODE, ARCIC_DESC
-            ORDER BY ARCIC_CODE
+            PARTITION BY DEPARTMENT_CODE, ITEM_CATEGORY_DESC
+            ORDER BY ITEM_CATEGORY_CODE
         )                                                 AS RN
-    FROM {{ ref('prep_ref_national_codes_fund_mapping') }}
-    WHERE ARCIC_CODE IS NOT NULL
+    FROM {{ ref('prep_ref_funding_category_national_code_mapping') }}
+    WHERE ITEM_CATEGORY_CODE IS NOT NULL
 ),
 
 contacts_with_ordsubcat AS (
@@ -31,12 +31,12 @@ contacts_with_ordsubcat AS (
         CO.*,
         COALESCE(
             CO.ORD_SUB_CAT,
-            OL.ARCIC_DESC
+            OL.ITEM_CATEGORY_DESC
         )                                                 AS ORD_SUB_CAT_RESOLVED
     FROM {{ ref('prep_src_contact_trakcare') }}           AS CO
     LEFT JOIN ordsubcat_lookup                            AS OL
         ON OL.ARCIM_DESC = CO.ORD_ITEM
-        AND OL.DEP_CODE = CO.PROGRAM_STREAM_CODE
+        AND OL.DEPARTMENT_CODE = CO.PROGRAM_STREAM_CODE
 ),
 
 number_in_group AS (
@@ -131,7 +131,7 @@ SELECT
     END                                                   AS PROGRAM_STREAM_DESC,
 
     -- ── Funding source ──────────────────────────────────────────────
-    FS.NFMI_DESC                                          AS FUNDING_SOURCE,
+    FS.FUNDING_CATEGORY_DESC                                          AS FUNDING_SOURCE,
 
     -- ── Order reference ─────────────────────────────────────────────
     CO.STO                                                AS STO,
@@ -150,7 +150,7 @@ SELECT
     CO.EV_NUMBER                                          AS EV_NUMBER,
     CO.EV_NAME                                            AS EV_NAME,
     CO.EVT_DESC                                           AS EVT_DESC,
-    CO.EVST_SUB_DESC                                      AS SUB_DESC,
+    CO.EVST_SUB_DESC                                      AS GOVERNMENT_SUBCATEGORY_DESC,
     CO.EV_VENUE                                           AS EV_VENUE,
     CO.EV_DURATION                                        AS EV_DURATION,
     CO.EV_PREPARATION_TIME                                AS EV_PREPARATION_TIME,
@@ -274,8 +274,8 @@ LEFT JOIN {{ ref('prep_src_client_trakcare_sean') }}           AS CL
     ON CO.UR = CL.UR
 
 LEFT JOIN funding_source                                  AS FS
-    ON FS.DEP_CODE = CO.PROGRAM_STREAM_CODE
-    AND TRIM(FS.ARCIC_DESC) = TRIM(CO.ORD_SUB_CAT_RESOLVED)
+    ON FS.DEPARTMENT_CODE = CO.PROGRAM_STREAM_CODE
+    AND TRIM(FS.ITEM_CATEGORY_DESC) = TRIM(CO.ORD_SUB_CAT_RESOLVED)
     AND FS.RN = 1
 
 LEFT JOIN number_in_group                                 AS NIG

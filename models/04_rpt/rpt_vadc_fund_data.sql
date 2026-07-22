@@ -159,41 +159,7 @@ outcome_latest AS (
 )
 
 SELECT
-    -- ── Legacy org — derived from EpisodeTeam per SSIS ──────────────
-    CASE
-        WHEN EP.EPISODE_TEAM ILIKE '%Prahran%'
-          OR EP.EPISODE_TEAM ILIKE '%Southport%'
-          OR EP.EPISODE_TEAM ILIKE '%Bentleigh East%'
-          OR EP.EPISODE_TEAM ILIKE '%Fitzroy St%'
-          OR EP.EPISODE_TEAM ILIKE '%Pharmacotherapy%'
-            THEN '1'
-        WHEN EP.EPISODE_TEAM ILIKE '%Parkdale%'
-          OR EP.EPISODE_TEAM ILIKE '%Chelsea%'
-          OR EP.EPISODE_TEAM IN (
-              'AOD Counselling', 'AOD Brief Intervention',
-              'AOD Assessment', 'AOD and Counselling'
-          )   THEN '2'
-    END                                                   AS LEGACY_ORGANISATION_ID,
 
-    CASE
-        WHEN EP.EPISODE_TEAM ILIKE '%Prahran%'
-          OR EP.EPISODE_TEAM ILIKE '%Southport%'
-          OR EP.EPISODE_TEAM ILIKE '%Bentleigh East%'
-          OR EP.EPISODE_TEAM ILIKE '%Fitzroy St%'
-          OR EP.EPISODE_TEAM ILIKE '%Pharmacotherapy%'
-            THEN 'Star Health'
-        WHEN EP.EPISODE_TEAM ILIKE '%Parkdale%'
-          OR EP.EPISODE_TEAM ILIKE '%Chelsea%'
-          OR EP.EPISODE_TEAM IN (
-              'AOD Counselling', 'AOD Brief Intervention',
-              'AOD Assessment', 'AOD and Counselling'
-          )   THEN 'Central Bayside'
-    END                                                   AS LEGACY_ORGANISATION_NAME,
-
-    -- ── Episode identity ────────────────────────────────────────────
-    'SH' || EP.EPISODE_ID::VARCHAR                        AS IEPISODE_ID,
-    EP.EPISODE_ID                                         AS EPISODE_ID,
-    'SH' || EP.UR::VARCHAR                                AS IUR,
     EP.UR                                                 AS UR,
 
     -- ── Client demographics ─────────────────────────────────────────

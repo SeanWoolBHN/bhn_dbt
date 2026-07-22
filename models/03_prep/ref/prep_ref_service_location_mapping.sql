@@ -2,8 +2,8 @@ SELECT
     LOC.CODE                                              AS LOCATION_CODE,
     LOC.DESCRIPTION                                       AS LOCATION_DESC,
     NAT.MAPPED_VALUE                                      AS MAPPED_VALUE,
-    NAT.REPORTING_TYPE_DR                                 AS NATC_REPORTING_TYPE_DR,
-    RT.DESCRIPTION                                        AS REPTYPE_DESC
+    NAT.REPORTING_TYPE_DR                                 AS REPORTING_TYPE_ID,
+    RT.DESCRIPTION                                        AS RPORTING_TYPE_DESC
 
 FROM {{ ref('prep_stg_trakcare_ct_loc') }}                AS LOC
 

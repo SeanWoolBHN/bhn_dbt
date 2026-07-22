@@ -19,7 +19,7 @@ rt_tag_lookup AS (
     WHERE RN = 1
 ),
 
--- Pre-compute the resolved ALT_SUBCODE per NFMI_CATEGORY row
+-- Pre-compute the resolved GOVERNMENT_SUBCATEGORY_CODE per NFMI_CATEGORY row
 -- to avoid repeating the CASE in both SELECT and JOIN
 nfmi_with_altsubcode AS (
     SELECT
@@ -40,7 +40,7 @@ nfmi_with_altsubcode AS (
             WHEN CAT.CODE_TABLE_TAGS IS NULL
                 THEN COALESCE(GOV.CODE, CAT.CODE)
             ELSE RTT.CODE
-        END                                               AS ALT_SUBCODE
+        END                                               AS GOVERNMENT_SUBCATEGORY_CODE
     FROM {{ ref('prep_stg_trakcare_ct_nfmi_category') }} AS CAT
     LEFT JOIN {{ ref('prep_stg_trakcare_ct_governsubcat') }} AS GOV
         ON CAST(GOV.ROW_ID AS VARCHAR) = CAST(CAT.GOV_SUB_CATEG_DR AS VARCHAR)
@@ -50,34 +50,34 @@ nfmi_with_altsubcode AS (
 )
 
 SELECT DISTINCT
-    DEP.CODE                                              AS DEP_CODE,
-    NFA.CODE                                              AS NFMI_CODE,
+    DEP.CODE                                              AS DEPARTMENT_CODE,
+    NFA.CODE                                              AS FUNDING_CATEGORY_CODE,
 
-    -- NFMI_Desc with CHSP override
+    -- FUNDING_CATEGORY_DESC with CHSP override
     CASE
         WHEN DEP.CODE = 'CHSP'
             THEN 'Commonwealth Home Support Program'
         ELSE NFA.DESCRIPTION
-    END                                                   AS NFMI_DESC,
+    END                                                   AS FUNDING_CATEGORY_DESC,
 
-    NFA.OWNER                                             AS NFMI_OWNER,
-    NFA.ALT_SUBCODE                                       AS ALT_SUBCODE,
-    NFA.GOV_DESC                                          AS SUB_DESC,
-    NAT.TABLE_NAME                                        AS NATC_TABLE_NAME,
-    NAT.FIELD_NAME                                        AS NATC_FIELD_NAME,
-    NAT.ACTUAL_VALUE                                      AS NATC_ACTUAL_VALUE,
-    NAT.MAPPED_VALUE                                      AS NATC_MAPPED_VALUE,
+    NFA.OWNER                                             AS FUNDING_CATEGORY_OWNER,
+    NFA.GOVERNMENT_SUBCATEGORY_CODE                                       AS GOVERNMENT_SUBCATEGORY_CODE,
+    NFA.GOV_DESC                                          AS GOVERNMENT_SUBCATEGORY_DESC,
+    NAT.TABLE_NAME                                        AS NAITONAL_CODE_TABLE_NAME,
+    NAT.FIELD_NAME                                        AS NATIONAL_CODE_FIELD_NAME,
+    NAT.ACTUAL_VALUE                                      AS NATIONAL_CODE_ACTUAL_VALUE,
+    NAT.MAPPED_VALUE                                      AS NATIONAL_CODE_MAPPED_VALUE,
 
-    -- ARCIC_Desc with overrides
+    -- ITEM_CATEGORY_DESC with overrides
     CASE
         WHEN NFA.CODE = 'IFAMVIO'
             THEN 'IRIS Activity Type'
         WHEN DEP.CODE = 'FVCC'
             THEN 'Family Violence Corrections'
         ELSE OI.DESCRIPTION
-    END                                                   AS ARCIC_DESC,
+    END                                                   AS ITEM_CATEGORY_DESC,
 
-    OI.CODE                                               AS ARCIC_CODE
+    OI.CODE                                               AS ITEM_CATEGORY_CODE
 
 FROM nfmi_with_altsubcode                                 AS NFA
 
@@ -85,7 +85,7 @@ LEFT JOIN {{ ref('prep_stg_trakcare_ct_nfmi_categdepart') }} AS DEP
     ON CAST(DEP.PAR_REF AS NUMBER(18,0)) = CAST(NFA.ROW_ID AS NUMBER(18,0))
 
 INNER JOIN {{ ref('prep_stg_trakcare_pac_reportingtype') }} AS RT
-    ON RT.CODE = NFA.ALT_SUBCODE
+    ON RT.CODE = NFA.GOVERNMENT_SUBCATEGORY_CODE
     AND RT.DATE_TO IS NULL
 
 LEFT JOIN {{ ref('prep_stg_trakcare_pac_nationalcodes') }} AS NAT
