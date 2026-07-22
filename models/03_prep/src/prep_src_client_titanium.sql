@@ -6,7 +6,7 @@ SELECT DISTINCT
     TP.DOB,
     NULL::VARCHAR                                         AS EMAIL,
     TP.MOBILE_PHONE,
-    TP.ADDRESS_1,
+    TP.ADDRESS,
     TP.CITY,
     TP.POSTCODE
 

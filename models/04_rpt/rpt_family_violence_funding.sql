@@ -1,13 +1,13 @@
 WITH ordsubcat_lookup AS (
     SELECT DISTINCT
         MAP.DEPARTMENT_CODE,
-        MAP.ITEM_CATEGORY_DESC,
-        SUBCAT.ARCIM_CODE                                 AS ARCIM_CODE,
-        SUBCAT.ARCIM_DESC                                 AS ARCIM_DESC
+        MAP.ORDER_SUBCATEGORY_DESC,
+        SUBCAT.ORDER_ITEM_CODE                                 AS ORDER_ITEM_CODE,
+        SUBCAT.ORDER_ITEM_DESC                                 AS ORDER_ITEM_DESC
     FROM {{ ref('prep_ref_funding_category_national_code_mapping') }} AS MAP
     INNER JOIN {{ ref('prep_ref_order_item_subcategory_mapping') }} AS SUBCAT
-        ON SUBCAT.ARCIC_CODE = MAP.ITEM_CATEGORY_CODE
-        AND SUBCAT.ARCIC_CODE IS NOT NULL
+        ON SUBCAT.ORDER_SUBCATEGORY = MAP.ORDER_SUBCATEGORY
+        AND SUBCAT.ORDER_SUBCATEGORY IS NOT NULL
     WHERE MAP.FUNDING_CATEGORY_CODE = 'IFAMVIO'
 ),
 
@@ -16,11 +16,11 @@ contacts_with_ordsubcat AS (
         CO.*,
         COALESCE(
             CO.ORD_SUB_CAT,
-            OL.ITEM_CATEGORY_DESC
+            OL.ORDER_SUBCATEGORY_DESC
         )                                                 AS ORD_SUB_CAT_RESOLVED
     FROM {{ ref('prep_src_contact_trakcare') }}           AS CO
     LEFT JOIN ordsubcat_lookup                            AS OL
-        ON OL.ARCIM_DESC = CO.ORD_ITEM
+        ON OL.ORDER_ITEM_DESC = CO.ORD_ITEM
         AND OL.DEPARTMENT_CODE = CO.PROGRAM_STREAM_CODE
 ),
 
@@ -202,7 +202,7 @@ FROM contacts_with_ordsubcat                              AS B
 LEFT JOIN {{ ref('prep_src_episode_trakcare') }}          AS EP
     ON B.EPISODE_ID = EP.EPISODE_ID::VARCHAR
 
-LEFT JOIN {{ ref('prep_src_client_trakcare_sean') }}           AS CL
+LEFT JOIN {{ ref('prep_src_client_trakcare') }}           AS CL
     ON B.UR = CL.UR
 
 LEFT JOIN first_contact_fvcc                              AS FC_FVCC

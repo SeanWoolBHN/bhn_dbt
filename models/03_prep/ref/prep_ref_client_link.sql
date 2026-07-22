@@ -39,7 +39,7 @@ cte_supportability AS (
         'SUPPORTABILITY'                                  AS SRC_SYS,
         SRC_SYS_CLIENT_ID,
         FIRST_NAME || LAST_NAME || CAST(DOB AS VARCHAR)
-            || ADDRESS_1 || CITY || POSTCODE                AS CLIENT_MATCH
+            || ADDRESS || CITY || POSTCODE                AS CLIENT_MATCH
     FROM {{ ref('prep_src_client_supportability') }}
 ),
 
@@ -48,7 +48,7 @@ cte_titanium AS (
         'TITANIUM'                                        AS SRC_SYS,
         SRC_SYS_CLIENT_ID,
         FIRST_NAME || LAST_NAME || CAST(DOB AS VARCHAR)
-            || ADDRESS_1 || CITY || POSTCODE                AS CLIENT_MATCH
+            || ADDRESS || CITY || POSTCODE                AS CLIENT_MATCH
     FROM {{ ref('prep_src_client_titanium') }}
 ),
 

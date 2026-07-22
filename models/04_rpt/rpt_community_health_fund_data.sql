@@ -1,18 +1,18 @@
 WITH funding_source AS (
     -- Pre-compute FundingSource — replaces correlated subquery on NatCodesFundMapping
-    -- Original SSIS: SELECT TOP 1 FUNDING_CATEGORY_DESC WHERE ITEM_CATEGORY_CODE IS NOT NULL
+    -- Original SSIS: SELECT TOP 1 FUNDING_CATEGORY_DESC WHERE ORDER_SUBCATEGORY IS NOT NULL
     --                AND NTC.DEPARTMENT_CODE = a.Program_Stream_Code
-    --                AND LTRIM(RTRIM(NTC.ITEM_CATEGORY_DESC)) = LTRIM(RTRIM(a.OrdSubCat))
+    --                AND LTRIM(RTRIM(NTC.ORDER_SUBCATEGORY_DESC)) = LTRIM(RTRIM(a.OrdSubCat))
     SELECT
         DEPARTMENT_CODE,
-        ITEM_CATEGORY_DESC,
+        ORDER_SUBCATEGORY_DESC,
         FUNDING_CATEGORY_DESC,
         ROW_NUMBER() OVER (
-            PARTITION BY DEPARTMENT_CODE, ITEM_CATEGORY_DESC
-            ORDER BY ITEM_CATEGORY_CODE
+            PARTITION BY DEPARTMENT_CODE, ORDER_SUBCATEGORY_DESC
+            ORDER BY ORDER_SUBCATEGORY
         )                                                 AS RN
     FROM {{ ref('prep_ref_funding_category_national_code_mapping') }}
-    WHERE ITEM_CATEGORY_CODE IS NOT NULL
+    WHERE ORDER_SUBCATEGORY IS NOT NULL
 ),
 
 number_in_group AS (
@@ -249,12 +249,12 @@ base AS (
     LEFT JOIN {{ ref('prep_src_episode_trakcare') }}      AS EP
         ON CO.EPISODE_ID = EP.EPISODE_ID::VARCHAR
 
-    LEFT JOIN {{ ref('prep_src_client_trakcare_sean') }}       AS CL
+    LEFT JOIN {{ ref('prep_src_client_trakcare') }}       AS CL
         ON CO.UR = CL.UR
 
     LEFT JOIN funding_source                              AS FS
         ON FS.DEPARTMENT_CODE = CO.PROGRAM_STREAM_CODE
-        AND TRIM(FS.ITEM_CATEGORY_DESC) = TRIM(CO.ORD_SUB_CAT)
+        AND TRIM(FS.ORDER_SUBCATEGORY_DESC) = TRIM(CO.ORD_SUB_CAT)
         AND FS.RN = 1
 
     LEFT JOIN number_in_group                             AS NIG

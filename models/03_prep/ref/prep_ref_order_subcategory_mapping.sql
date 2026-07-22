@@ -1,23 +1,23 @@
 SELECT
-    IC.CODE                                               AS ARCIC_CODE,
-    IC.DESCRIPTION                                        AS ARCIC_DESC,
+    IC.CODE                                               AS ORDER_SUBCATEGORY,
+    IC.DESCRIPTION                                        AS ORDER_SUBCATEGORY_DESC,
 
     -- Parent category via self-join
-    PARENT.CODE                                           AS CATEGORY,
+    PARENT.CODE                                           AS PARENT_CATEGORY_CODE,
 
     -- Program stream code via CT_NFMI_CATEGDEPART
-    PROG.CODE                                             AS DEP_CODE,
+    PROG.CODE                                             AS DEPARTMENT_CODE,
 
     -- National codes fields
-    NAT.ACTUAL_VALUE                                      AS NATC_ACTUAL_VALUE,
-    NAT.MAPPED_VALUE                                      AS NATC_MAPPED_VALUE,
-    NAT.REPORTING_TYPE_DR                                 AS NATC_REPORTING_TYPE_DR,
+    NAT.ACTUAL_VALUE                                      AS NATIONAL_CODE_ACTUAL_VALUE,
+    NAT.MAPPED_VALUE                                      AS NATIONAL_CODE_MAPPED_VALUE,
+    NAT.REPORTING_TYPE_DR                                 AS REPORTING_TYPE_ID,
 
     -- Reporting type description
-    RT.DESCRIPTION                                        AS REPTYPE_DESC,
+    RT.DESCRIPTION                                        AS REPORTING_TYPE_DESC,
 
     -- Date to from national codes
-    NAT.DATE_TO                                           AS NATC_DATE_TO
+    NAT.DATE_TO                                           AS NATIONAL_CODE_END_DATE
 
 FROM {{ ref('prep_stg_trakcare_arc_itemcat') }}           AS IC
 

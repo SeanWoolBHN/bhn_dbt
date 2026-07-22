@@ -217,10 +217,10 @@ SELECT
     END                                                   AS MAPPED_PROGRAM_STREAM_CODE,
 
     PROG.PROGRAM_STREAM_DESC                              AS PROGRAM_STREAM,
-    PROG.GOVT_CAT_CODE                                    AS PARENT_STREAM,
+    PROG.GOVERNMENT_CATEGORY_CODE                                    AS PARENT_STREAM,
 
     -- Stream — replace en-dash with hyphen per SSIS logic
-    REPLACE(PROG.STREAM, '–', '-')                        AS STREAM,
+    REPLACE(PROG.STREAM_NAME, '–', '-')                        AS STREAM_NAME,
 
     -- DTAU_Stream — placeholder pending confirmation of derivation
     NULL::VARCHAR                                         AS DTAU_STREAM,
@@ -361,7 +361,7 @@ LEFT JOIN {{ ref('prep_src_vadc_form_trakcare') }}        AS FORM
     ON EP.EPISODE_ID = FORM.EPISODE_ID
 
 -- Client demographics
-LEFT JOIN {{ ref('prep_src_client_trakcare_sean') }}           AS CL
+LEFT JOIN {{ ref('prep_src_client_trakcare') }}           AS CL
     ON EP.UR = CL.UR
 
 -- Program stream

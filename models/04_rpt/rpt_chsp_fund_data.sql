@@ -3,27 +3,27 @@ WITH ordsubcat_lookup AS (
     -- Filtered to CHSP program only
     SELECT DISTINCT
         MAP.DEPARTMENT_CODE,
-        MAP.ITEM_CATEGORY_DESC,
-        SUBCAT.ARCIM_DESC                                 AS ARCIM_DESC
+        MAP.ORDER_SUBCATEGORY_DESC,
+        SUBCAT.ORDER_ITEM_DESC                                 AS ORDER_ITEM_DESC
     FROM {{ ref('prep_ref_funding_category_national_code_mapping') }} AS MAP
     INNER JOIN {{ ref('prep_ref_order_item_subcategory_mapping') }} AS SUBCAT
-        ON SUBCAT.ARCIC_CODE = MAP.ITEM_CATEGORY_CODE
-        AND SUBCAT.ARCIC_CODE IS NOT NULL
+        ON SUBCAT.ORDER_SUBCATEGORY = MAP.ORDER_SUBCATEGORY
+        AND SUBCAT.ORDER_SUBCATEGORY IS NOT NULL
     WHERE MAP.DEPARTMENT_CODE = 'CHSP'
-      AND MAP.ITEM_CATEGORY_CODE IS NOT NULL
+      AND MAP.ORDER_SUBCATEGORY IS NOT NULL
 ),
 
 funding_source AS (
     SELECT
         DEPARTMENT_CODE,
-        ITEM_CATEGORY_DESC,
+        ORDER_SUBCATEGORY_DESC,
         FUNDING_CATEGORY_DESC,
         ROW_NUMBER() OVER (
-            PARTITION BY DEPARTMENT_CODE, ITEM_CATEGORY_DESC
-            ORDER BY ITEM_CATEGORY_CODE
+            PARTITION BY DEPARTMENT_CODE, ORDER_SUBCATEGORY_DESC
+            ORDER BY ORDER_SUBCATEGORY
         )                                                 AS RN
     FROM {{ ref('prep_ref_funding_category_national_code_mapping') }}
-    WHERE ITEM_CATEGORY_CODE IS NOT NULL
+    WHERE ORDER_SUBCATEGORY IS NOT NULL
 ),
 
 contacts_with_ordsubcat AS (
@@ -31,11 +31,11 @@ contacts_with_ordsubcat AS (
         CO.*,
         COALESCE(
             CO.ORD_SUB_CAT,
-            OL.ITEM_CATEGORY_DESC
+            OL.ORDER_SUBCATEGORY_DESC
         )                                                 AS ORD_SUB_CAT_RESOLVED
     FROM {{ ref('prep_src_contact_trakcare') }}           AS CO
     LEFT JOIN ordsubcat_lookup                            AS OL
-        ON OL.ARCIM_DESC = CO.ORD_ITEM
+        ON OL.ORDER_ITEM_DESC = CO.ORD_ITEM
         AND OL.DEPARTMENT_CODE = CO.PROGRAM_STREAM_CODE
 ),
 
@@ -270,12 +270,12 @@ FROM contacts_with_ordsubcat                              AS CO
 LEFT JOIN {{ ref('prep_src_episode_trakcare') }}          AS EP
     ON CAST(CO.EPISODE_ID AS VARCHAR) = CAST(EP.EPISODE_ID AS VARCHAR)
 
-LEFT JOIN {{ ref('prep_src_client_trakcare_sean') }}           AS CL
+LEFT JOIN {{ ref('prep_src_client_trakcare') }}           AS CL
     ON CO.UR = CL.UR
 
 LEFT JOIN funding_source                                  AS FS
     ON FS.DEPARTMENT_CODE = CO.PROGRAM_STREAM_CODE
-    AND TRIM(FS.ITEM_CATEGORY_DESC) = TRIM(CO.ORD_SUB_CAT_RESOLVED)
+    AND TRIM(FS.ORDER_SUBCATEGORY_DESC) = TRIM(CO.ORD_SUB_CAT_RESOLVED)
     AND FS.RN = 1
 
 LEFT JOIN number_in_group                                 AS NIG

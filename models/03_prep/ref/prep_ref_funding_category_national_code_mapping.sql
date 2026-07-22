@@ -61,7 +61,7 @@ SELECT DISTINCT
     END                                                   AS FUNDING_CATEGORY_DESC,
 
     NFA.OWNER                                             AS FUNDING_CATEGORY_OWNER,
-    NFA.GOVERNMENT_SUBCATEGORY_CODE                                       AS GOVERNMENT_SUBCATEGORY_CODE,
+    NFA.GOVERNMENT_SUBCATEGORY_CODE                       AS GOVERNMENT_SUBCATEGORY_CODE,
     NFA.GOV_DESC                                          AS GOVERNMENT_SUBCATEGORY_DESC,
     NAT.TABLE_NAME                                        AS NAITONAL_CODE_TABLE_NAME,
     NAT.FIELD_NAME                                        AS NATIONAL_CODE_FIELD_NAME,
@@ -75,9 +75,9 @@ SELECT DISTINCT
         WHEN DEP.CODE = 'FVCC'
             THEN 'Family Violence Corrections'
         ELSE OI.DESCRIPTION
-    END                                                   AS ITEM_CATEGORY_DESC,
+    END                                                   AS ORDER_SUBCATEGORY_DESC,
 
-    OI.CODE                                               AS ITEM_CATEGORY_CODE
+    OI.CODE                                               AS ORDER_SUBCATEGORY
 
 FROM nfmi_with_altsubcode                                 AS NFA
 

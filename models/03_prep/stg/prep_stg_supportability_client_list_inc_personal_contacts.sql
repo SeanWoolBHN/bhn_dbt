@@ -7,7 +7,7 @@ SELECT
     UPPER(TRIM(GENDER))                             AS GENDER,
     {{ format_name('REGION') }}                     AS REGION,
     {{ format_name('SUBURB') }}                     AS CITY,
-    {{ format_address('ADDRESS') }}                    AS ADDRESS_1,
+    {{ format_address('ADDRESS') }}                 AS ADDRESS,
     {{ format_name('LANGUAGE') }}                   AS LANGUAGE,
     CAST(TRIM(POSTCODE) AS TEXT)                    AS POSTCODE,
     TRIM(RELATIONSHIP)                              AS RELATIONSHIP,

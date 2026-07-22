@@ -18,10 +18,10 @@ SELECT
           OR DEP.CODE LIKE 'SEMPHN%'                    THEN 'Mental Health'
         WHEN DEP.CODE LIKE 'HCP%'                       THEN 'Home Care Package'
         ELSE LTRIM(DEP.DESCRIPTION)
-    END                                                 AS STREAM,
+    END                                                 AS STREAM_NAME,
 
     -- Government category code
-    CAT.CODE                                            AS GOVT_CAT_CODE,
+    CAT.CODE                                            AS GOVERNMENT_CATEGORY_CODE,
 
     -- Funding body derived from program code
     CASE
@@ -67,7 +67,7 @@ SELECT
     CASE
         WHEN DEP.CODE LIKE 'HACC%' THEN TRUE
         ELSE FALSE
-    END                                                 AS AGE_SPLIT_APPLIES
+    END                                                 AS IS_AGE_SPLIT_APPLIES
 
 FROM {{ ref('prep_stg_trakcare_ct_nfmi_categdepart') }} AS DEP
 

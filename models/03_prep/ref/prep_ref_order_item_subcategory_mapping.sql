@@ -1,10 +1,10 @@
 SELECT
-    IC.ROW_ID                                             AS ARCIC_ROWID,
-    IC.CODE                                               AS ARCIC_CODE,
-    IC.DESCRIPTION                                        AS ARCIC_DESC,
-    IM.CODE                                               AS ARCIM_CODE,
-    IM.DESCRIPTION                                        AS ARCIM_DESC,
-    PROG.CODE                                             AS DEP_CODE
+    IC.ROW_ID                                             AS ORDER_SUBCATEGORY_ID,
+    IC.CODE                                               AS ORDER_SUBCATEGORY,
+    IC.DESCRIPTION                                        AS ORDER_SUBCATEGORY_DESC,
+    IM.CODE                                               AS ORDER_ITEM_CODE,
+    IM.DESCRIPTION                                        AS ORDER_ITEM_DESC,
+    PROG.CODE                                             AS DEPARTMENT_CODE
 
 FROM {{ ref('prep_stg_trakcare_arc_itmmast') }}           AS IM
 
