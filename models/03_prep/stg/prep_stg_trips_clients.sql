@@ -12,7 +12,7 @@ SELECT
     TRIM(DVANUM)                                   AS DVA_NO,
     TRIM(MAPREF)                                   AS MAP_REF,
     {{ format_name('PAIDBY') }}                    AS PAID_BY,
-    {{ format_name('STREET') }}                    AS STREET,
+    {{ format_address('STREET') }}                 AS STREET,
     TRIM(COMMENT)                                  AS COMMENT,
     TRIM(PROFILE)                                  AS PROFILE,
     TRIM(SPECIAL)                                  AS IS_SPECIAL,

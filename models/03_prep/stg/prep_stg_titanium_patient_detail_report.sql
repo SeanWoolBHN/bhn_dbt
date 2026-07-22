@@ -9,7 +9,7 @@ SELECT
     TRIM(ABORIGINALITY)                             AS ATSI,
     TRIM(REFUGEE)                                   AS REFUGEE,
     TRIM(ASYLUMSEEKER)                              AS ASYLUM_SEEKER_FLAG,
-    {{ format_name('ADDRESS') }}                    AS ADDRESS_1,
+    {{ format_address('ADDRESS') }}                    AS ADDRESS_1,
     {{ format_name('SUBURB') }}                     AS CITY,
     TRIM(POSTCODE)                                  AS POSTCODE,
     {{ format_phone('HOMEPHONE') }}                 AS HOME_PHONE,

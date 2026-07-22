@@ -62,7 +62,7 @@ cte_trips AS (
 )
 
 SELECT DISTINCT
-    MD5(COALESCE(
+    SHA1(COALESCE(
         TC.CLIENT_MATCH,
         BP.CLIENT_MATCH,
         EC.CLIENT_MATCH,

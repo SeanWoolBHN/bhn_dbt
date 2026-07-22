@@ -4,7 +4,7 @@ SELECT
     {{ format_name('PAPER_NAME') }}                                           AS LAST_NAME,
     {{ format_name('PAPER_NAME2') }}                                          AS FIRST_NAME,
     {{ format_name('PAPER_NAME3') }}                                          AS MIDDLE_NAME,
-    NULLIF(TRIM(PAPER_NAME4), 'NULL')                                         AS NAME_4,
+    {{ format_name('PAPER_NAME4') }}                                          AS NAME_4,
     {{ format_name('PAPER_SURNAME') }}                                        AS SURNAME,
     PAPER_DOB                                                                 AS DOB,
     NULLIF(TRIM(PAPER_ESTDOB), 'NULL')                                        AS EST_DOB,
