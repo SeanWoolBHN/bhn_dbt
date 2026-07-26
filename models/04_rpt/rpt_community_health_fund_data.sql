@@ -1,8 +1,4 @@
 WITH funding_source AS (
-    -- Pre-compute FundingSource — replaces correlated subquery on NatCodesFundMapping
-    -- Original SSIS: SELECT TOP 1 FUNDING_CATEGORY_DESC WHERE ORDER_SUBCATEGORY IS NOT NULL
-    --                AND NTC.DEPARTMENT_CODE = a.Program_Stream_Code
-    --                AND LTRIM(RTRIM(NTC.ORDER_SUBCATEGORY_DESC)) = LTRIM(RTRIM(a.OrdSubCat))
     SELECT
         DEPARTMENT_CODE,
         ORDER_SUBCATEGORY_DESC,
@@ -16,9 +12,6 @@ WITH funding_source AS (
 ),
 
 number_in_group AS (
-    -- Pre-compute group contact counts — replaces correlated subquery on Contacts
-    -- Original SSIS: COUNT(RowId) WHERE Ev_Number IS NOT NULL AND direct > 0
-    --                GROUP BY Ev_Name, contactdatetime, Program_Stream_Desc
     SELECT
         EV_NAME,
         CONTACT_DATE_TIME,
@@ -35,76 +28,80 @@ number_in_group AS (
 
 base AS (
     SELECT
+        -- ── Legacy org ──────────────────────────────────────────────
+        1                                                 AS LEGACY_ORGANISATION_ID,
+        'Star Health'                                     AS LEGACY_ORGANISATION_NAME,
+
         -- ── Client demographics ─────────────────────────────────────
-        CL.AGE                                            AS AGE,
+        CL.AGE,
 
         -- ── Episode fields ──────────────────────────────────────────
-        EP.REF_REC_DT                                     AS REF_REC_DT,
-        EP.REF_CREATE_DT                                  AS REF_CREATE_DT,
-        EP.EPISODE_DT                                     AS EPISODE_DT,
-        EP.INT_REF_TEAM                                   AS INT_REF_TEAM,
-        EP.REFERRAL_ORG                                   AS REFERRAL_ORG,
-        EP.REF_SOURCE                                     AS REF_SOURCE,
-        EP.REF_TYPE                                       AS REF_TYPE,
+        EP.REF_REC_DT,
+        EP.REF_CREATE_DT,
+        EP.EPISODE_DT,
+        EP.INT_REF_TEAM,
+        EP.REFERRAL_ORG,
+        EP.REF_SOURCE,
+        EP.REF_TYPE,
         EP.DATA_COLLECTION_CONSENT                        AS DAT_COLLECTION_CONSENT,
-        EP.CONSENT_TO_REFERRAL                            AS CONSENT_TO_REFERRAL,
-        EP.REFERRAL_REASON                                AS REFERRAL_REASON,
-        EP.EPISODE_TEAM                                   AS EPISODE_TEAM,
-        EP.EPISODE_CP                                     AS EPISODE_CP,
-        EP.SERVICE                                        AS SERVICE,
-        NULL::VARCHAR                                     AS REFERRAL_STATUS,
-        NULL::VARCHAR                                     AS REF_PRIORITY,
-        EP.EPISODE_ACTIVE                                 AS EPISODE_ACTIVE,
-        EP.DAYS_OPEN                                      AS DAYS_OPEN,
-        EP.EXT_REQUESTOR_NAME                             AS EXT_REQUESTOR_NAME,
-        EP.DISCHARGE_DT                                   AS DISCHARGE_DT,
-        EP.REFERRAL_DESTINATION                           AS REFERRAL_DESTINATION,
+        EP.CONSENT_TO_REFERRAL,
+        EP.REFERRAL_REASON,
+        EP.EPISODE_TEAM,
+        EP.EPISODE_CP,
+        EP.SERVICE,
+        EP.REFERRAL_STATUS,
+        EP.REF_PRIORITY,
+        EP.EPISODE_ACTIVE,
+        EP.DAYS_OPEN,
+        EP.EXT_REQUESTOR_NAME,
+        EP.DISCHARGE_DT,
+        EP.REFERRAL_DESTINATION,
 
         -- ── Contact identity ────────────────────────────────────────
-        CO.CONTACT_ID                                     AS CONTACT_ID,
+        CO.CONTACT_ID                                     AS ROW_ID,
+        'SH' || CO.CONTACT_ID::VARCHAR                    AS IROW_ID,
+        'SH' || CO.UR::VARCHAR                            AS IUR,
+        'SH' || CO.EPISODE_ID::VARCHAR                    AS IEPISODE,
 
-        NULL::VARCHAR                                     AS REQUEST_STATUS,
-        NULL::VARCHAR                                     AS ORDER_STATUS,
+        -- ── Status ──────────────────────────────────────────────────
+        CO.REQUEST_STATUS,
+        CO.ORDER_STATUS,
 
         -- ── Contact fields ──────────────────────────────────────────
-        'ANON_CLIENT_ORG'                                 AS ANON_CLIENT_ORG,
-        NULL::VARCHAR                                     AS ANON_CLIENT_TYPE,
-        NULL::VARCHAR                                     AS CONTACT_SEX,
-        CO.ENQ_CONTACT_NAME                               AS ENQ_CONTACT_NAME,
-        EP.PRESENTING_ISSUE                               AS PRESENTING_ISSUE,
-        'ENQ_ACTION_DETAILS'                              AS ENQ_ACTION_DETAILS,
+        CO.ANON_CLIENT_ORG,
+        CO.ANON_CLIENT_TYPE,
+        CO.CONTACT_SEX,
+        CO.ENQ_CONTACT_NAME,
+        EP.PRESENTING_ISSUE,
+        CO.ACTION_DETAILS                                 AS ENQ_ACTION_DETAILS,
 
-        -- ── CP coalesce — matches ISNULL(ISNULL(CP, EpisodeCP), 'Unknown')
+        -- ── CP ──────────────────────────────────────────────────────
         COALESCE(
-            NULLIF(CO.CARE_PROVIDER, ''),
+            NULLIF(CO.CP, ''),
             NULLIF(EP.EPISODE_CP, ''),
             'Unknown'
-        )                                                 AS CARE_PROVIDER,
+        )                                                 AS CP,
 
-        -- ── Location / hospital ─────────────────────────────────────
-        CO.LOCATION                                       AS LOCATION,
-        CO.HOSPITAL                                       AS HOSPITAL,
+        -- ── Location ────────────────────────────────────────────────
+        CO.LOCATION,
+        CO.HOSPITAL,
+        CO.CONTACT_METHOD,
+        CO.DELIVERY_MODE,
+        CO.DATE_ENTERED,
 
-        -- ── Contact method — pending PAC_ContMethod ─────────────────
-        NULL::VARCHAR                                     AS CONTACT_METHOD,
-        NULL::VARCHAR                                     AS DELIVERY_MODE,
-
-        -- ── Dates ───────────────────────────────────────────────────
-        CO.DATE_ENTERED                                   AS DATE_ENTERED,
-
-        -- ── Hours / distance — matches ISNULL(x/60, 0.00) ──────────
+        -- ── Hours ───────────────────────────────────────────────────
         COALESCE(CO.DIRECT_MINUTES / 60, 0.00)            AS DIRECT_HOURS,
         COALESCE(CO.INDIRECT_MINUTES / 60, 0.00)          AS INDIRECT_HOURS,
         COALESCE(CO.TRAVEL_MINUTES / 60, 0.00)            AS TRAVEL,
         COALESCE(CO.KM, 0.00)                             AS DISTANCE_TRAVELED,
-        CO.INTERPRETER                                    AS INTERPRETER,
+        CO.INTERPRETER,
 
-        -- ── Payor / plan — pending PA_ADMINSURANCE ──────────────────
-        NULL::VARCHAR                                     AS PAYOR,
-        NULL::VARCHAR                                     AS PLAN,
+        -- ── Payor / plan ────────────────────────────────────────────
+        CO.PAYOR,
+        CO.PLAN,
 
         -- ── Program stream ──────────────────────────────────────────
-        CO.PROGRAM_STREAM_CODE                            AS PROGRAM_STREAM_CODE,
+        CO.PROGRAM_STREAM_CODE,
         CASE
             WHEN CO.PROGRAM_STREAM_CODE = 'CHPDCHP'
                 THEN 'Community Health Program'
@@ -120,8 +117,7 @@ base AS (
             WHEN CO.PROGRAM_STREAM_CODE = 'CHPDCHP' THEN
                 CASE
                     WHEN CO.HOSPITAL IN (
-                        'Child Health Team',
-                        'Child Development Service',
+                        'Child Health Team', 'Child Development Service',
                         'Child and Family Services'
                     )   THEN 'Child Health'
                     WHEN (
@@ -154,17 +150,15 @@ base AS (
                         CO.LOCATION NOT ILIKE '%Paed%'
                         OR CO.LOCATION NOT ILIKE '%CFS%'
                     ) AND CO.ORD_SUB_CAT IN (
-                        'Podiatry', 'Physiotherapy_DHS',
-                        'Occupational Therapy', 'Dietetics',
-                        'Diabetes Education'
+                        'Podiatry', 'Physiotherapy_DHS', 'Occupational Therapy',
+                        'Dietetics', 'Diabetes Education'
                     )   THEN REPLACE(CO.ORD_SUB_CAT, '_DHS', '')
                     WHEN CO.HOSPITAL IN (
                         'Allied Health', 'Podiatry', 'Physiotherapy',
                         'Occupational Therapy', 'Dietetics', 'Coordinator'
                     ) AND CO.ORD_SUB_CAT IN (
-                        'Podiatry', 'Physiotherapy_DHS',
-                        'Occupational Therapy', 'Dietetics',
-                        'Client Care Co-ordination'
+                        'Podiatry', 'Physiotherapy_DHS', 'Occupational Therapy',
+                        'Dietetics', 'Client Care Co-ordination'
                     )   THEN REPLACE(CO.ORD_SUB_CAT, '_DHS', '')
                     WHEN CO.HOSPITAL = 'AHA'
                       AND (
@@ -184,7 +178,7 @@ base AS (
         END                                               AS ALLIED_HEALTH_SUB_PROGRAM,
 
         -- ── Funding source ──────────────────────────────────────────
-        FS.FUNDING_CATEGORY_DESC                                      AS FUNDING_SOURCE,
+        FS.FUNDING_CATEGORY_DESC                          AS FUNDING_SOURCE,
 
         -- ── Validity ────────────────────────────────────────────────
         CASE
@@ -192,56 +186,47 @@ base AS (
               AND CO.ORD_SUB_CAT IN (
                 'Intake Worker', 'Podiatry', 'Physiotherapy_DHS',
                 'Occupational Therapy', 'Nursing', 'Counselling',
-                'Dietetics', 'Speech Pathology',
-                'Client Care Co-ordination', 'Youth Worker',
-                'Primary Community Health worker'
+                'Dietetics', 'Speech Pathology', 'Client Care Co-ordination',
+                'Youth Worker', 'Primary Community Health worker'
               ) THEN 'Valid'
             WHEN CO.PROGRAM_STREAM_CODE = 'CHPDICDM'
               AND CO.ORD_SUB_CAT IN (
                 'Intake Worker', 'Podiatry', 'Physiotherapy_DHS',
                 'Occupational Therapy', 'Nursing', 'Counselling',
                 'Dietetics', 'Speech Pathology', 'Diabetes Education',
-                'Client Care Co-ordination', 'Youth Worker',
-                'Social Worker', 'Primary Community Health worker'
+                'Client Care Co-ordination', 'Youth Worker', 'Social Worker',
+                'Primary Community Health worker'
               ) THEN 'Valid'
             WHEN TRIM(CO.PROGRAM_STREAM_CODE) = 'CHPDIHS'
               AND CO.ORD_SUB_CAT IN (
                 'Intake Worker', 'Nursing', 'Counselling',
-                'Client Care Co-ordination', 'Youth Worker',
-                'Social Worker'
+                'Client Care Co-ordination', 'Youth Worker', 'Social Worker'
               ) THEN 'Valid'
             ELSE 'Invalid'
         END                                               AS VALIDITY,
 
-        -- ── Order / contact reference ────────────────────────────────
-        CO.STO                                            AS STO,
-        CO.OEORDI_REF                                     AS OEORDI_REF,
-        CO.ORD_ITEM                                       AS ORD_ITEM,
-        CO.ORD_SUB_CAT                                    AS ORD_SUB_CAT,
-        CO.INTERVENTIONS                                  AS INTERVENTIONS,
-        CO.CONTACT_TYPE                                   AS CONTACT_TYPE,
-
-        -- ── Contact dates ───────────────────────────────────────────
+        -- ── Order reference ─────────────────────────────────────────
+        CO.STO,
+        CO.OEORDI_REF,
+        CO.OEORDI_REF                                AS ENQ_OEORDITEM_DR,
+        CO.ORD_ITEM,
+        CO.ORD_SUB_CAT,
+        CO.INTERVENTIONS,
+        CO.CONTACT_TYPE,
         CO.CONTACT_DATE                                   AS CONTACT_DT,
-        CO.CONTACT_DATE_TIME                              AS CONTACT_DATE_TIME,
-
-        -- ── Group event fields ──────────────────────────────────────
+        CO.CONTACT_DATE_TIME,
         CO.RB_EVENT_DR                                    AS ENQ_RBEVENT_DR,
-        CO.EV_NUMBER                                      AS EV_NUMBER,
-        CO.EV_NAME                                        AS EV_NAME,
-        CO.EVT_DESC                                       AS EVT_DESC,
+        CO.EV_NUMBER,
+        CO.EV_NAME,
+        CO.EVT_DESC,
         CO.EVST_SUB_DESC                                  AS GOVERNMENT_SUBCATEGORY_DESC,
-        CO.EV_VENUE                                       AS EV_VENUE,
-        CO.EV_DURATION                                    AS EV_DURATION,
-        CO.EV_PREPARATION_TIME                            AS EV_PREPARATION_TIME,
-        CO.EV_MAX_NUMBER_OF_PARTICIPANTS                   AS EV_MAX_NUMBER_OF_PARTICIPANTS,
-
-        -- ── Number in group ─────────────────────────────────────────
+        CO.EV_VENUE,
+        CO.EV_DURATION,
+        CO.EV_PREPARATION_TIME,
+        CO.EV_MAX_NUMBER_OF_PARTICIPANTS,
         NIG.NO_CONTACTS                                   AS NUMBER_IN_GROUP,
-
-        -- ── Reporting quarter / UR / episode ────────────────────────
-        CO.REPORTING_QTR                                  AS REPORTING_QTR,
-        CO.UR                                             AS UR,
+        CO.REPORTING_QTR,
+        CO.UR,
         CO.EPISODE_ID                                     AS EPISODE
 
     FROM {{ ref('prep_src_contact_trakcare') }}           AS CO
@@ -262,15 +247,16 @@ base AS (
         AND NIG.CONTACT_DATE_TIME = CO.CONTACT_DATE_TIME
         AND NIG.PROGRAM_STREAM_DESC = CO.PROGRAM_STREAM_DESC
 
-    WHERE LEFT(CO.REPORTING_QTR, 4)::NUMBER >= 2020
-      AND (CO.PROGRAM_STREAM_CODE ILIKE 'CHP%'
-           OR CO.PROGRAM_STREAM_CODE IS NULL)
-      AND CO.HOSPITAL NOT IN (
-          'Carer Respite', 'Social Support Groups', 'Midwifery'
+    WHERE TRY_TO_NUMBER(LEFT(CO.REPORTING_QTR, 4)) >= 2020
+      AND (CO.PROGRAM_STREAM_CODE ILIKE 'CHP%' OR CO.PROGRAM_STREAM_CODE IS NULL)
+      AND (
+          CO.ORDER_STATUS = 'Executed'
+          OR CO.REQUEST_STATUS = 'completed'
+          OR (CO.ORDER_STATUS IS NULL AND CO.REQUEST_STATUS IS NULL)
       )
+      AND CO.HOSPITAL NOT IN ('Carer Respite', 'Social Support Groups', 'Midwifery')
 )
 
--- ── Outer STREAM derivation — matches original SSIS outer SELECT ─────
 SELECT
     *,
     CASE

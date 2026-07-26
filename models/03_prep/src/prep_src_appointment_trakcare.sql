@@ -1,4 +1,5 @@
 WITH booked_by AS (
+    -- Pre-compute to avoid correlated subquery limitation in Snowflake views
     SELECT ROW_ID, NAME
     FROM {{ ref('prep_stg_trakcare_ss_user') }}
 )
@@ -6,9 +7,8 @@ WITH booked_by AS (
 SELECT
 
     APPT.ROW_ID                                           AS APPOINTMENT_ID,
-    PAT.PATIENT_NO                                        AS UR,
-    ADM.ADM_NO                                            AS EPISODE_ID,
-    APPT.ADM_DR                                           AS EPISODE_DR_RAW,
+    PAT.PATIENT_NO::VARCHAR                               AS UR,
+    ADM.ADM_NO::VARCHAR                                   AS EPISODE,
     APPT.OE_ORI_DR                                        AS OEORDI_REF,
 
     -- ── Appointment type ────────────────────────────────────────────
@@ -35,32 +35,36 @@ SELECT
         ELSE 'Onsite Appointment'
     END                                                   AS HOME,
 
-    -- ── Appointment dates and times ─────────────────────────────────
-    APPT.BOOKED_DATE                                      AS BOOKED_DATE,
-    APPT.BOOKED_TIME                                      AS BOOKED_TIME,
-    TO_TIMESTAMP(
-        APPT.BOOKED_DATE::VARCHAR || ' ' || APPT.BOOKED_TIME::VARCHAR
-    )                                                     AS BOOKED_DATE_TIME,
+    -- ── Appointment details ─────────────────────────────────────────
+    APPT.REMARKS                                          AS REMARKS,
+    APPT.CUSTOM_TEXT_1                                    AS INTERPRETER_BOOKING_REF,
+    APPT.CUSTOM_TEXT_2                                    AS CUSTOM_TEXT_2,
+    APPT.CUSTOM_TEXT_3                                    AS CUSTOM_TEXT_3,
+    APPT.DOCTOR_LETTER_NOTES                              AS INTERPRETER_NOTES,
+    APPT.DURATION                                         AS DURATION_MINUTES,
+
+    -- ── Dates and times ─────────────────────────────────────────────
     APPT.COMPLETION_DATE                                  AS APPT_DATE,
     APPT.COMPLETION_TIME                                  AS COMPLETION_TIME,
-    TO_TIMESTAMP(
+    TRY_TO_TIMESTAMP(
         APPT.COMPLETION_DATE::VARCHAR || ' ' || APPT.COMPLETION_TIME::VARCHAR
     )                                                     AS APPT_DATE_TIME,
     APPT.ARRIVAL_DATE                                     AS ARRIVAL_DATE,
     APPT.ARRIVAL_TIME                                     AS ARRIVAL_TIME,
-    TO_TIMESTAMP(
+    TRY_TO_TIMESTAMP(
         APPT.COMPLETION_DATE::VARCHAR || ' ' || APPT.ARRIVAL_TIME::VARCHAR
     )                                                     AS ARRIVAL_DATE_TIME,
     APPT.END_DATE                                         AS END_DATE,
     APPT.END_TIME                                         AS END_TIME,
-    APPT.DURATION                                         AS DURATION_MINUTES,
 
-    -- ── Care provider / resource / team ─────────────────────────────
+    -- ── Item category ───────────────────────────────────────────────
+    IC.DESCRIPTION                                        AS ITEM_CAT,
+
+    -- ── Resource / team / CP ────────────────────────────────────────
     RES.DESCRIPTION                                       AS CARE_PROVIDER_RESOURCE,
     RES.ROW_ID                                            AS CARE_PROVIDER_RESOURCE_ID,
     LOC.DESCRIPTION                                       AS TEAM,
     CP.DESCRIPTION                                        AS CARE_PROVIDER,
-    APPT.LOC_DR                                           AS LOCATION_DR_RAW,
 
     -- ── Consultation category ───────────────────────────────────────
     CASE
@@ -71,37 +75,18 @@ SELECT
 
     -- ── Booked by ───────────────────────────────────────────────────
     BB.NAME                                               AS BOOKED_BY,
-
-    -- ── Item category ───────────────────────────────────────────────
-    IC.DESCRIPTION                                        AS ITEM_CAT,
+    APPT.BOOKED_DATE                                      AS BOOKED_DATE,
+    APPT.BOOKED_TIME                                      AS BOOKED_TIME,
+    TRY_TO_TIMESTAMP(
+        APPT.BOOKED_DATE::VARCHAR || ' ' || APPT.BOOKED_TIME::VARCHAR
+    )                                                     AS BOOKED_DATE_TIME,
 
     -- ── Service category ────────────────────────────────────────────
     SER.DESCRIPTION                                       AS SERVICE_CATEGORY,
 
-    -- ── Cancellation ────────────────────────────────────────────────
-    RFC.DESCRIPTION                                       AS CANCEL_REASON,
-    RFC.CODE                                              AS CANCEL_REASON_CODE,
-    RFC.INITIATOR                                         AS CANCEL_INITIATOR,
-    APPT.CANCEL_DATE                                      AS CANCEL_DATE,
-    APPT.CANCEL_TIME                                      AS CANCEL_TIME,
-    TO_TIMESTAMP(
-        APPT.CANCEL_DATE::VARCHAR || ' ' || APPT.CANCEL_TIME::VARCHAR
-    )                                                     AS CANCELLED_DATE_TIME,
-
-    -- ── Did not attend ──────────────────────────────────────────────
-    RNS.DESCRIPTION                                       AS DNA_REASON,
-    RNS.CODE                                              AS DNA_REASON_CODE,
-
-    -- ── Transport ───────────────────────────────────────────────────
-    APTR.DESCRIPTION                                      AS TRANSPORT_TYPE,
-    APTR.CODE                                             AS TRANSPORT_CODE,
-    APPT.TRANSPORT_REQUIRED                               AS TRANSPORT_REQUIRED,
-    APPT.TRANSPORT_COMMENTS                               AS TRANSPORT_COMMENTS,
-    APPT.TRANS_DATE                                       AS TRANS_DATE,
-    TO_TIMESTAMP(
-        APPT.TRANS_DATE::VARCHAR || ' ' || APPT.TRANS_TIME::VARCHAR
-    )                                                     AS TRANS_DATE_TIME,
-    TU.NAME                                               AS TRANSPORT_USER,
+    -- ── Program stream — now wired via OE_ORDITEM → OE_ORDITEM2 → CT_NFMI_CATEGDEPART
+    PROG.CODE                                             AS PROGRAM_STREAM_CODE,
+    PROG.DESCRIPTION                                      AS PROGRAM_STREAM,
 
     -- ── Group event ─────────────────────────────────────────────────
     APPT.RB_EVENT_DR                                      AS APPT_RBEVENT_DR,
@@ -120,20 +105,34 @@ SELECT
     -- ── Interpreter ─────────────────────────────────────────────────
     APPT.INTERPRETER_REQUIRED                             AS INTERPRETER_REQUIRED,
     APPT.INTERPRETER_CONFIRMED                            AS INTERPRETER_CONFIRMED,
-    APPT.CUSTOM_TEXT_1                                    AS INTERPRETER_BOOKING_REF,
-    APPT.CUSTOM_TEXT_2                                    AS CUSTOM_TEXT_2,
-    APPT.CUSTOM_TEXT_3                                    AS CUSTOM_TEXT_3,
-    APPT.DOCTOR_LETTER_NOTES                              AS INTERPRETER_NOTES,
     LANG.DESCRIPTION                                      AS LANGUAGES,
+
+    -- ── Cancellation ────────────────────────────────────────────────
+    RFC.DESCRIPTION                                       AS CANCEL_REASON,
+    RFC.CODE                                              AS CANCEL_REASON_CODE,
+    APPT.CANCEL_DATE                                      AS CANCEL_DATE,
+    APPT.CANCEL_TIME                                      AS CANCEL_TIME,
+    TRY_TO_TIMESTAMP(
+        APPT.CANCEL_DATE::VARCHAR || ' ' || APPT.CANCEL_TIME::VARCHAR
+    )                                                     AS CANCELLED_DATE_TIME,
+
+    -- ── Did not attend ──────────────────────────────────────────────
+    RNS.DESCRIPTION                                       AS DNA_REASON,
+    RNS.CODE                                              AS DNA_REASON_CODE,
+
+    -- ── Transport ───────────────────────────────────────────────────
+    APTR.DESCRIPTION                                      AS TRANSPORT_TYPE,
+    APPT.TRANSPORT_REQUIRED                               AS TRANSPORT_REQUIRED,
+    APPT.TRANSPORT_COMMENTS                               AS TRANSPORT_COMMENTS,
+    APPT.TRANS_DATE                                       AS TRANS_DATE,
+    TRY_TO_TIMESTAMP(
+        APPT.TRANS_DATE::VARCHAR || ' ' || APPT.TRANS_TIME::VARCHAR
+    )                                                     AS TRANS_DATE_TIME,
+    TU.NAME                                               AS TRANSPORT_USER,
 
     -- ── Misc flags ──────────────────────────────────────────────────
     APPT.PATIENT_NOT_ATTENDING                            AS PATIENT_NOT_ATTENDING,
     APPT.FIRST_APPT_FLAG                                  AS FIRST_APPOINTMENT_FLAG,
-    APPT.REMARKS                                          AS REMARKS,
-
-    -- ── Program stream — OE_OrdItem2 not yet in Snowflake ───────────
-    NULL::VARCHAR                                         AS PROGRAM_STREAM_CODE,
-    NULL::VARCHAR                                         AS PROGRAM_STREAM,
 
     -- ── Financial year quarter ──────────────────────────────────────
     CASE
@@ -160,21 +159,26 @@ SELECT
 
 FROM {{ ref('prep_stg_trakcare_rb_appointment') }}        AS APPT
 
--- Patient
-LEFT JOIN {{ ref('prep_stg_trakcare_pa_patmas') }}        AS PAT
-    ON APPT.PATIENT_DR = PAT.PATIENT_ID
-
--- Episode
+-- Episode — per SSIS: APPT_Adm_DR = PAADM_RowID
 LEFT JOIN {{ ref('prep_stg_trakcare_pa_adm') }}           AS ADM
     ON APPT.ADM_DR = ADM.ADM_ID
 
--- Resource / CP / team
-LEFT JOIN {{ ref('prep_stg_trakcare_rb_resource') }}      AS RES
-    ON APPT.AT_DR = RES.ROW_ID
+-- Patient — per SSIS: PAADM_PAPMI_DR = PAPMI_RowId1
+LEFT JOIN {{ ref('prep_stg_trakcare_pa_patmas') }}        AS PAT
+    ON ADM.PATIENT_DR = PAT.PATIENT_ID
 
+-- Appointment schedule → resource (INNER JOIN per SSIS)
+LEFT JOIN {{ ref('prep_stg_trakcare_rb_apptschedule') }}  AS SCHED
+    ON APPT.AS_PAR_REF = SCHED.ROW_ID
+
+INNER JOIN {{ ref('prep_stg_trakcare_rb_resource') }}     AS RES
+    ON SCHED.RES_PAR_REF = RES.ROW_ID
+
+-- Location via resource
 LEFT JOIN {{ ref('prep_stg_trakcare_ct_loc') }}           AS LOC
     ON RES.CT_LOC_DR = LOC.ROW_ID
 
+-- Care provider via resource
 LEFT JOIN {{ ref('prep_stg_trakcare_ct_careprov') }}      AS CP
     ON CAST(RES.CT_PCP_DR AS VARCHAR) = CAST(CP.ROW_ID AS VARCHAR)
 
@@ -186,7 +190,17 @@ LEFT JOIN {{ ref('prep_stg_trakcare_arc_itmmast') }}      AS IM
     ON CAST(SER.ARCIM_DR AS VARCHAR) = CAST(IM.ROW_ID AS VARCHAR)
 
 LEFT JOIN {{ ref('prep_stg_trakcare_arc_itemcat') }}      AS IC
-    ON CAST(IM.ITEM_CAT_DR AS NUMBER(18,0)) = IC.ROW_ID
+    ON IM.ITEM_CAT_DR = IC.ROW_ID
+
+-- Program stream — per SSIS: APPT_OEORI_DR → OE_ORDITEM → OE_ORDITEM2 → CT_NFMI_CATEGDEPART
+LEFT JOIN {{ ref('prep_stg_trakcare_oe_orditem') }}       AS OI
+    ON CAST(APPT.OE_ORI_DR AS VARCHAR) = CAST(OI.ROW_ID AS VARCHAR)
+
+LEFT JOIN {{ ref('prep_stg_trakcare_oe_orditem2') }}      AS OI2
+    ON CAST(OI.OE_ORD_ITEM_2_DR AS VARCHAR) = CAST(OI2.ROW_ID AS VARCHAR)
+
+LEFT JOIN {{ ref('prep_stg_trakcare_ct_nfmi_categdepart') }} AS PROG
+    ON CAST(OI2.NFMI_CATEG_DEPART_DR AS VARCHAR) = CAST(PROG.ROW_ID AS VARCHAR)
 
 -- Booked by
 LEFT JOIN booked_by                                       AS BB

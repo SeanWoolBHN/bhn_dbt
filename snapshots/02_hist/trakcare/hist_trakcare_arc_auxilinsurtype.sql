@@ -24,7 +24,6 @@
 
 SELECT
     *
-
 FROM {{ source('raw_trakcare', 'ARC_AUXILINSURTYPE') }}
 
 {% endsnapshot %}

@@ -1,7 +1,7 @@
 {% snapshot HIST_TRAKCARE_QAUXXADVADCQQVADCPROGREF %}
 {{
     config(
-        unique_key='VADC_PROG_REF_KEY',
+        unique_key='ID',
         strategy='check',
         check_cols=[
             'ID', 'CHILDSUB', 'QUESPARREFDR', 'QVADCPROGREFQ1',

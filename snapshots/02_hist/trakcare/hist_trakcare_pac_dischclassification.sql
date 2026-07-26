@@ -1,0 +1,10 @@
+{% snapshot HIST_TRAKCARE_PAC_DISCHCLASSIFICATION %}
+{{ config(unique_key='DSCL_ROWID', strategy='check',
+    check_cols=['DSCL_CODE','DSCL_DESC','DSCL_OWNER','DSCL_DATETO','DSCL_DEFAULT',
+        'DSCL_DATEFROM','DSCL_DECEASED','DSCL_ICONNAME','DSCL_CREATEDDATE',
+        'DSCL_CREATEDTIME','DSCL_UPDATEDDATE','DSCL_UPDATEDTIME','DSCL_WAITINGTYPE',
+        'DSCL_ICONPRIORITY','DSCL_NATIONALCODE','DSCL_CODETABLETAGS',
+        'DSCL_CREATEDUSER_DR','DSCL_UPDATEDUSER_DR'],
+    invalidate_hard_deletes=True, dbt_valid_to_current="to_date('9999-12-31')") }}
+SELECT * FROM {{ source('raw_trakcare', 'PAC_DISCHCLASSIFICATION') }}
+{% endsnapshot %}

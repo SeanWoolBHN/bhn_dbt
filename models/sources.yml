@@ -242,3 +242,43 @@ sources:
         description: "Extended admission data from TrakCare system"
       - name: OE_ORDITEM2
         description: "Extended order item data from TrakCare system"
+      - name: MR_ADM
+        description: "Medical records admission data from TrakCare"
+      - name: PAC_ADMREASON
+        description: "Reference table of admission reasons from TrakCare"
+      - name: PAC_REFERRALSTATUS
+        description: "Reference table of referral status codes from TrakCare"
+      - name: ARC_INSURANCETYPE
+        description: "Reference table of insurance types from TrakCare"
+      - name: PAC_CONTMETHOD
+        description: "Reference table of contact methods from TrakCare"
+      - name: PAC_CONTDELIVMODE
+        description: "Reference table of contact delivery modes from TrakCare"
+      - name: PAC_CONTOUTCOME
+        description: "Reference table of contact outcomes from TrakCare"
+      - name: PAC_CONTWORKERTYPE
+        description: "Reference table of contact worker types from TrakCare"
+      - name: PAC_CONTPRESENTINGISSUE
+        description: "Reference table of contact presenting issues from TrakCare"
+      - name: PAC_CONTLOCALGOAL
+        description: "Reference table of contact local goals from TrakCare"
+      - name: PAC_CONTINTERPRETERTYPE
+        description: "Reference table of contact interpreter types from TrakCare"
+      - name: PAC_CONTSERVICEREC2
+        description: "Reference table of contact service recommendations from TrakCare"
+      - name: PAC_REQUESTTYPE
+        description: "Reference table of request types from TrakCare"
+      - name: PAC_REFERRALPRIORITY
+        description: "Reference table of referral priorities from TrakCare"
+      - name: PAC_DISCHCLASSIFICATION
+        description: "Reference table of discharge classifications from TrakCare"
+      - name: PA_PERSONADMINSURANCE
+        description: "Person admin insurance records from TrakCare"
+      - name: ARC_ITEMPRICEITALY
+        description: "Item pricing records from TrakCare"
+      - name: OE_ORDER
+        description: "Order records from TrakCare"
+      - name: PAC_CONTVENUE
+        description: "Reference table of contact venues from TrakCare system"
+      - name: OEC_ORDERSTATUS
+        description: "Reference table of order status codes from TrakCare system"
