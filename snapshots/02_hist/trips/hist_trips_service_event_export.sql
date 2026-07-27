@@ -2,9 +2,7 @@
 
 {{
     config(
-        target_database='DEV_02_HIST_DB',
-        target_schema='TRIPS',
-        unique_key='_AIRBYTE_RAW_ID',
+        unique_key='SYSID',
         strategy='check',
         check_cols=[
             'ACL', 'ACR', 'AHC', 'AHH', 'CCL', 'CCR', 'CDC', 'CMG',
@@ -21,20 +19,8 @@
 }}
 
 SELECT
-    _AIRBYTE_RAW_ID,
-    _AIRBYTE_EXTRACTED_AT,
-    _AIRBYTE_META,
-    _AIRBYTE_GENERATION_ID,
-    ACL, ACR, AHC, AHH, CCL, CCR, CDC, CMG,
-    DAS, EOL, FLS, GAR, GCA, GCM, GMA, GOG,
-    GSA, GSM, MNT, MOD, MRC, MRH, NCC, NCH,
-    OFS, PAG, PAH, PCR, RSC, SCL, SCR, SSP,
-    TRC, TRN, SYSID, FULLNAME, RECORDTYPE,
-    LETTERSOFNAME,
-    _AB_SOURCE_FILE_URL,
-    _AB_SOURCE_FILE_LAST_MODIFIED,
-    CURRENT_TIMESTAMP() AS _stg_loaded_at
-
+    *
 FROM {{ source('raw_trips', 'SERVICE_EVENT_EXPORT') }}
+QUALIFY ROW_NUMBER() OVER (PARTITION BY SYSID ORDER BY _AIRBYTE_GENERATION_ID DESC) = 1
 
 {% endsnapshot %}

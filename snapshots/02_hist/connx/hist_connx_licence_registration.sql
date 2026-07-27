@@ -2,9 +2,7 @@
 
 {{
     config(
-        target_database='DEV_02_HIST_DB',
-        target_schema='CONNX',
-        unique_key='_AIRBYTE_RAW_ID',
+        unique_key="IDENTIFICATION_NUMBER||'-'||ISSUING_BODY||'-'||EMPLOYEE_NUMBER||'-'||LICENSE_TYPE||'-'||ISSUE_DATE||'-'||STATUS",
         strategy='check',
         check_cols=[
             'STATUS', 'ISSUE_DATE', 'EXPIRY_DATE', 'ISSUING_BODY',
@@ -18,9 +16,8 @@
 }}
 
 SELECT
-    *,
-    CURRENT_TIMESTAMP() AS _stg_loaded_at
-
+    *
 FROM {{ source('raw_connx', 'LICENCE_REGISTRATION') }}
+QUALIFY ROW_NUMBER() OVER (PARTITION BY IDENTIFICATION_NUMBER, ISSUING_BODY, EMPLOYEE_NUMBER, LICENSE_TYPE, ISSUE_DATE, STATUS ORDER BY _AIRBYTE_GENERATION_ID DESC, _AIRBYTE_RAW_ID) = 1
 
 {% endsnapshot %}

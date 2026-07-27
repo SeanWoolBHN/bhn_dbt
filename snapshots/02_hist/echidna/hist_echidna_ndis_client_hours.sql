@@ -2,9 +2,7 @@
 
 {{
     config(
-        target_database='DEV_02_HIST_DB',
-        target_schema='ECHIDNA',
-        unique_key='_AIRBYTE_RAW_ID',
+        unique_key="_AIRBYTE_RAW_ID",
         strategy='check',
         check_cols=[
             '"TO"', '"DATE"', '"FROM"', 'RATE', 'HOURS', 'VALUE',
@@ -18,11 +16,17 @@
         dbt_valid_to_current="to_date('9999-12-31')"
     )
 }}
+WITH cte_max_gen AS (
+    SELECT MAX(_AIRBYTE_GENERATION_ID) AS MAX_GEN
+    FROM {{ source('raw_echidna', 'NDIS_CLIENT_HOURS') }}
+)
+
 
 SELECT
-    *,
-    CURRENT_TIMESTAMP() AS _stg_loaded_at
+    *
+FROM {{ source('raw_echidna', 'NDIS_CLIENT_HOURS') }} ch
+INNER JOIN cte_max_gen mg
+    ON mg.MAX_GEN = ch._AIRBYTE_GENERATION_ID
 
-FROM {{ source('raw_echidna', 'NDIS_CLIENT_HOURS') }}
 
 {% endsnapshot %}

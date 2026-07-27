@@ -1,0 +1,12 @@
+{% snapshot HIST_TRAKCARE_PAC_ADMREASON %}
+{{ config(unique_key='REA_ROWID', strategy='check',
+    check_cols=['REA_CODE','REA_DESC','REA_AGETO','REA_OWNER','REA_AGE1TO',
+        'REA_DATETO','REA_AGEFROM','REA_AGETYPE','REA_AGE1FROM','REA_AGE1TYPE',
+        'REA_CARETYPE','REA_DATEFROM','REA_ADMSOURCE','REA_EMERGENCY',
+        'REA_INPATIENT','REA_OUTPATIENT','REA_CREATEDDATE','REA_CREATEDTIME',
+        'REA_EPISSUBTYPE','REA_INPATADM_DR','REA_UPDATEDDATE','REA_UPDATEDTIME',
+        'REA_NATIONALCODE','REA_QUALIFSTATUS','REA_SUBREGION_DR',
+        'REA_CODETABLETAGS','REA_CREATEDUSER_DR','REA_UPDATEDUSER_DR'],
+    invalidate_hard_deletes=True, dbt_valid_to_current="to_date('9999-12-31')") }}
+SELECT * FROM {{ source('raw_trakcare', 'PAC_ADMREASON') }}
+{% endsnapshot %}

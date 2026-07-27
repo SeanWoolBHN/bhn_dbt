@@ -2,9 +2,7 @@
 
 {{
     config(
-        target_database='DEV_02_HIST_DB',
-        target_schema='TITANIUM',
-        unique_key='_AIRBYTE_RAW_ID',
+        unique_key='PROVIDER',
         strategy='check',
         check_cols=[
             'COC',
@@ -30,28 +28,8 @@
 }}
 
 SELECT
-    _AIRBYTE_RAW_ID,
-    _AIRBYTE_EXTRACTED_AT,
-    _AIRBYTE_META,
-    _AIRBYTE_GENERATION_ID,
-    COC,
-    AMOUNT,
-    VISITS,
-    FTAAPPT,
-    PATIENTS,
-    PROVIDER,
-    TEXTBOX62,
-    TOTALAPPT,
-    APPTNOTREAT,
-    PROVIDERNAME,
-    PROVIDERTYPE,
-    FTALENGTHHOURS,
-    PROVIDERREGTYPE,
-    APPTLENGTHHOURS1,
-    _AB_SOURCE_FILE_URL,
-    _AB_SOURCE_FILE_LAST_MODIFIED,
-    CURRENT_TIMESTAMP() AS _stg_loaded_at
-
+*
 FROM {{ source('raw_titanium', 'PROVIDER_OUTPUT_SUMMARY') }}
+QUALIFY ROW_NUMBER() OVER (PARTITION BY PROVIDER ORDER BY _AIRBYTE_GENERATION_ID DESC) = 1
 
 {% endsnapshot %}

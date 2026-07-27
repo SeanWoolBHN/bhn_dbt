@@ -2,9 +2,7 @@
 
 {{
     config(
-        target_database='DEV_02_HIST_DB',
-        target_schema='MICROPAY',
-        unique_key='_AIRBYTE_RAW_ID',
+        unique_key='IDEMPLOYEE',
         strategy='check',
         check_cols=[
             'TITLE',
@@ -28,26 +26,8 @@
 }}
 
 SELECT
-    _AIRBYTE_RAW_ID,
-    _AIRBYTE_EXTRACTED_AT,
-    _AIRBYTE_META,
-    _AIRBYTE_GENERATION_ID,
-    TITLE,
-    EMPCODE,
-    SURNAME,
-    FIRSTNAME,
-    HIREDDATE,
-    IDEMPLOYEE,
-    MIDDLENAME,
-    NORMALHOURS,
-    PREFERREDNAME,
-    TERMINATIONDATE,
-    TERMINATIONREASON,
-    DEFAULTCOSTACCOUNT,
-    _AB_SOURCE_FILE_URL,
-    _AB_SOURCE_FILE_LAST_MODIFIED,
-    CURRENT_TIMESTAMP() AS _stg_loaded_at
-
+*
 FROM {{ source('raw_micropay', 'EMPLOYEE_DETAILS') }}
+QUALIFY ROW_NUMBER() OVER (PARTITION BY IDEMPLOYEE ORDER BY _AIRBYTE_GENERATION_ID DESC) = 1
 
 {% endsnapshot %}

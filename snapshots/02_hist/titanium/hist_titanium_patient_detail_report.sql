@@ -2,9 +2,7 @@
 
 {{
     config(
-        target_database='DEV_02_HIST_DB',
-        target_schema='TITANIUM',
-        unique_key='PATIENT_KEY',
+        unique_key="SLK||'-'||DR_",
         strategy='check',
         check_cols=[
             'DR_',
@@ -41,7 +39,9 @@
             'COUNTRY',
             'LANGUAGE',
             'SCHOOL',
-            'RISKSTATUS'
+            'RISKSTATUS',
+            '_AB_SOURCE_FILE_URL',
+            '_AB_SOURCE_FILE_LAST_MODIFIED'
         ],
         invalidate_hard_deletes=True,
         dbt_valid_to_current="to_date('9999-12-31')"
@@ -49,16 +49,8 @@
 }}
 
 SELECT
-    MD5(
-        COALESCE(SLK, 'unknown')        || '-' ||
-        COALESCE(FIRSTNAME, 'unknown')  || '-' ||
-        COALESCE(LASTNAME, 'unknown')   || '-' ||
-        COALESCE(DOB, 'unknown')        || '-' ||
-        COALESCE(DR_, 'unknown')
-    )                                   AS PATIENT_KEY,
-    *,
-    CURRENT_TIMESTAMP()                 AS _stg_loaded_at
-
+    *
 FROM {{ source('raw_titanium', 'PATIENT_DETAIL_REPORT') }}
+QUALIFY ROW_NUMBER() OVER (PARTITION BY SLK,DR_ ORDER BY _AIRBYTE_GENERATION_ID DESC) = 1
 
 {% endsnapshot %}
