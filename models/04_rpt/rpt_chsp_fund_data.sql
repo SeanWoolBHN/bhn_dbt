@@ -26,7 +26,7 @@ contacts_with_ordsubcat AS (
     SELECT
         CO.*,
         COALESCE(CO.ORD_SUB_CAT, OL.ORDER_SUBCATEGORY_DESC) AS ORD_SUB_CAT_RESOLVED
-    FROM {{ ref('prep_src_contact_trakcare') }}           AS CO
+    FROM {{ ref('prep_model_contact') }}           AS CO
     LEFT JOIN ordsubcat_lookup                            AS OL
         ON OL.ARCIM_DESC = CO.ORD_ITEM
         AND OL.DEPARTMENT_CODE = CO.PROGRAM_STREAM_CODE
@@ -42,15 +42,13 @@ number_in_group AS (
             WHEN SUM(DIRECT_MINUTES) = 0 THEN 0
             ELSE COUNT(CONTACT_ID)
         END                                               AS NO_CONTACTS
-    FROM {{ ref('prep_src_contact_trakcare') }}
+    FROM {{ ref('prep_model_contact') }}
     WHERE EV_NUMBER IS NOT NULL
       AND DIRECT_MINUTES > 0
     GROUP BY EV_NAME, CONTACT_DATE_TIME, PROGRAM_STREAM_DESC
 )
 
 SELECT
-    1                                                     AS LEGACY_ORGANISATION_ID,
-    'Star Health'                                         AS LEGACY_ORGANISATION_NAME,
     CL.AGE,
     EP.REF_REC_DT,
     EP.REF_CREATE_DT,
@@ -59,7 +57,7 @@ SELECT
     EP.REFERRAL_ORG,
     EP.REF_SOURCE,
     EP.REF_TYPE,
-    EP.DATA_COLLECTION_CONSENT                            AS DAT_COLLECTION_CONSENT,
+    EP.DATA_COLLECTION_CONSENT                            AS DATA_COLLECTION_CONSENT,
     EP.CONSENT_TO_REFERRAL,
     EP.REFERRAL_REASON,
     EP.EPISODE_TEAM,
@@ -73,9 +71,6 @@ SELECT
     EP.DISCHARGE_DT,
     EP.REFERRAL_DESTINATION,
     CO.CONTACT_ID                                         AS ROW_ID,
-    'SH' || CO.CONTACT_ID::VARCHAR                        AS IROW_ID,
-    'SH' || CO.UR::VARCHAR                                AS IUR,
-    'SH' || CO.EPISODE_ID::VARCHAR                        AS IEPISODE,
     CO.REQUEST_STATUS,
     CO.ANON_CLIENT_ORG,
     CO.ANON_CLIENT_TYPE,
@@ -232,7 +227,7 @@ SELECT
 
 FROM contacts_with_ordsubcat                              AS CO
 
-LEFT JOIN {{ ref('prep_src_episode_trakcare') }}          AS EP
+LEFT JOIN {{ ref('prep_model_episode') }}          AS EP
     ON CAST(CO.EPISODE_ID AS VARCHAR) = CAST(EP.EPISODE_ID AS VARCHAR)
 
 LEFT JOIN {{ ref('prep_src_client_trakcare') }}           AS CL

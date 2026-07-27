@@ -20,7 +20,7 @@ number_in_group AS (
             WHEN SUM(DIRECT_MINUTES) = 0 THEN 0
             ELSE COUNT(CONTACT_ID)
         END                                               AS NO_CONTACTS
-    FROM {{ ref('prep_src_contact_trakcare') }}
+    FROM {{ ref('prep_model_contact') }}
     WHERE EV_NUMBER IS NOT NULL
       AND DIRECT_MINUTES > 0
     GROUP BY EV_NAME, CONTACT_DATE_TIME, PROGRAM_STREAM_DESC
@@ -28,10 +28,6 @@ number_in_group AS (
 
 base AS (
     SELECT
-        -- ── Legacy org ──────────────────────────────────────────────
-        1                                                 AS LEGACY_ORGANISATION_ID,
-        'Star Health'                                     AS LEGACY_ORGANISATION_NAME,
-
         -- ── Client demographics ─────────────────────────────────────
         CL.AGE,
 
@@ -59,9 +55,6 @@ base AS (
 
         -- ── Contact identity ────────────────────────────────────────
         CO.CONTACT_ID                                     AS ROW_ID,
-        'SH' || CO.CONTACT_ID::VARCHAR                    AS IROW_ID,
-        'SH' || CO.UR::VARCHAR                            AS IUR,
-        'SH' || CO.EPISODE_ID::VARCHAR                    AS IEPISODE,
 
         -- ── Status ──────────────────────────────────────────────────
         CO.REQUEST_STATUS,
@@ -229,9 +222,9 @@ base AS (
         CO.UR,
         CO.EPISODE_ID                                     AS EPISODE
 
-    FROM {{ ref('prep_src_contact_trakcare') }}           AS CO
+    FROM {{ ref('prep_model_contact') }}           AS CO
 
-    LEFT JOIN {{ ref('prep_src_episode_trakcare') }}      AS EP
+    LEFT JOIN {{ ref('prep_model_episode') }}      AS EP
         ON CO.EPISODE_ID = EP.EPISODE_ID::VARCHAR
 
     LEFT JOIN {{ ref('prep_src_client_trakcare') }}       AS CL

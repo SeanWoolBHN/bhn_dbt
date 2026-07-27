@@ -3,7 +3,7 @@ WITH total_hours AS (
     SELECT
         EPISODE_ID,
         SUM(DIRECT_MINUTES) / 60.0                       AS TOTAL_HRS
-    FROM {{ ref('prep_src_contact_trakcare') }}
+    FROM {{ ref('prep_model_contact') }}
     WHERE HOSPITAL = 'Alcohol & Drug'
     GROUP BY EPISODE_ID
 ),
@@ -13,7 +13,7 @@ no_dtau_contacts AS (
     SELECT
         EPISODE_ID,
         COUNT(*) AS NO_DTAU_CONTACTS
-    FROM {{ ref('prep_src_contact_trakcare') }}
+    FROM {{ ref('prep_model_contact') }}
     WHERE HOSPITAL = 'Alcohol & Drug'
       AND PROGRAM_STREAM_DESC ILIKE '%Bridging support%'
     GROUP BY EPISODE_ID
@@ -24,7 +24,7 @@ last_contact AS (
     SELECT
         EPISODE_ID,
         MAX(CONTACT_DATE)                                 AS LAST_CONTACT_DT
-    FROM {{ ref('prep_src_contact_trakcare') }}
+    FROM {{ ref('prep_model_contact') }}
     GROUP BY EPISODE_ID
 ),
 
@@ -33,7 +33,7 @@ first_contact AS (
     SELECT
         EPISODE_ID,
         MIN(CONTACT_DATE)                                 AS FIRST_CONTACT_DT
-    FROM {{ ref('prep_src_contact_trakcare') }}
+    FROM {{ ref('prep_model_contact') }}
     GROUP BY EPISODE_ID
 ),
 
@@ -42,7 +42,7 @@ first_fr AS (
     SELECT
         UR,
         MIN(FIRST_REGISTRATION)                           AS FIRST_FR
-    FROM {{ ref('prep_src_vadc_form_trakcare') }}
+    FROM {{ ref('prep_model_vadc_form') }}
     WHERE FIRST_REGISTRATION IS NOT NULL
     GROUP BY UR
 ),
@@ -52,7 +52,7 @@ last_fr AS (
     SELECT
         UR,
         MAX(FIRST_REGISTRATION)                           AS LAST_FR
-    FROM {{ ref('prep_src_vadc_form_trakcare') }}
+    FROM {{ ref('prep_model_vadc_form') }}
     WHERE FIRST_REGISTRATION IS NOT NULL
     GROUP BY UR
 ),
@@ -62,7 +62,7 @@ ref_in AS (
     SELECT
         VADC_EPISODE_ID,
         MIN(CHILD_SUB)                                    AS MIN_CHILD_SUB
-    FROM {{ ref('prep_src_vadc_referral_trakcare') }}
+    FROM {{ ref('prep_model_vadc_referral') }}
     WHERE REFERRAL_DIRECTION = 'Referral In'
     GROUP BY VADC_EPISODE_ID
 ),
@@ -75,7 +75,7 @@ ref_in_detail AS (
         R.REFERRAL_ORG_CODE                               AS ACSO,
         R.REFERRAL_DATE                                   AS REF_IN_DATE,
         R.REFERRAL_SOURCE_TYPE                            AS PROVIDER_IN_TYPE
-    FROM {{ ref('prep_src_vadc_referral_trakcare') }}     AS R
+    FROM {{ ref('prep_model_vadc_referral') }}     AS R
     INNER JOIN ref_in                                     AS RI
         ON R.VADC_EPISODE_ID = RI.VADC_EPISODE_ID
         AND R.CHILD_SUB = RI.MIN_CHILD_SUB
@@ -87,7 +87,7 @@ ref_out AS (
     SELECT
         VADC_EPISODE_ID,
         MIN(CHILD_SUB)                                    AS MIN_CHILD_SUB
-    FROM {{ ref('prep_src_vadc_referral_trakcare') }}
+    FROM {{ ref('prep_model_vadc_referral') }}
     WHERE REFERRAL_DIRECTION = 'Referral Out'
     GROUP BY VADC_EPISODE_ID
 ),
@@ -98,7 +98,7 @@ ref_out_detail AS (
         R.VADC_EPISODE_ID,
         R.REFERRAL_DIRECTION                              AS REF_OUT,
         R.REFERRAL_SOURCE_TYPE                            AS PROVIDER_OUT_TYPE
-    FROM {{ ref('prep_src_vadc_referral_trakcare') }}     AS R
+    FROM {{ ref('prep_model_vadc_referral') }}     AS R
     INNER JOIN ref_out                                    AS RO
         ON R.VADC_EPISODE_ID = RO.VADC_EPISODE_ID
         AND R.CHILD_SUB = RO.MIN_CHILD_SUB
@@ -110,7 +110,7 @@ no_ref_ins AS (
     SELECT
         VADC_EPISODE_ID,
         COUNT(VADC_PROGREF_ID)                            AS NO_REF_INS
-    FROM {{ ref('prep_src_vadc_referral_trakcare') }}
+    FROM {{ ref('prep_model_vadc_referral') }}
     WHERE REFERRAL_DIRECTION = 'Referral In'
     GROUP BY VADC_EPISODE_ID
 ),
@@ -122,7 +122,7 @@ primary_doc AS (
         VADC_OUTCOME_ID,
         COUNT(VADC_DOC_ID)                                AS NUM_PRIMARY_DRUG,
         MIN(CHILD_SUB)                                    AS MIN_CHILD_SUB
-    FROM {{ ref('prep_src_vadc_drug_trakcare') }}
+    FROM {{ ref('prep_model_vadc_drug') }}
     WHERE AGE_OF_FIRST_USE ILIKE '%principal drug of concern%'
     GROUP BY VADC_OUTCOME_ID
 ),
@@ -136,7 +136,7 @@ primary_doc_detail AS (
         D.METHOD_OF_USE                                   AS DOC_METHOD,
         D.INJECTION_FLAG                                  AS DOC_QUANTITY,
         D.ADDITIONAL_FLAGS                                AS DOC_MEASURE
-    FROM {{ ref('prep_src_vadc_drug_trakcare') }}         AS D
+    FROM {{ ref('prep_model_vadc_drug') }}         AS D
     INNER JOIN primary_doc                                AS PD
         ON D.VADC_OUTCOME_ID = PD.VADC_OUTCOME_ID
         AND D.CHILD_SUB = PD.MIN_CHILD_SUB
@@ -155,7 +155,7 @@ outcome_latest AS (
             PARTITION BY EPISODE_ID
             ORDER BY OUTCOME_DATE DESC NULLS LAST
         )                                                 AS RN
-    FROM {{ ref('prep_src_vadc_outcome_trakcare') }}
+    FROM {{ ref('prep_model_vadc_outcome') }}
 )
 
 SELECT
@@ -354,10 +354,10 @@ SELECT
         ELSE 'Valid'
     END                                                   AS VALIDITY
 
-FROM {{ ref('prep_src_episode_trakcare') }}               AS EP
+FROM {{ ref('prep_model_episode') }}               AS EP
 
 -- VADC form / questionnaire
-LEFT JOIN {{ ref('prep_src_vadc_form_trakcare') }}        AS FORM
+LEFT JOIN {{ ref('prep_model_vadc_form') }}        AS FORM
     ON EP.EPISODE_ID = FORM.EPISODE_ID
 
 -- Client demographics

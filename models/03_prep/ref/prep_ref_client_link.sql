@@ -1,154 +1,149 @@
-WITH cte_trakcare AS (
+{{ config(materialized='table') }}
+
+WITH cte_trakcare AS (    
     SELECT DISTINCT
-        SRC_SYS_CLIENT_ID,
-        FIRST_NAME,
-        LAST_NAME,
-        CAST(DOB AS VARCHAR)                              AS DOB,
-        ADDRESS,
-        CITY,
-        POSTCODE,
-        UPPER(FIRST_NAME || '|' || LAST_NAME || '|' || CAST(DOB AS VARCHAR)
-              || '|' || ADDRESS || '|' || CITY || '|' || POSTCODE) AS CLIENT_LINK
-    FROM {{ ref('prep_src_client_trakcare') }}
+	    SRC_SYS_CLIENT_ID,
+        CLIENT_ID_RAW,
+        CLIENT_LINK_RAW,
+        CLIENT_ID,
+        CLIENT_LINK     
+    FROM {{ ref('prep_ref_client_link_details') }}
+    WHERE SRC_SYS = 'TRAKCARE'
 ),
 
-cte_best_practice AS (
+cte_best_practice AS (    
     SELECT DISTINCT
-        SRC_SYS_CLIENT_ID,
-        FIRST_NAME,
-        LAST_NAME,
-        CAST(DOB AS VARCHAR)                              AS DOB,
-        ADDRESS,
-        CITY,
-        POSTCODE,
-        UPPER(FIRST_NAME || '|' || LAST_NAME || '|' || CAST(DOB AS VARCHAR)
-              || '|' || ADDRESS || '|' || CITY || '|' || POSTCODE) AS CLIENT_LINK
-    FROM {{ ref('prep_src_client_best_practice') }}
+	    SRC_SYS_CLIENT_ID,
+        CLIENT_ID_RAW,
+        CLIENT_LINK_RAW,
+        CLIENT_ID,
+        CLIENT_LINK     
+    FROM {{ ref('prep_ref_client_link_details') }}
+    WHERE SRC_SYS = 'BEST_PRACTICE'
 ),
 
-cte_echidna AS (
+cte_echidna AS (    
     SELECT DISTINCT
-        SRC_SYS_CLIENT_ID,
-        FIRST_NAME,
-        LAST_NAME,
-        CAST(DOB AS VARCHAR)                              AS DOB,
-        ADDRESS,
-        CITY,
-        POSTCODE,
-        UPPER(FIRST_NAME || '|' || LAST_NAME || '|' || CAST(DOB AS VARCHAR)
-              || '|' || ADDRESS || '|' || CITY || '|' || POSTCODE) AS CLIENT_LINK
-    FROM {{ ref('prep_src_client_echidna') }}
+	    SRC_SYS_CLIENT_ID,
+        CLIENT_ID_RAW,
+        CLIENT_LINK_RAW,
+        CLIENT_ID,
+        CLIENT_LINK     
+    FROM {{ ref('prep_ref_client_link_details') }}
+    WHERE SRC_SYS = 'ECHIDNA'
 ),
 
-cte_e_tools AS (
+cte_e_tools AS (    
     SELECT DISTINCT
-        SRC_SYS_CLIENT_ID,
-        FIRST_NAME,
-        LAST_NAME,
-        CAST(DOB AS VARCHAR)                              AS DOB,
-        ADDRESS,
-        CITY,
-        POSTCODE,
-        UPPER(FIRST_NAME || '|' || LAST_NAME || '|' || CAST(DOB AS VARCHAR)
-              || '|' || ADDRESS || '|' || CITY || '|' || POSTCODE) AS CLIENT_LINK
-    FROM {{ ref('prep_src_client_e_tools') }}
+	    SRC_SYS_CLIENT_ID,
+        CLIENT_ID_RAW,
+        CLIENT_LINK_RAW,
+        CLIENT_ID,
+        CLIENT_LINK     
+    FROM {{ ref('prep_ref_client_link_details') }}
+    WHERE SRC_SYS = 'E_TOOLS'
 ),
 
-cte_supportability AS (
+cte_supportability AS (    
     SELECT DISTINCT
-        SRC_SYS_CLIENT_ID,
-        FIRST_NAME,
-        LAST_NAME,
-        CAST(DOB AS VARCHAR)                              AS DOB,
-        ADDRESS                                           AS ADDRESS,
-        CITY,
-        POSTCODE,
-        UPPER(FIRST_NAME || '|' || LAST_NAME || '|' || CAST(DOB AS VARCHAR)
-              || '|' || ADDRESS || '|' || CITY || '|' || POSTCODE) AS CLIENT_LINK
-    FROM {{ ref('prep_src_client_supportability') }}
+	    SRC_SYS_CLIENT_ID,
+        CLIENT_ID_RAW,
+        CLIENT_LINK_RAW,
+        CLIENT_ID,
+        CLIENT_LINK     
+    FROM {{ ref('prep_ref_client_link_details') }}
+    WHERE SRC_SYS = 'SUPPORTABILITY'
 ),
 
 cte_titanium AS (
     SELECT DISTINCT
-        SRC_SYS_CLIENT_ID,
-        FIRST_NAME,
-        LAST_NAME,
-        CAST(DOB AS VARCHAR)                              AS DOB,
-        ADDRESS                                           AS ADDRESS,
-        CITY,
-        POSTCODE,
-        UPPER(FIRST_NAME || '|' || LAST_NAME || '|' || CAST(DOB AS VARCHAR)
-              || '|' || ADDRESS || '|' || CITY || '|' || POSTCODE) AS CLIENT_LINK
-    FROM {{ ref('prep_src_client_titanium') }}
+	    SRC_SYS_CLIENT_ID,
+        CLIENT_ID_RAW,
+        CLIENT_LINK_RAW,
+        CLIENT_ID,
+        CLIENT_LINK     
+    FROM {{ ref('prep_ref_client_link_details') }}
+    WHERE SRC_SYS = 'TITANIUM'
 ),
 
 cte_trips AS (
     SELECT DISTINCT
-        SRC_SYS_CLIENT_ID,
-        FIRST_NAME,
-        LAST_NAME,
-        CAST(DOB AS VARCHAR)                              AS DOB,
-        ADDRESS,
-        CITY,
-        POSTCODE,
-        UPPER(FIRST_NAME || '|' || LAST_NAME || '|' || CAST(DOB AS VARCHAR)
-              || '|' || ADDRESS || '|' || CITY || '|' || POSTCODE) AS CLIENT_LINK
-    FROM {{ ref('prep_src_client_trips') }}
+	    SRC_SYS_CLIENT_ID,
+        CLIENT_ID_RAW,
+        CLIENT_LINK_RAW,
+        CLIENT_ID,
+        CLIENT_LINK     
+    FROM {{ ref('prep_ref_client_link_details') }}
+    WHERE SRC_SYS = 'TRIPS'
 ),
 
 cte_distinct_links AS (
-    SELECT DISTINCT
-        SHA1(CONCAT_WS('|',
-            COALESCE(TC.FIRST_NAME, BP.FIRST_NAME, EC.FIRST_NAME, ET.FIRST_NAME,
-                     SU.FIRST_NAME, TI.FIRST_NAME, TR.FIRST_NAME, ''),
-            COALESCE(TC.LAST_NAME, BP.LAST_NAME, EC.LAST_NAME, ET.LAST_NAME,
-                     SU.LAST_NAME, TI.LAST_NAME, TR.LAST_NAME, ''),
-            COALESCE(TC.DOB, BP.DOB, EC.DOB, ET.DOB,
-                     SU.DOB, TI.DOB, TR.DOB, ''),
-            COALESCE(TC.ADDRESS, BP.ADDRESS, EC.ADDRESS, ET.ADDRESS,
-                     SU.ADDRESS, TI.ADDRESS, TR.ADDRESS, ''),
-            COALESCE(TC.CITY, BP.CITY, EC.CITY, ET.CITY,
-                     SU.CITY, TI.CITY, TR.CITY, ''),
-            COALESCE(TC.POSTCODE, BP.POSTCODE, EC.POSTCODE, ET.POSTCODE,
-                     SU.POSTCODE, TI.POSTCODE, TR.POSTCODE, '')
-        ))                                                AS CLIENT_ID_HASH,
-        SHA1(COALESCE(
-            TC.CLIENT_LINK, BP.CLIENT_LINK, EC.CLIENT_LINK, ET.CLIENT_LINK,
-            SU.CLIENT_LINK, TI.CLIENT_LINK, TR.CLIENT_LINK
-        ))                                                AS CLIENT_LINK_HASH,
-        TC.SRC_SYS_CLIENT_ID                              AS TRAKCARE_ID,
-        BP.SRC_SYS_CLIENT_ID                              AS BEST_PRACTICE_ID,
-        EC.SRC_SYS_CLIENT_ID                              AS ECHIDNA_ID,
-        ET.SRC_SYS_CLIENT_ID                              AS E_TOOLS_ID,
-        SU.SRC_SYS_CLIENT_ID                              AS SUPPORTABILITY_ID,
-        TI.SRC_SYS_CLIENT_ID                              AS TITANIUM_ID,
-        TR.SRC_SYS_CLIENT_ID                              AS TRIPS_ID
+SELECT DISTINCT
 
-    FROM cte_trakcare                                     AS TC
+    COALESCE(
+        TC.CLIENT_ID_RAW,
+        BP.CLIENT_ID_RAW,
+        EC.CLIENT_ID_RAW,
+        ET.CLIENT_ID_RAW,
+        SU.CLIENT_ID_RAW,
+        TI.CLIENT_ID_RAW,
+        TR.CLIENT_ID_RAW
+    )                           AS CLIENT_ID_RAW,
+    COALESCE(
+        TC.CLIENT_ID,
+        BP.CLIENT_ID,
+        EC.CLIENT_ID,
+        ET.CLIENT_ID,
+        SU.CLIENT_ID,
+        TI.CLIENT_ID,
+        TR.CLIENT_ID
+    )                           AS CLIENT_ID_COALESCE,
+    SHA1(CLIENT_ID_COALESCE)    AS CLIENT_ID_HASH,
+    
+    COALESCE(
+        TC.CLIENT_LINK,
+        BP.CLIENT_LINK,
+        EC.CLIENT_LINK,
+        ET.CLIENT_LINK,
+        SU.CLIENT_LINK,
+        TI.CLIENT_LINK,
+        TR.CLIENT_LINK
+    )                           AS CLIENT_LINK_COALESCE,
+    SHA1(CLIENT_LINK_COALESCE)  AS CLIENT_LINK_HASH,
+    
+    TC.SRC_SYS_CLIENT_ID        AS TRAKCARE_ID,
+    BP.SRC_SYS_CLIENT_ID        AS BEST_PRACTICE_ID,
+    EC.SRC_SYS_CLIENT_ID        AS ECHIDNA_ID,
+    ET.SRC_SYS_CLIENT_ID        AS E_TOOLS_ID,
+    SU.SRC_SYS_CLIENT_ID        AS SUPPORTABILITY_ID,
+    TI.SRC_SYS_CLIENT_ID        AS TITANIUM_ID,
+    TR.SRC_SYS_CLIENT_ID        AS TRIPS_ID
 
-    FULL OUTER JOIN cte_best_practice                     AS BP
-        ON TC.CLIENT_LINK = BP.CLIENT_LINK
+FROM cte_trakcare                                         AS TC
 
-    FULL OUTER JOIN cte_echidna                           AS EC
-        ON COALESCE(TC.CLIENT_LINK, BP.CLIENT_LINK) = EC.CLIENT_LINK
+FULL OUTER JOIN cte_best_practice                         AS BP
+    ON TC.CLIENT_LINK = BP.CLIENT_LINK
 
-    FULL OUTER JOIN cte_e_tools                           AS ET
-        ON COALESCE(TC.CLIENT_LINK, BP.CLIENT_LINK,
-                    EC.CLIENT_LINK) = ET.CLIENT_LINK
+FULL OUTER JOIN cte_echidna                               AS EC
+    ON COALESCE(TC.CLIENT_LINK, BP.CLIENT_LINK) = EC.CLIENT_LINK
 
-    FULL OUTER JOIN cte_supportability                    AS SU
-        ON COALESCE(TC.CLIENT_LINK, BP.CLIENT_LINK,
-                    EC.CLIENT_LINK, ET.CLIENT_LINK) = SU.CLIENT_LINK
+FULL OUTER JOIN cte_e_tools                               AS ET
+    ON COALESCE(TC.CLIENT_LINK, BP.CLIENT_LINK,
+                EC.CLIENT_LINK) = ET.CLIENT_LINK
 
-    FULL OUTER JOIN cte_titanium                          AS TI
-        ON COALESCE(TC.CLIENT_LINK, BP.CLIENT_LINK,
-                    EC.CLIENT_LINK, ET.CLIENT_LINK,
-                    SU.CLIENT_LINK) = TI.CLIENT_LINK
+FULL OUTER JOIN cte_supportability                        AS SU
+    ON COALESCE(TC.CLIENT_LINK, BP.CLIENT_LINK,
+                EC.CLIENT_LINK, ET.CLIENT_LINK) = SU.CLIENT_LINK
 
-    FULL OUTER JOIN cte_trips                             AS TR
-        ON COALESCE(TC.CLIENT_LINK, BP.CLIENT_LINK,
-                    EC.CLIENT_LINK, ET.CLIENT_LINK,
-                    SU.CLIENT_LINK, TI.CLIENT_LINK) = TR.CLIENT_LINK
+FULL OUTER JOIN cte_titanium                              AS TI
+    ON COALESCE(TC.CLIENT_LINK, BP.CLIENT_LINK,
+                EC.CLIENT_LINK, ET.CLIENT_LINK,
+                SU.CLIENT_LINK) = TI.CLIENT_LINK
+
+FULL OUTER JOIN cte_trips                                 AS TR
+    ON COALESCE(TC.CLIENT_LINK, BP.CLIENT_LINK,
+                EC.CLIENT_LINK, ET.CLIENT_LINK,
+                SU.CLIENT_LINK, TI.CLIENT_LINK) = TR.CLIENT_LINK
 )
-
-SELECT * FROM cte_distinct_links
+SELECT *
+FROM CTE_DISTINCT_LINKS

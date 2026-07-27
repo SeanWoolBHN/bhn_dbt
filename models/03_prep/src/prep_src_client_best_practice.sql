@@ -6,7 +6,7 @@ SELECT DISTINCT
     DOB,
     EMAIL,
     MOBILE_PHONE,
-    ADDRESS_1 || IFNULL(', ' || ADDRESS_2, '')            AS ADDRESS,
+    IFNULL(ADDRESS_1 || IFNULL(', ' || ADDRESS_2, ''), IFNULL(ADDRESS_2, ''))            AS ADDRESS,
     CITY,
     POSTCODE
 

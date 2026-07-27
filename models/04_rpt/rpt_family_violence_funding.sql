@@ -12,7 +12,7 @@ contacts_with_ordsubcat AS (
     SELECT
         CO.*,
         COALESCE(CO.ORD_SUB_CAT, OL.ORDER_SUBCATEGORY_DESC) AS ORD_SUB_CAT_RESOLVED
-    FROM {{ ref('prep_src_contact_trakcare') }}           AS CO
+    FROM {{ ref('prep_model_contact') }}           AS CO
     LEFT JOIN ordsubcat_lookup                            AS OL
         ON OL.ARCIM_DESC = CO.ORD_ITEM
         AND OL.DEPARTMENT_CODE = CO.PROGRAM_STREAM_CODE
@@ -158,7 +158,7 @@ SELECT
 
 FROM contacts_with_ordsubcat                              AS CO
 
-LEFT JOIN {{ ref('prep_src_episode_trakcare') }}          AS EP
+LEFT JOIN {{ ref('prep_model_episode') }}          AS EP
     ON CO.EPISODE_ID = EP.EPISODE_ID::VARCHAR
 
 LEFT JOIN {{ ref('prep_src_client_trakcare') }}           AS CL

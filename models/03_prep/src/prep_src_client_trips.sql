@@ -1,7 +1,7 @@
 SELECT DISTINCT
     'TRIPS'                                               AS SRC_SYS,
     'TR-' || TRIPS_ID                                     AS SRC_SYS_CLIENT_ID,
-    FIRST_NAME,
+    COALESCE(FIRST_NAME,PREF_NAME)                          AS FIRST_NAME,
     LAST_NAME,
     DOB,
     EMAIL,
