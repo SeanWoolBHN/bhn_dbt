@@ -61,8 +61,6 @@ SELECT
             'IFVMHCP183', 'FVMCMH', 'IFVMHCP', 'IFVPROV'
         )   THEN FC_IFV.FIRST_CONTACT_DT
     END                                                   AS FIRST_CONTACT_DT,
-    1                                                     AS LEGACY_ORGANISATION_ID,
-    'Star Health'                                         AS LEGACY_ORGANISATION_NAME,
     CL.AGE,
     CL.GENDER,
     CL.PREF_LANG,
@@ -89,13 +87,10 @@ SELECT
     EP.DISCHARGE_DT,
     EP.REFERRAL_DESTINATION,
     CO.CONTACT_ID                                         AS ROW_ID,
-    'SH' || CO.CONTACT_ID::VARCHAR                        AS IROW_ID,
     CO.REPORTING_QTR,
     CO.CONTACT_DATE                                       AS CONTACT_DT,
     CO.UR,
     CO.EPISODE_ID,
-    'SH' || CO.UR::VARCHAR                                AS IUR,
-    'SH' || CO.EPISODE_ID::VARCHAR                        AS IEPISODE,
     CO.REQUEST_STATUS,
     CO.ANON_CLIENT_ORG,
     CO.ANON_CLIENT_TYPE,
@@ -161,7 +156,7 @@ FROM contacts_with_ordsubcat                              AS CO
 LEFT JOIN {{ ref('prep_model_episode') }}          AS EP
     ON CO.EPISODE_ID = EP.EPISODE_ID::VARCHAR
 
-LEFT JOIN {{ ref('prep_src_client_trakcare') }}           AS CL
+LEFT JOIN {{ ref('prep_model_client') }}           AS CL
     ON CO.UR = CL.UR
 
 LEFT JOIN first_contact_fvcc                              AS FC_FVCC

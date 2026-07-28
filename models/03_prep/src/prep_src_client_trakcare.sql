@@ -44,92 +44,12 @@ SELECT
     -- ── Source system keys — kept for client matching ────────────────
     'TRAKCARE'                                            AS SRC_SYS,
     PAT.PATIENT_NO::VARCHAR                               AS SRC_SYS_CLIENT_ID,
-
-    -- ── Identity ────────────────────────────────────────────────────
-    PAT.PATIENT_NO::VARCHAR                               AS UR,
-    PER.PERSON_ID                                         AS PAPER_ROW_ID,
-    CAST(PER.PATIENT_DR AS VARCHAR)                       AS PAPER_PAPMI_DR,
-    PAT.PATIENT_ID                                        AS PAPMI_ROW_ID,
-
-    -- ── Name ────────────────────────────────────────────────────────
-    UPPER(NULLIF(TRIM(PAT.LAST_NAME), ''))                AS LAST_NAME,
     PAT.FIRST_NAME                                        AS FIRST_NAME,
-    PER.MIDDLE_NAME                                       AS OTHER_NAME,
-    TTL.DESC                                              AS TITLE,
-    PER.NAME_4                                            AS PREFERRED_NAME,
-
-    -- ── Date of birth ───────────────────────────────────────────────
+    UPPER(NULLIF(TRIM(PAT.LAST_NAME), ''))                AS LAST_NAME,
     PAT.DOB                                               AS DOB,
-    PER.EST_DOB                                           AS EST_DOB,
-    PER.AGE_YR                                            AS AGE,
-    PER.DECEASED                                          AS DECEASED,
-    PER.DECEASED_DATE                                     AS DECEASED_DATE,
-
-    -- ── Gender ──────────────────────────────────────────────────────
-    SEX.DESC                                              AS GENDER,
-    SEX_BIRTH.DESC                                        AS GENDER_AT_BIRTH,
-    GI.DESC                                               AS GENDER_IDENTITY,
-    SEX_INTERP.DESC                                       AS PREFERRED_INTERPRETER_GENDER,
-
-    -- ── ATSI ────────────────────────────────────────────────────────
-    INDST.DESCRIPTION                                     AS INDIG_STATUS,
-    CASE
-        WHEN PAT.INDIGENOUS_STATUS_DR IN (4, 5, 6)
-            THEN 'ATSI'
-        ELSE 'Non-ATSI'
-    END                                                   AS ATSI,
-
-    -- ── Cultural background ──────────────────────────────────────────
-    NAT.DESC                                             AS CULTURAL_BACKGROUND,
-    COB.DESC                                             AS COUNTRY_OF_BIRTH,
-    REL.DESC                                             AS RELIGION,
-    MAR.DESC                                             AS MARITAL_STATUS,
-    DEP.DESCRIPTION                                      AS DEPENDENT_CHILDREN,
-
-    -- ── Language ────────────────────────────────────────────────────
-    LANG.DESCRIPTION                                      AS PREF_LANG,
-    PER.INTERPRETER_REQUIRED                              AS INTERPRETER_REQUIRED,
-    SEX_INTERP.DESC                               AS PREFERRED_INTERPRETER_GENDER_DESC,
-
-    -- ── Refugee ─────────────────────────────────────────────────────
-    PAT.CHC_PATIENT                                       AS REFUGEE_STATUS,
-    PER.FREE_TEXT_5                                       AS REFUGEE_YEAR_OF_ARRIVAL,
-
-    -- ── Contact ─────────────────────────────────────────────────────
-    PAT.MOBILE_PHONE                                      AS MOBILE_PHONE,
-    PAT.HOME_PHONE                                        AS TEL_H,
-    PER.WORK_PHONE                                        AS TEL_O,
-    CASE
-        WHEN PER.CAN_LEAVE_MESSAGES_ON ILIKE '%C%'
-            THEN 'Y'
-        WHEN LENGTH(PAT.HOME_PHONE) >= 10
-          AND PER.CAN_LEAVE_MESSAGES_ON ILIKE '%M%'
-            THEN 'Y'
-        WHEN LENGTH(PER.WORK_PHONE) >= 10
-          AND PER.CAN_LEAVE_MESSAGES_ON ILIKE '%B%'
-            THEN 'Y'
-        ELSE 'N'
-    END                                                   AS MOB_CAN_LEAVE_MESSAGE,
-    CASE
-        WHEN PER.CAN_LEAVE_MESSAGES_ON ILIKE '%C%'
-            THEN PAT.MOBILE_PHONE
-        WHEN LENGTH(PAT.HOME_PHONE) >= 10
-          AND PER.CAN_LEAVE_MESSAGES_ON ILIKE '%M%'
-            THEN PAT.HOME_PHONE
-        WHEN LENGTH(PER.WORK_PHONE) >= 10
-          AND PER.CAN_LEAVE_MESSAGES_ON ILIKE '%B%'
-            THEN PER.WORK_PHONE
-        ELSE NULL
-    END                                                   AS MOB_TO_LEAVE_MESSAGE_ON,
-    PER.APPOINTMENT_SMS                                   AS SMS,
-    PAT.EMAIL                                             AS EMAIL,
-    PER.PREF_CONTACT_METHOD                               AS PREFERRED_CONTACT_METHOD,
-
-    -- ── Address ─────────────────────────────────────────────────────
     PER.STREET_NAME                                       AS ADDRESS,
-    PER.FOREIGN_ADDRESS                                   AS ADDRESS_LINE_2,
 
-    -- ── Suburb — CASE override per SSIS for specific ZIP_DR values ──
+        -- ── Suburb — CASE override per SSIS for specific ZIP_DR values ──
     CASE
         WHEN PER.ZIP_DR IN (116543,116546,116547,116551,116552,116553)
             THEN 'Armadale North'
@@ -223,8 +143,92 @@ SELECT
         ELSE ZIP.CITY
     END                                                   AS CITY,
 
-    PER.ZIP_DR                                            AS SUBURB_REF,
     ZIP.POSTCODE                                          AS POSTCODE,
+
+    PAT.EMAIL                                             AS EMAIL,
+
+    PAT.MOBILE_PHONE                                      AS MOBILE_PHONE,
+
+    -- ── Identity ────────────────────────────────────────────────────
+    PAT.PATIENT_NO::VARCHAR                               AS UR,
+    PER.PERSON_ID                                         AS PAPER_ROW_ID,
+    CAST(PER.PATIENT_DR AS VARCHAR)                       AS PAPER_PAPMI_DR,
+    PAT.PATIENT_ID                                        AS PAPMI_ROW_ID,
+
+    -- ── Name ────────────────────────────────────────────────────────
+    PER.MIDDLE_NAME                                       AS OTHER_NAME,
+    TTL.DESC                                              AS TITLE,
+    PER.NAME_4                                            AS PREFERRED_NAME,
+
+    -- ── Date of birth ───────────────────────────────────────────────
+    PER.EST_DOB                                           AS EST_DOB,
+    PER.AGE_YR                                            AS AGE,
+    PER.DECEASED                                          AS DECEASED,
+    PER.DECEASED_DATE                                     AS DECEASED_DATE,
+
+    -- ── Gender ──────────────────────────────────────────────────────
+    SEX.DESC                                              AS GENDER,
+    SEX_BIRTH.DESC                                        AS GENDER_AT_BIRTH,
+    GI.DESC                                               AS GENDER_IDENTITY,
+    SEX_INTERP.DESC                                       AS PREFERRED_INTERPRETER_GENDER,
+
+    -- ── ATSI ────────────────────────────────────────────────────────
+    INDST.DESCRIPTION                                     AS INDIG_STATUS,
+    CASE
+        WHEN PAT.INDIGENOUS_STATUS_DR IN (4, 5, 6)
+            THEN 'ATSI'
+        ELSE 'Non-ATSI'
+    END                                                   AS ATSI,
+
+    -- ── Cultural background ──────────────────────────────────────────
+    NAT.DESC                                             AS CULTURAL_BACKGROUND,
+    COB.DESC                                             AS COUNTRY_OF_BIRTH,
+    REL.DESC                                             AS RELIGION,
+    MAR.DESC                                             AS MARITAL_STATUS,
+    DEP.DESCRIPTION                                      AS DEPENDENT_CHILDREN,
+
+    -- ── Language ────────────────────────────────────────────────────
+    LANG.DESCRIPTION                                      AS PREF_LANG,
+    PER.INTERPRETER_REQUIRED                              AS INTERPRETER_REQUIRED,
+    SEX_INTERP.DESC                                       AS PREFERRED_INTERPRETER_GENDER_DESC,
+
+    -- ── Refugee ─────────────────────────────────────────────────────
+    PAT.CHC_PATIENT                                       AS REFUGEE_STATUS,
+    PER.FREE_TEXT_5                                       AS REFUGEE_YEAR_OF_ARRIVAL,
+
+    -- ── Contact ─────────────────────────────────────────────────────
+    PAT.HOME_PHONE                                        AS TEL_H,
+    PER.WORK_PHONE                                        AS TEL_O,
+    CASE
+        WHEN PER.CAN_LEAVE_MESSAGES_ON ILIKE '%C%'
+            THEN 'Y'
+        WHEN LENGTH(PAT.HOME_PHONE) >= 10
+          AND PER.CAN_LEAVE_MESSAGES_ON ILIKE '%M%'
+            THEN 'Y'
+        WHEN LENGTH(PER.WORK_PHONE) >= 10
+          AND PER.CAN_LEAVE_MESSAGES_ON ILIKE '%B%'
+            THEN 'Y'
+        ELSE 'N'
+    END                                                   AS MOB_CAN_LEAVE_MESSAGE,
+    CASE
+        WHEN PER.CAN_LEAVE_MESSAGES_ON ILIKE '%C%'
+            THEN PAT.MOBILE_PHONE
+        WHEN LENGTH(PAT.HOME_PHONE) >= 10
+          AND PER.CAN_LEAVE_MESSAGES_ON ILIKE '%M%'
+            THEN PAT.HOME_PHONE
+        WHEN LENGTH(PER.WORK_PHONE) >= 10
+          AND PER.CAN_LEAVE_MESSAGES_ON ILIKE '%B%'
+            THEN PER.WORK_PHONE
+        ELSE NULL
+    END                                                   AS MOB_TO_LEAVE_MESSAGE_ON,
+    PER.APPOINTMENT_SMS                                   AS SMS,
+    PER.PREF_CONTACT_METHOD                               AS PREFERRED_CONTACT_METHOD,
+
+    -- ── Address ─────────────────────────────────────────────────────
+    PER.FOREIGN_ADDRESS                                   AS ADDRESS_LINE_2,
+
+
+    PER.ZIP_DR                                            AS SUBURB_REF,
     RGN.DESCRIPTION                                       AS LGA,
 
     -- ── Social circumstances ────────────────────────────────────────

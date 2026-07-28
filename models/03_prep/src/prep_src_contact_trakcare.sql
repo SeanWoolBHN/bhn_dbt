@@ -13,6 +13,20 @@ WITH order_status AS (
     FROM {{ ref('prep_stg_trakcare_oe_ordstatus') }}      AS OS
     LEFT JOIN {{ ref('prep_stg_trakcare_oec_orderstatus') }} AS OEC
         ON OS.STATUS_DR = OEC.ROW_ID
+),
+
+price_lookup AS (
+    -- Deduplicate ARC_ITEMPRICEITALY — multiple rows per PAR_REF
+    -- (one per insurer/location combination via CHILD_SUB)
+    -- Pick lowest CHILD_SUB as the base price row
+    SELECT
+        PAR_REF,
+        PRICE,
+        ROW_NUMBER() OVER (
+            PARTITION BY PAR_REF
+            ORDER BY TRY_TO_NUMBER(CHILD_SUB::VARCHAR, 18, 0) ASC NULLS LAST
+        )                                                 AS RN
+    FROM {{ ref('prep_stg_trakcare_arc_itempriceitaly') }}
 )
 
 SELECT
@@ -230,8 +244,9 @@ LEFT JOIN {{ ref('prep_stg_trakcare_arc_itemcat') }}      AS IC_DIRECT
     ON CAST(ENQ.ITEM_CAT_DR AS VARCHAR) = CAST(IC_DIRECT.ROW_ID AS VARCHAR)
 
 -- Unit price — ARC_ITEMPRICEITALY
-LEFT JOIN {{ ref('prep_stg_trakcare_arc_itempriceitaly') }} AS ITP
+LEFT JOIN price_lookup                                    AS ITP
     ON CAST(OI.ITM_MAST_DR AS VARCHAR) = CAST(ITP.PAR_REF AS VARCHAR)
+    AND ITP.RN = 1
 
 -- Request status — now wired
 LEFT JOIN {{ ref('prep_stg_trakcare_pac_requeststatus') }} AS REQST

@@ -1,7 +1,7 @@
 WITH cte_esah AS (
     -- ESAH clients with full contact details
     SELECT DISTINCT
-        'ET_' || ESAH.CARE_RECIPIENT_ID                   AS SRC_SYS_CLIENT_ID,
+        'ET-' || ESAH.CARE_RECIPIENT_ID                   AS SRC_SYS_CLIENT_ID,
         ESAH.FIRST_NAME,
         ESAH.LAST_NAME,
         ESAH.DOB,
@@ -27,7 +27,7 @@ cte_cust_minus AS (
 cte_cust AS (
     -- CUSTOMER_LIST clients not in ESAH — no contact details available
     SELECT DISTINCT
-        'ET_' || ET.CARE_RECIPIENT_ID                     AS SRC_SYS_CLIENT_ID,
+        'ET-' || ET.CARE_RECIPIENT_ID                     AS SRC_SYS_CLIENT_ID,
         ET.FIRST_NAME,
         ET.LAST_NAME,
         ET.DOB,
@@ -46,7 +46,7 @@ cte_cust AS (
 cte_cust_null AS (
     -- CUSTOMER_LIST clients with NULL CARE_RECIPIENT_ID
     SELECT DISTINCT
-        'ET_' || ET.CARE_RECIPIENT_ID                     AS SRC_SYS_CLIENT_ID,
+        'ET-' || ET.CARE_RECIPIENT_ID                     AS SRC_SYS_CLIENT_ID,
         ET.FIRST_NAME,
         ET.LAST_NAME,
         ET.DOB,

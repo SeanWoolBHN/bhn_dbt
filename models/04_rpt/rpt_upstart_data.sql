@@ -1,0 +1,89 @@
+SELECT
+    CL.AGE,
+    CL.GENDER,
+    CL.PREF_LANG,
+    CL.ATSI,
+    CL.HOMELESS,
+    EP.REF_REC_DT,
+    EP.REF_CREATE_DT,
+    EP.EPISODE_DT,
+    EP.INT_REF_TEAM,
+    EP.REFERRAL_ORG,
+    EP.REF_SOURCE,
+    EP.REF_TYPE,
+    EP.DATA_COLLECTION_CONSENT                            AS DAT_COLLECTION_CONSENT,
+    EP.CONSENT_TO_REFERRAL,
+    EP.REFERRAL_REASON,
+    EP.EPISODE_TEAM,
+    EP.EPISODE_CP,
+    EP.SERVICE,
+    EP.REFERRAL_STATUS,
+    EP.REF_PRIORITY,
+    EP.EPISODE_ACTIVE,
+    EP.DAYS_OPEN,
+    EP.EXT_REQUESTOR_NAME,
+    EP.DISCHARGE_DT,
+    EP.REFERRAL_DESTINATION,
+    CO.UR,
+    CO.EPISODE_ID                                         AS EPISODE,
+    CO.REQUEST_STATUS,
+    CO.ANON_CLIENT_ORG,
+    CO.ANON_CLIENT_TYPE,
+    CO.CONTACT_SEX,
+    CO.ENQ_CONTACT_NAME,
+    EP.PRESENTING_ISSUE,
+    COALESCE(NULLIF(CO.CP, ''), NULLIF(EP.EPISODE_CP, ''), 'Unknown') AS CP,
+    CO.LOCATION,
+    CO.HOSPITAL,
+    CO.CONTACT_METHOD,
+    CO.DELIVERY_MODE,
+    CO.DATE_ENTERED,
+    COALESCE(CO.DIRECT_MINUTES / 60, 0.00)                AS DIRECT_HOURS,
+    COALESCE(CO.INDIRECT_MINUTES / 60, 0.00)              AS INDIRECT_HOURS,
+    COALESCE(CO.TRAVEL_MINUTES / 60, 0.00)                AS TRAVEL,
+    CO.PAYOR,
+    CO.PLAN,
+    CO.CONTACT_TYPE,
+    CASE
+        WHEN CO.CONTACT_TYPE = 'A'
+            THEN 'Non Registered / Org client'
+        ELSE 'client'
+    END                                                   AS CONTACT_TYPE_DESC,
+    CO.ORDER_STATUS,
+    CO.ORD_ITEM,
+    CO.OEORDI_REF,
+    CO.INTERVENTIONS,
+    CO.ORD_SUB_CAT,
+    CO.PROGRAM_STREAM_CODE,
+    TRIM(CO.PROGRAM_STREAM_DESC)                          AS PROGRAM_STREAM_DESC,
+    CO.STO,
+    CO.REPORTING_QTR,
+    CO.CONTACT_DATE                                       AS CONTACT_DT,
+    CO.COST,
+    CO.UNIT_PRICE,
+    CO.EV_NUMBER,
+    CO.EV_NAME,
+    CO.EVT_DESC,
+    CO.EVST_SUB_DESC                                      AS GOVERNMENT_SUBCATEGORY_DESC,
+    CO.EV_VENUE,
+    CO.EV_DURATION,
+    CO.EV_PREPARATION_TIME,
+    CO.EV_MAX_NUMBER_OF_PARTICIPANTS
+
+FROM {{ ref('prep_model_contact') }}                      AS CO
+
+LEFT JOIN {{ ref('prep_model_episode') }}                 AS EP
+    ON CO.EPISODE_ID = EP.EPISODE_ID::VARCHAR
+
+LEFT JOIN {{ ref('prep_model_client') }}           AS CL
+    ON CO.UR = CL.UR
+
+WHERE CO.PROGRAM_STREAM_DESC IN ('Upstart Individual', 'Upstart Group')
+  AND CO.HOSPITAL IN ('Case Management')
+  AND CO.LOCATION = 'Upstart VPC'
+  AND TRY_TO_NUMBER(LEFT(CO.REPORTING_QTR, 4)) >= 2020
+  AND (
+      CO.ORDER_STATUS = 'Executed'
+      OR CO.REQUEST_STATUS = 'completed'
+      OR (CO.ORDER_STATUS IS NULL AND CO.REQUEST_STATUS IS NULL)
+  )

@@ -1,0 +1,22 @@
+SELECT 'E_TOOLS'                                 AS SRC_SYS, 
+       'CUSTOMER_LIST'                           AS TABLE_NAME, 
+       CARE_RECIPIENT_ID, 
+       FIRST_NAME, 
+       LAST_NAME, 
+       DATE_OF_BIRTH,
+       ADDRESS_LINE_1,
+       ADDRESS_LINE_2,
+       ADDRESS_LINE_1||IFNULL(ADDRESS_LINE_2,'') AS ADDRESS,
+       SUBURB,
+       POSTCODE
+
+FROM {{ source('raw_e_tools', 'ESAH_CLIENTS') }}
+
+WHERE STATUS IN ('Active','Discharged')
+AND (   CARE_RECIPIENT_ID IS NULL
+     OR FIRST_NAME IS NULL
+     OR LAST_NAME IS NULL
+     OR DATE_OF_BIRTH IS NULL
+     OR ADDRESS_LINE_1||IFNULL(ADDRESS_LINE_2,'') IS NULL
+     OR SUBURB IS NULL
+     OR POSTCODE IS NULL)

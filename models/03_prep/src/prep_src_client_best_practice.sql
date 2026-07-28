@@ -1,6 +1,6 @@
 SELECT DISTINCT
     'BP'                                                  AS SRC_SYS,
-    'BP_' || INTERNAL_ID                                  AS SRC_SYS_CLIENT_ID,
+    'BP-' || INTERNAL_ID                                  AS SRC_SYS_CLIENT_ID,
     FIRST_NAME,
     LAST_NAME,
     DOB,

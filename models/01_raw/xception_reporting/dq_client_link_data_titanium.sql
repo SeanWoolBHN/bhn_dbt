@@ -1,0 +1,27 @@
+SELECT 'TITANIUM'               AS SRC_SYS, 
+       'PATIENT_DETAIL_REPORT'  AS TABLE_NAME, 
+       DR_, 
+       FIRSTNAME, 
+       LASTNAME, 
+       DOB, 
+       ADDRESS, 
+       SUBURB, 
+       POSTCODE
+
+FROM {{ source('raw_titanium', 'PATIENT_DETAIL_REPORT') }}
+
+WHERE DR_ IS NULL 
+   OR DR_ LIKE '%*%' 
+   OR DR_ LIKE '%#%'
+   OR FIRSTNAME IS NULL 
+   OR FIRSTNAME LIKE '%#%' 
+   OR FIRSTNAME LIKE '%*%' 
+   OR FIRSTNAME LIKE '%"%' 
+   OR FIRSTNAME LIKE '%--%'
+   OR LASTNAME IS NULL 
+   OR LASTNAME LIKE '%*%' 
+   OR LASTNAME LIKE '%#%'
+   OR DOB IS NULL
+   OR ADDRESS IS NULL
+   OR SUBURB IS NULL
+   OR POSTCODE IS NULL

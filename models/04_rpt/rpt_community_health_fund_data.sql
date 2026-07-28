@@ -227,7 +227,7 @@ base AS (
     LEFT JOIN {{ ref('prep_model_episode') }}      AS EP
         ON CO.EPISODE_ID = EP.EPISODE_ID::VARCHAR
 
-    LEFT JOIN {{ ref('prep_src_client_trakcare') }}       AS CL
+    LEFT JOIN {{ ref('prep_model_client') }}       AS CL
         ON CO.UR = CL.UR
 
     LEFT JOIN funding_source                              AS FS
