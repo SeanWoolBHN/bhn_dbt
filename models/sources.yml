@@ -2,14 +2,14 @@ version: 2
 
 sources:
   - name: raw_best_practice
-    database: DEV_01_RAW_DB
+    database: "{{(target.name|upper~'_')|replace('_DEP','')}}01_RAW_DB"
     schema: BEST_PRACTICE
     tables:
       - name: BPS_SEARCH_RESULT
         description: "Raw patient search result data from Best Practice system"
 
   - name: raw_titanium
-    database: DEV_01_RAW_DB
+    database: "{{(target.name|upper~'_')|replace('_DEP','')}}01_RAW_DB"
     schema: TITANIUM
     tables:
       - name: PATIENT_DETAIL_REPORT
@@ -20,7 +20,7 @@ sources:
         description: "Raw appointment detail report FCT data from Titanium system loaded via Airbyte"
 
   - name: raw_echidna
-    database: DEV_01_RAW_DB
+    database: "{{(target.name|upper~'_')|replace('_DEP','')}}01_RAW_DB"
     schema: ECHIDNA
     tables:
       - name: ECHIDNA_CLIENTS
@@ -29,7 +29,7 @@ sources:
         description: "Raw NDIS client hours FCT data from Echidna system loaded via Airbyte"
 
   - name: raw_trips
-    database: DEV_01_RAW_DB
+    database: "{{(target.name|upper~'_')|replace('_DEP','')}}01_RAW_DB"
     schema: TRIPS
     tables:
       - name: TRIPS_CLIENTS
@@ -38,7 +38,7 @@ sources:
         description: "Raw service event FCT data from TRIPS system loaded via Airbyte"
 
   - name: raw_e_tools
-    database: DEV_01_RAW_DB
+    database: "{{(target.name|upper~'_')|replace('_DEP','')}}01_RAW_DB"
     schema: E_TOOLS
     tables:
       - name: CUSTOMER_LIST
@@ -49,7 +49,7 @@ sources:
         description: "Raw ESAH client data from E-Tools system"
 
   - name: raw_micropay
-    database: DEV_01_RAW_DB
+    database: "{{(target.name|upper~'_')|replace('_DEP','')}}01_RAW_DB"
     schema: MICROPAY
     tables:
       - name: EMPLOYEE_DETAILS
@@ -58,7 +58,7 @@ sources:
         description: "Raw employee leave FCT data from Micropay payroll system"
 
   - name: raw_better_impact
-    database: DEV_01_RAW_DB
+    database: "{{(target.name|upper~'_')|replace('_DEP','')}}01_RAW_DB"
     schema: BETTER_IMPACT
     tables:
       - name: PROFILE_EXPORT
@@ -69,7 +69,7 @@ sources:
         description: "Raw volunteer feedback FCT data from Better Impact system"
 
   - name: raw_supportability
-    database: DEV_01_RAW_DB
+    database: "{{(target.name|upper~'_')|replace('_DEP','')}}01_RAW_DB"
     schema: SUPPORTABILITY
     tables:
       - name: CLIENT_LIST_INC_PERSONAL_CONTACTS
@@ -80,14 +80,14 @@ sources:
         description: "Raw allocations report FCT data from Supportability system loaded via Airbyte"
 
   - name: raw_gh_connect
-    database: DEV_01_RAW_DB
+    database: "{{(target.name|upper~'_')|replace('_DEP','')}}01_RAW_DB"
     schema: GH_CONNECT
     tables:
       - name: TIMESHEETS
         description: "Raw timesheet FCT data from GH Connect system loaded via Airbyte"
 
   - name: raw_connx
-    database: DEV_01_RAW_DB
+    database: "{{(target.name|upper~'_')|replace('_DEP','')}}01_RAW_DB"
     schema: CONNX
     tables:
       - name: EMPLOYEE_DATA
@@ -98,7 +98,7 @@ sources:
         description: "Raw licence registration data from CONNX system"
   
   - name: raw_manual
-    database: DEV_01_RAW_DB
+    database: "{{(target.name|upper~'_')|replace('_DEP','')}}01_RAW_DB"
     schema: MANUAL
     tables:
       - name: LOCATION_MAPPING
@@ -107,7 +107,7 @@ sources:
         description: "Fund source targets reference table"
     
   - name: raw_trakcare
-    database: DEV_01_RAW_DB
+    database: "{{(target.name|upper~'_')|replace('_DEP','')}}01_RAW_DB"
     schema: TRAKCARE
     tables:
       - name: CT_COUNTRY

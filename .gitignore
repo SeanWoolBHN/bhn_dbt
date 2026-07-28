@@ -8,3 +8,4 @@ dbt_internal_packages/
 .vscode/
 .user.yml
 profiles.yml
+**.DS_Store
