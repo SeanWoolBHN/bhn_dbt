@@ -23,7 +23,7 @@
             {{ default_schema }}
         {%- elif target.name == 'PROD' -%}
             {{ custom_schema_name | trim }}
-        {%- elif target.name == 'TEST' -%}
+        {%- elif target.name == 'DEV_DEP' -%}
             {{ custom_schema_name | trim }}
         {%- else -%}
             {{ default_schema | upper }}_{{ custom_schema_name | trim }}
