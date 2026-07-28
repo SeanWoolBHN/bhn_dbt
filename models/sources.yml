@@ -1,0 +1,284 @@
+version: 2
+
+sources:
+  - name: raw_best_practice
+    database: "{{(target.name|upper~'_')|replace('_DEP','')}}01_RAW_DB"
+    schema: BEST_PRACTICE
+    tables:
+      - name: BPS_SEARCH_RESULT
+        description: "Raw patient search result data from Best Practice system"
+
+  - name: raw_titanium
+    database: "{{(target.name|upper~'_')|replace('_DEP','')}}01_RAW_DB"
+    schema: TITANIUM
+    tables:
+      - name: PATIENT_DETAIL_REPORT
+        description: "Raw patient detail data from Titanium system"
+      - name: PROVIDER_OUTPUT_SUMMARY
+        description: "Raw provider output summary FCT data from Titanium system"
+      - name: APPOINTMENT_DETAIL_REPORT
+        description: "Raw appointment detail report FCT data from Titanium system loaded via Airbyte"
+
+  - name: raw_echidna
+    database: "{{(target.name|upper~'_')|replace('_DEP','')}}01_RAW_DB"
+    schema: ECHIDNA
+    tables:
+      - name: ECHIDNA_CLIENTS
+        description: "Raw client data from Echidna system"
+      - name: NDIS_CLIENT_HOURS
+        description: "Raw NDIS client hours FCT data from Echidna system loaded via Airbyte"
+
+  - name: raw_trips
+    database: "{{(target.name|upper~'_')|replace('_DEP','')}}01_RAW_DB"
+    schema: TRIPS
+    tables:
+      - name: TRIPS_CLIENTS
+        description: "Raw client data from TRIPS system"
+      - name: SERVICE_EVENT_EXPORT
+        description: "Raw service event FCT data from TRIPS system loaded via Airbyte"
+
+  - name: raw_e_tools
+    database: "{{(target.name|upper~'_')|replace('_DEP','')}}01_RAW_DB"
+    schema: E_TOOLS
+    tables:
+      - name: CUSTOMER_LIST
+        description: "Raw customer list data from E-Tools system"
+      - name: PROVIDER_STATEMENT
+        description: "Raw provider list data from E-Tools system"
+      - name: ESAH_CLIENTS
+        description: "Raw ESAH client data from E-Tools system"
+
+  - name: raw_micropay
+    database: "{{(target.name|upper~'_')|replace('_DEP','')}}01_RAW_DB"
+    schema: MICROPAY
+    tables:
+      - name: EMPLOYEE_DETAILS
+        description: "Raw employee details from Micropay payroll system"
+      - name: EMPLOYEE_LEAVE
+        description: "Raw employee leave FCT data from Micropay payroll system"
+
+  - name: raw_better_impact
+    database: "{{(target.name|upper~'_')|replace('_DEP','')}}01_RAW_DB"
+    schema: BETTER_IMPACT
+    tables:
+      - name: PROFILE_EXPORT
+        description: "Raw volunteer profile data from Better Impact system"
+      - name: VOLUNTEER_INFORMATION
+        description: "Raw volunteer information data from Better Impact system"
+      - name: PIVOTED_FEEDBACK_REPORT
+        description: "Raw volunteer feedback FCT data from Better Impact system"
+
+  - name: raw_supportability
+    database: "{{(target.name|upper~'_')|replace('_DEP','')}}01_RAW_DB"
+    schema: SUPPORTABILITY
+    tables:
+      - name: CLIENT_LIST_INC_PERSONAL_CONTACTS
+        description: "Raw client and personal contact list from Supportability system"
+      - name: ACTIVITY_REPORT
+        description: "Raw activity report FCT data from Supportability system"
+      - name: ALLOCATIONS_REPORT
+        description: "Raw allocations report FCT data from Supportability system loaded via Airbyte"
+
+  - name: raw_gh_connect
+    database: "{{(target.name|upper~'_')|replace('_DEP','')}}01_RAW_DB"
+    schema: GH_CONNECT
+    tables:
+      - name: TIMESHEETS
+        description: "Raw timesheet FCT data from GH Connect system loaded via Airbyte"
+
+  - name: raw_connx
+    database: "{{(target.name|upper~'_')|replace('_DEP','')}}01_RAW_DB"
+    schema: CONNX
+    tables:
+      - name: EMPLOYEE_DATA
+        description: "Raw employee data from CONNX system"
+      - name: EMPLOYEE_DEMOGRAPHICS
+        description: "Raw employee demographics from CONNX system"
+      - name: LICENCE_REGISTRATION
+        description: "Raw licence registration data from CONNX system"
+  
+  - name: raw_manual
+    database: "{{(target.name|upper~'_')|replace('_DEP','')}}01_RAW_DB"
+    schema: MANUAL
+    tables:
+      - name: LOCATION_MAPPING
+        description: "Manual location mapping reference table linking TrakCare location codes to reporting values"
+      - name: FUNDSOURCETARGETS
+        description: "Fund source targets reference table"
+    
+  - name: raw_trakcare
+    database: "{{(target.name|upper~'_')|replace('_DEP','')}}01_RAW_DB"
+    schema: TRAKCARE
+    tables:
+      - name: CT_COUNTRY
+        description: "Reference table of countries from TrakCare system"
+      - name: CT_GENDERIDENTITY
+        description: "Reference table of gender identities from TrakCare system"
+      - name: CT_MARITAL
+        description: "Reference table of marital statuses from TrakCare system"
+      - name: CT_NATION
+        description: "Reference table of nationalities from TrakCare system"
+      - name: CT_OCCUPATION
+        description: "Reference table of occupations from TrakCare system"
+      - name: CT_REGION
+        description: "Reference table of regions from TrakCare system"
+      - name: CT_RELIGION
+        description: "Reference table of religions from TrakCare system"
+      - name: CT_SEX
+        description: "Reference table of sex codes from TrakCare system"
+      - name: CT_SOCIALSTATUS
+        description: "Reference table of social statuses from TrakCare system"
+      - name: CT_TITLE
+        description: "Reference table of titles from TrakCare system"
+      - name: PAC_ACCOMSETTING
+        description: "Reference table of accommodation settings from TrakCare system"
+      - name: PAC_CARDTYPE
+        description: "Reference table of card types from TrakCare system"
+      - name: PAC_CARERAVAILABILITY
+        description: "Reference table of carer availability from TrakCare system"
+      - name: PAC_COMMUNICATIONNEEDS
+        description: "Reference table of communication needs from TrakCare system"
+      - name: PAC_CONCESSIONCARDTYPE
+        description: "Reference table of concession card types from TrakCare system"
+      - name: PAC_DEPENDENTCHILDREN
+        description: "Reference table of dependent children categories from TrakCare system"
+      - name: PAC_EMPLOYMENTSTATUS
+        description: "Reference table of employment statuses from TrakCare system"
+      - name: PAC_INDIGSTATUS
+        description: "Reference table of indigenous statuses from TrakCare system"
+      - name: PAC_LIVINGARRANGEMENT
+        description: "Reference table of living arrangements from TrakCare system"
+      - name: PAC_PENSIONTYPE
+        description: "Reference table of pension types from TrakCare system"
+      - name: PAC_PREFERREDLANGUAGE
+        description: "Reference table of preferred languages from TrakCare system"
+      - name: PAC_REFDOCTORCLINIC
+        description: "Reference table of referring doctor clinics from TrakCare system"
+      - name: PAC_SOURCEOFINCOME
+        description: "Reference table of income sources from TrakCare system"
+      - name: PA_PATMAS
+        description: "Patient master data from TrakCare system"
+      - name: PA_PERSON
+        description: "Person master data from TrakCare system"
+      - name: ARC_ITMMAST
+        description: "Reference table of item master records from TrakCare system"
+      - name: ARC_ITEMCAT
+        description: "Reference table of item categories from TrakCare system"
+      - name: ARC_AUXILINSURTYPE
+        description: "Reference table of auxiliary insurance types from TrakCare system"
+      - name: RT_MASTER
+        description: "Master Data Table"
+      - name: CT_ZIP
+        description: "Reference table of zip/postcode codes from TrakCare system"
+      - name: PAC_REFERRALTYPE
+        description: "Reference table of referral types from TrakCare system"
+      - name: CT_CAREPROV
+        description: "Reference table of care providers from TrakCare system"
+      - name: PAC_SOURCEOFATTENDANCE
+        description: "Reference table of source of attendance codes from TrakCare system"
+      - name: PAC_NONGOVORG
+        description: "Reference table of non-government organisations from TrakCare system"
+      - name: PAC_REFERREDDEPARTURE
+        description: "Reference table of referred departure codes from TrakCare system"
+      - name: RBC_REASONFORCANCEL
+        description: "Reference table of cancellation reasons from TrakCare system"
+      - name: RBC_REASONFORNOTSHOW
+        description: "Reference table of not-show reasons from TrakCare system"
+      - name: RB_RESOURCE
+        description: "Reference table of booking resources from TrakCare system"
+      - name: RB_EVENT
+        description: "Reference table of events from TrakCare system"
+      - name: RBC_APPOINTTRANSPORT
+        description: "Reference table of appointment transport options from TrakCare system"
+      - name: RBC_SERVICES
+        description: "Reference table of services from TrakCare system"
+      - name: RBC_EVENTTYPE
+        description: "Reference table of event types from TrakCare system"
+      - name: RBC_EVENTSUBTYPE
+        description: "Reference table of event subtypes from TrakCare system"
+      - name: RB_APPTSCHEDULE
+        description: "Appointment schedule data from TrakCare system"
+      - name: SS_USER
+        description: "System user reference table from TrakCare system"
+      - name: CT_NFMI_CATEGDEPART
+        description: "Reference table of NFMI category departments from TrakCare system"
+      - name: CT_HOSPITAL
+        description: "Reference table of hospitals from TrakCare system"
+      - name: CT_LOC
+        description: "Reference table of locations from TrakCare system"
+      - name: PA_ADM
+        description: "Patient admission/episode FCT table from TrakCare system"
+      - name: CT_NFMI_CATEGORY
+        description: "Reference table of NFMI categories from TrakCare system"
+      - name: RB_APPOINTMENT
+        description: "Appointment bookings from TrakCare system"
+      - name: QAUXXADVADC
+        description: "VADC questionnaire response table from TrakCare system"
+      - name: QAUXXADOUT
+        description: "VADC outcome questionnaire response table from TrakCare system"
+      - name: QAUXXADOUTQQVADCOUTDOC
+        description: "VADC outcome document child table from TrakCare system"
+      - name: QAUXXADVADCQQVADCPROGREF
+        description: "VADC program referral child table from TrakCare system"
+      - name: PA_ENQUIRYCONTACT
+        description: "Service contact/enquiry contact records from TrakCare system"
+      - name: OE_ORDITEM
+        description: "Order item records from TrakCare system"
+      - name: RTC_MRECORDTYPE
+        description: "Reference table of medical record types from TrakCare system"
+      - name: PAC_REPORTINGTYPE
+        description: "Reference table of reporting types from TrakCare system"
+      - name: PAC_NATIONALCODES
+        description: "National codes mapping table from TrakCare system"
+      - name: CT_GOVERNSUBCAT
+        description: "Reference table of government subcategories from TrakCare system"
+      - name: PA_ADMINSURANCE
+        description: "Admission insurance/payor records from TrakCare system"
+      - name: OE_ORDSTATUS
+        description: "Order status records from TrakCare system"
+      - name: PAC_REQUESTSTATUS
+        description: "Reference table of request status codes from TrakCare system"
+      - name: PA_ADM2
+        description: "Extended admission data from TrakCare system"
+      - name: OE_ORDITEM2
+        description: "Extended order item data from TrakCare system"
+      - name: MR_ADM
+        description: "Medical records admission data from TrakCare"
+      - name: PAC_ADMREASON
+        description: "Reference table of admission reasons from TrakCare"
+      - name: PAC_REFERRALSTATUS
+        description: "Reference table of referral status codes from TrakCare"
+      - name: ARC_INSURANCETYPE
+        description: "Reference table of insurance types from TrakCare"
+      - name: PAC_CONTMETHOD
+        description: "Reference table of contact methods from TrakCare"
+      - name: PAC_CONTDELIVMODE
+        description: "Reference table of contact delivery modes from TrakCare"
+      - name: PAC_CONTOUTCOME
+        description: "Reference table of contact outcomes from TrakCare"
+      - name: PAC_CONTWORKERTYPE
+        description: "Reference table of contact worker types from TrakCare"
+      - name: PAC_CONTPRESENTINGISSUE
+        description: "Reference table of contact presenting issues from TrakCare"
+      - name: PAC_CONTLOCALGOAL
+        description: "Reference table of contact local goals from TrakCare"
+      - name: PAC_CONTINTERPRETERTYPE
+        description: "Reference table of contact interpreter types from TrakCare"
+      - name: PAC_CONTSERVICEREC2
+        description: "Reference table of contact service recommendations from TrakCare"
+      - name: PAC_REQUESTTYPE
+        description: "Reference table of request types from TrakCare"
+      - name: PAC_REFERRALPRIORITY
+        description: "Reference table of referral priorities from TrakCare"
+      - name: PAC_DISCHCLASSIFICATION
+        description: "Reference table of discharge classifications from TrakCare"
+      - name: PA_PERSONADMINSURANCE
+        description: "Person admin insurance records from TrakCare"
+      - name: ARC_ITEMPRICEITALY
+        description: "Item pricing records from TrakCare"
+      - name: OE_ORDER
+        description: "Order records from TrakCare"
+      - name: PAC_CONTVENUE
+        description: "Reference table of contact venues from TrakCare system"
+      - name: OEC_ORDERSTATUS
+        description: "Reference table of order status codes from TrakCare system"

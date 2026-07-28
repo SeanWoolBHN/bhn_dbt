@@ -1,0 +1,21 @@
+SELECT
+    CTRLG_ROWID                                   AS ROW_ID,
+    TRIM(CTRLG_CODE)                              AS CODE,
+    TRIM(CTRLG_DESC)                              AS DESC,
+    CTRLG_DATEFROM                                AS DATE_FROM,
+    CAST(TRIM(CTRLG_DATETO) AS DATE)              AS DATE_TO,
+    TRIM(CTRLG_OWNER)                             AS OWNER,
+    TRIM(CTRLG_CODETABLETAGS)                     AS CODE_TABLE_TAGS,
+    CAST(TRIM(CTRLG_CREATEDDATE) AS DATE)         AS CREATED_DATE,
+    CAST(TRIM(CTRLG_CREATEDTIME) AS TIME)         AS CREATED_TIME,
+    TRY_TO_NUMBER(TRIM(CTRLG_CREATEDUSER_DR),18,6) AS CREATED_USER_DR,
+    TRIM(CTRLG_UPDATEDDATE)                       AS UPDATED_DATE,
+    TRIM(CTRLG_UPDATEDTIME)                       AS UPDATED_TIME,
+    TRY_TO_NUMBER(TRIM(CTRLG_UPDATEDUSER_DR),18,6)  AS UPDATED_USER_DR,
+    TRIM(CTRLG_CODETRANSLATED)                    AS CODE_TRANSLATED,
+    TRIM(CTRLG_DESCTRANSLATED)                    AS DESC_TRANSLATED,
+
+    _AIRBYTE_EXTRACTED_AT                         AS AIRBYTE_EXTRACTED_TS
+
+FROM {{ ref('HIST_TRAKCARE_CT_RELIGION') }}
+WHERE dbt_valid_to = TO_DATE('9999-12-31')

@@ -1,0 +1,14 @@
+SELECT
+    UPPER(TRIM(STATUS))                          AS STATUS,
+    {{ format_date('ISSUE_DATE') }}              AS ISSUE_DATE,
+    {{ format_date('EXPIRY_DATE') }}             AS EXPIRY_DATE,
+    {{ format_name('ISSUING_BODY') }}            AS ISSUING_BODY,
+    TRIM(LICENSE_TYPE)                           AS LICENSE_TYPE,
+    TRY_TO_NUMBER(TRIM(EMPLOYEE_NUMBER),18,6)    AS EMPLOYEE_NO,
+    TRY_TO_NUMBER(TRIM(IDENTIFICATION_NUMBER),18,6) AS LICENSE_ID,
+    TRIM(LICENSE_CLASSIFICATION)                 AS LICENSE_CLASSIFICATION,
+
+    _AIRBYTE_EXTRACTED_AT                         AS AIRBYTE_EXTRACTED_TS
+
+FROM {{ ref('HIST_CONNX_LICENCE_REGISTRATION') }}
+WHERE dbt_valid_to = TO_DATE('9999-12-31')

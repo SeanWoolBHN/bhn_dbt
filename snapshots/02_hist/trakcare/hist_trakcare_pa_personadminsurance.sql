@@ -1,0 +1,24 @@
+{% snapshot HIST_TRAKCARE_PA_PERSONADMINSURANCE %}
+{{
+    config(
+        unique_key='PAINS_ROWID',
+        strategy='check',
+        check_cols=[
+            'PAINS_RANK', 'PAINS_CARDNO', 'PAINS_PARREF', 'PAINS_SPEC_DR',
+            'PAINS_APPLYGST', 'PAINS_CTLOC_DR', 'PAINS_CTPCP_DR', 'PAINS_CTREL_DR',
+            'PAINS_CHILDSUB', 'PAINS_DATETYPETO', 'PAINS_INSTYPE_DR',
+            'PAINS_UPDATEDATE', 'PAINS_UPDATETIME', 'PAINS_CARDTYPE_DR',
+            'PAINS_DATEVALIDTO', 'PAINS_NUMOFVISITS', 'PAINS_ROOMTYPE_DR',
+            'PAINS_CARDHOLDERID', 'PAINS_DATETYPEFROM', 'PAINS_DEPENDENT_DR',
+            'PAINS_AUXINSTYPE_DR', 'PAINS_DATEVALIDFROM', 'PAINS_DEPENDENTFLAG',
+            'PAINS_UPDATEUSER_DR', 'PAINS_CARDHOLDERNAME', 'PAINS_EPISSUBTYPE_DR',
+            'PAINS_BENEFITPACKAGE_DR', 'PAINS_NUMOFVISITSREMAIN',
+            'PAINS_PERSONRESPONSIBLE', 'PAINS_UPDATEUSERHOSPITAL_DR',
+            'PAINS_PAYORVARIATIONCOMMENTS'
+        ],
+        invalidate_hard_deletes=True,
+        dbt_valid_to_current="to_date('9999-12-31')"
+    )
+}}
+SELECT * FROM {{ source('raw_trakcare', 'PA_PERSONADMINSURANCE') }}
+{% endsnapshot %}

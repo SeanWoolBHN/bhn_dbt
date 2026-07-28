@@ -1,0 +1,19 @@
+SELECT
+    -- ── Natural keys ────────────────────────────────────────────────
+    DOC.VADC_OUT_DOC_KEY                                  AS VADC_DOC_ID,--RowID
+    DOC.VADC_OUT_ID                                       AS VADC_OUTCOME_ID,
+    DOC.QUES_PAR_REF_DR                                   AS PARENT_OUTCOME_DR_RAW,--QUESParRefDR
+    DOC.CHILD_SUB                                         AS CHILD_SUB,
+
+    -- ── Drug of concern fields ──────────────────────────────────────
+    DOC.VADC_OUT_DOC_Q1                                   AS DRUG_TYPE_CODE, --DrugName
+    DOC.VADC_OUT_DOC_Q2                                   AS USE_FREQUENCY, --UseFrequency
+    DOC.VADC_OUT_DOC_Q3                                   AS METHOD_OF_USE,--UseMethod
+    DOC.VADC_OUT_DOC_Q4                                   AS IS_PRINCIPAL_DRUG,--IsPrincipleDOC
+    DOC.VADC_OUT_DOC_Q5                                   AS AGE_OF_FIRST_USE,
+    DOC.VADC_OUT_DOC_Q6                                   AS INJECTION_FLAG,
+    DOC.VADC_OUT_DOC_Q7                                   AS ADDITIONAL_FLAGS
+
+FROM {{ ref('prep_stg_trakcare_qauxxadoutqqvadcoutdoc') }} AS DOC
+
+WHERE DOC.VADC_OUT_ID IS NOT NULL

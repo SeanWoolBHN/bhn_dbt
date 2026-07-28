@@ -1,0 +1,18 @@
+SELECT
+    REFDEP_ROWID                                                          AS ROW_ID,
+    NULLIF(TRIM(REFDEP_CODE), 'NULL')                                     AS CODE,
+    NULLIF(TRIM(REFDEP_DESC), 'NULL')                                     AS DESCRIPTION,
+    TRY_TO_DATE(NULLIF(TRIM(REFDEP_DATEFROM), 'NULL'))                    AS DATE_FROM,
+    TRY_TO_DATE(NULLIF(TRIM(REFDEP_DATETO), 'NULL'))                      AS DATE_TO,
+    NULLIF(TRIM(REFDEP_NATIONALCODE), 'NULL')                             AS NATIONAL_CODE,
+    NULLIF(TRIM(REFDEP_OWNER), 'NULL')                                    AS OWNER,
+    NULLIF(TRIM(REFDEP_CODETABLETAGS), 'NULL')                            AS CODE_TABLE_TAGS,
+    TRY_TO_DATE(NULLIF(TRIM(REFDEP_CREATEDDATE), 'NULL'))                 AS CREATED_DATE,
+    NULLIF(TRIM(REFDEP_CREATEDTIME), 'NULL')                              AS CREATED_TIME,
+    TRY_TO_NUMBER(NULLIF(TRIM(REFDEP_CREATEDUSER_DR), 'NULL'), 18, 6)     AS CREATED_USER_DR,
+    TRY_TO_DATE(NULLIF(TRIM(REFDEP_UPDATEDDATE), 'NULL'))                 AS UPDATED_DATE,
+    NULLIF(TRIM(REFDEP_UPDATEDTIME), 'NULL')                              AS UPDATED_TIME,
+    TRY_TO_NUMBER(NULLIF(TRIM(REFDEP_UPDATEDUSER_DR), 'NULL'), 18, 6)     AS UPDATED_USER_DR
+
+FROM {{ ref('HIST_TRAKCARE_PAC_REFERREDDEPARTURE') }}
+WHERE dbt_valid_to = TO_DATE('9999-12-31')
