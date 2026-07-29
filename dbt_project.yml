@@ -82,6 +82,9 @@ models:
       model:
         +materialized: view
         +schema: MODEL
+      xception_reporting:
+        +materialized: view
+        +schema: XCEPTION_REPORTING
     04_rpt:
       +database: 04_RPT_DB
       +materialized: view          

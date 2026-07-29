@@ -1,5 +1,5 @@
 SELECT 'E_TOOLS'                                 AS SRC_SYS, 
-       'CUSTOMER_LIST'                           AS TABLE_NAME, 
+       'ESAH_CLIENTS'                           AS TABLE_NAME, 
        CARE_RECIPIENT_ID, 
        FIRST_NAME, 
        LAST_NAME, 

@@ -145,5 +145,14 @@ FULL OUTER JOIN cte_trips                                 AS TR
                 EC.CLIENT_LINK, ET.CLIENT_LINK,
                 SU.CLIENT_LINK, TI.CLIENT_LINK) = TR.CLIENT_LINK
 )
-SELECT *
-FROM CTE_DISTINCT_LINKS
+SELECT
+    CLIENT_LINK_HASH,
+    CLIENT_ID_HASH,
+    TRAKCARE_ID,
+    BEST_PRACTICE_ID,
+    ECHIDNA_ID,
+    E_TOOLS_ID,
+    SUPPORTABILITY_ID,
+    TITANIUM_ID,
+    TRIPS_ID
+FROM cte_distinct_links
