@@ -166,11 +166,11 @@ SELECT
     ENQ.INTERPRETER_REQUIRED                              AS INTERPRETER_REQUIRED,
 
     -- ── Misc ────────────────────────────────────────────────────────
-    ENQ.URGENT_CONTACT                                    AS URGENT_CONTACT,
-    ENQ.INPATIENT_FLAG                                    AS INPATIENT_FLAG,
-    ENQ.VOLUNTEER_SER                                     AS VOLUNTEER_SER,
-    ENQ.YES_NO_1                                          AS YES_NO_1,
-    ENQ.YES_NO_2                                          AS YES_NO_2,
+    --ENQ.URGENT_CONTACT                                    AS URGENT_CONTACT,
+    --ENQ.INPATIENT_FLAG                                    AS INPATIENT_FLAG,
+    --ENQ.VOLUNTEER_SER                                     AS VOLUNTEER_SER,
+    --ENQ.YES_NO_1                                          AS YES_NO_1,
+    --ENQ.YES_NO_2                                          AS YES_NO_2,
 
     -- ── Group event fields ──────────────────────────────────────────
     ENQ.RB_EVENT_DR                                       AS RB_EVENT_DR,

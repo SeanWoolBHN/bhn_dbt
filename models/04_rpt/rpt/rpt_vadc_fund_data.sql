@@ -53,69 +53,69 @@ last_fr AS (
 
 ref_in AS (
     SELECT
-        VADC_EPISODE_ID,
+        VADC_EPISODE_ID::VARCHAR                          AS VADC_EPISODE_ID,
         MIN(CHILD_SUB)                                    AS MIN_CHILD_SUB
     FROM {{ ref('prep_model_vadc_referral') }}
     WHERE REFERRAL_DIRECTION = 'Referral In'
-    GROUP BY VADC_EPISODE_ID
+    GROUP BY VADC_EPISODE_ID::VARCHAR
 ),
 
 ref_in_detail AS (
     SELECT
-        R.VADC_EPISODE_ID,
+        R.VADC_EPISODE_ID::VARCHAR                        AS VADC_EPISODE_ID,
         R.REFERRAL_DIRECTION                              AS REF_IN,
         R.REFERRAL_ORG_CODE                               AS ACSO,
         R.REFERRAL_DATE                                   AS REF_IN_DATE,
         R.REFERRAL_SOURCE_TYPE                            AS PROVIDER_IN_TYPE
     FROM {{ ref('prep_model_vadc_referral') }}            AS R
     INNER JOIN ref_in                                     AS RI
-        ON R.VADC_EPISODE_ID = RI.VADC_EPISODE_ID
+        ON R.VADC_EPISODE_ID::VARCHAR = RI.VADC_EPISODE_ID
         AND R.CHILD_SUB = RI.MIN_CHILD_SUB
     WHERE R.REFERRAL_DIRECTION = 'Referral In'
 ),
 
 ref_out AS (
     SELECT
-        VADC_EPISODE_ID,
+        VADC_EPISODE_ID::VARCHAR                          AS VADC_EPISODE_ID,
         MIN(CHILD_SUB)                                    AS MIN_CHILD_SUB
     FROM {{ ref('prep_model_vadc_referral') }}
     WHERE REFERRAL_DIRECTION = 'Referral Out'
-    GROUP BY VADC_EPISODE_ID
+    GROUP BY VADC_EPISODE_ID::VARCHAR
 ),
 
 ref_out_detail AS (
     SELECT
-        R.VADC_EPISODE_ID,
+        R.VADC_EPISODE_ID::VARCHAR                        AS VADC_EPISODE_ID,
         R.REFERRAL_DIRECTION                              AS REF_OUT,
         R.REFERRAL_SOURCE_TYPE                            AS PROVIDER_OUT_TYPE
     FROM {{ ref('prep_model_vadc_referral') }}            AS R
     INNER JOIN ref_out                                    AS RO
-        ON R.VADC_EPISODE_ID = RO.VADC_EPISODE_ID
+        ON R.VADC_EPISODE_ID::VARCHAR = RO.VADC_EPISODE_ID
         AND R.CHILD_SUB = RO.MIN_CHILD_SUB
     WHERE R.REFERRAL_DIRECTION = 'Referral Out'
 ),
 
 no_ref_ins AS (
     SELECT
-        VADC_EPISODE_ID,
+        VADC_EPISODE_ID::VARCHAR                          AS VADC_EPISODE_ID,
         COUNT(VADC_PROGREF_ID)                            AS NO_REF_INS
     FROM {{ ref('prep_model_vadc_referral') }}
     WHERE REFERRAL_DIRECTION = 'Referral In'
-    GROUP BY VADC_EPISODE_ID
+    GROUP BY VADC_EPISODE_ID::VARCHAR
 ),
 
 primary_doc AS (
     SELECT
-        VADC_OUTCOME_ID,
+        VADC_OUTCOME_ID::VARCHAR                          AS VADC_OUTCOME_ID,
         MIN(CHILD_SUB)                                    AS MIN_CHILD_SUB
     FROM {{ ref('prep_model_vadc_drug') }}
     WHERE AGE_OF_FIRST_USE ILIKE '%principal drug of concern%'
-    GROUP BY VADC_OUTCOME_ID
+    GROUP BY VADC_OUTCOME_ID::VARCHAR
 ),
 
 primary_doc_detail AS (
     SELECT
-        D.VADC_OUTCOME_ID,
+        D.VADC_OUTCOME_ID::VARCHAR                        AS VADC_OUTCOME_ID,
         D.DRUG_TYPE_CODE                                  AS PRINCIPAL_DOC,
         D.USE_FREQUENCY                                   AS DOC_DATE,
         D.USE_FREQUENCY                                   AS DOC_OCCURRENCE,
@@ -124,7 +124,7 @@ primary_doc_detail AS (
         D.ADDITIONAL_FLAGS                                AS DOC_MEASURE
     FROM {{ ref('prep_model_vadc_drug') }}                AS D
     INNER JOIN primary_doc                                AS PD
-        ON D.VADC_OUTCOME_ID = PD.VADC_OUTCOME_ID
+        ON D.VADC_OUTCOME_ID::VARCHAR = PD.VADC_OUTCOME_ID
         AND D.CHILD_SUB = PD.MIN_CHILD_SUB
     WHERE D.AGE_OF_FIRST_USE ILIKE '%principal drug of concern%'
 ),
@@ -144,44 +144,9 @@ outcome_latest AS (
 )
 
 SELECT
-    -- ── Legacy org — derived from EpisodeTeam per SSIS ──────────────
-    CASE
-        WHEN EP.EPISODE_TEAM ILIKE '%Prahran%'
-          OR EP.EPISODE_TEAM ILIKE '%Southport%'
-          OR EP.EPISODE_TEAM ILIKE '%Bentleigh East%'
-          OR EP.EPISODE_TEAM ILIKE '%Fitzroy St%'
-          OR EP.EPISODE_TEAM ILIKE '%Pharmacotherapy%'
-            THEN 1
-        WHEN EP.EPISODE_TEAM ILIKE '%Parkdale%'
-          OR EP.EPISODE_TEAM ILIKE '%Chelsea%'
-          OR EP.EPISODE_TEAM IN (
-              'AOD Counselling', 'AOD Brief Intervention',
-              'AOD Assessment', 'AOD and Counselling'
-          )   THEN 2
-    END                                                   AS LEGACY_ORGANISATION_ID,
 
-    CASE
-        WHEN EP.EPISODE_TEAM ILIKE '%Prahran%'
-          OR EP.EPISODE_TEAM ILIKE '%Southport%'
-          OR EP.EPISODE_TEAM ILIKE '%Bentleigh East%'
-          OR EP.EPISODE_TEAM ILIKE '%Fitzroy St%'
-          OR EP.EPISODE_TEAM ILIKE '%Pharmacotherapy%'
-            THEN 'Star Health'
-        WHEN EP.EPISODE_TEAM ILIKE '%Parkdale%'
-          OR EP.EPISODE_TEAM ILIKE '%Chelsea%'
-          OR EP.EPISODE_TEAM IN (
-              'AOD Counselling', 'AOD Brief Intervention',
-              'AOD Assessment', 'AOD and Counselling'
-          )   THEN 'Central Bayside'
-    END                                                   AS LEGACY_ORGANISATION_NAME,
-
-    -- ── Episode identity ────────────────────────────────────────────
-    'SH' || EP.EPISODE_ID::VARCHAR                        AS IEPISODE_ID,
     EP.EPISODE_ID,
-    'SH' || EP.UR::VARCHAR                                AS IUR,
     EP.UR,
-
-    -- ── Client demographics ─────────────────────────────────────────
     CL.DOB,
     CL.AGE,
     CL.GENDER,
@@ -190,8 +155,6 @@ SELECT
     FORM.ATSI,
     CL.MEDICARE_NO,
     CL.MEDICARE_NO_1,
-
-    -- ── Episode dates ───────────────────────────────────────────────
     EP.EPISODE_DT,
     EP.DISCHARGE_DT,
     EP.SERVICE,
@@ -213,8 +176,6 @@ SELECT
     NULL::VARCHAR                                         AS DOWNGRADE,
     EP.EPISODE_ACTIVE,
     EP.DAYS_OPEN,
-
-    -- ── VADC program stream ─────────────────────────────────────────
     EP.PROGRAM_STREAM_CODE,
     CASE
         WHEN EP.PROGRAM_STREAM_CODE = 'AODACSOA'  THEN 'AD71-100'
@@ -227,8 +188,6 @@ SELECT
     EP.GOVT_CAT_CODE                                      AS PARENT_STREAM,
     REPLACE(EP.PROGRAM_STREAM_DESC, '–', '-')             AS STREAM,
     NULL::VARCHAR                                         AS DTAU_STREAM,
-
-    -- ── VADC questionnaire fields ───────────────────────────────────
     FORM.VADC_EPISODE_ID                                  AS Q_ROW_ID,
     FORM.MARAM_RISK                                       AS QVADCMARAM,
     COALESCE(FORM.FORENSIC_TYPE, 'Non Forensic')          AS FORENSIC_TYPE,
@@ -254,13 +213,9 @@ SELECT
     END                                                   AS PROGRAM_TYPE,
     FORM.MALTREATMENT_FLAG                                AS QVADCMALTRT,
     FORM.MALTREATMENT_PERPETRATOR                         AS PERPETRATOR,
-
-    -- ── Outcome fields ──────────────────────────────────────────────
     OUTC.VADC_OUTCOME_ID                                  AS OUTCOME_ID,
     OUTC.VADC_OUTCOME_DATE                                AS OUTC_DATE,
     OUTC.K10_SCORE,
-
-    -- ── PROGREF / referral in-out ────────────────────────────────────
     NRI.NO_REF_INS,
     RID.REF_IN,
     ROD.REF_OUT,
@@ -268,16 +223,10 @@ SELECT
     RID.ACSO,
     RID.PROVIDER_IN_TYPE,
     ROD.PROVIDER_OUT_TYPE,
-
-    -- ── First / last FR ─────────────────────────────────────────────
     FFR.FIRST_FR,
     LFR.LAST_FR,
-
-    -- ── Contact summary ─────────────────────────────────────────────
     LCO.LAST_CONTACT_DT,
     FCO.FIRST_CONTACT_DT,
-
-    -- ── Drug of concern ─────────────────────────────────────────────
     PDC.MIN_CHILD_SUB                                     AS NUM_PRIMARY_DRUG_OF_CONCERN,
     PDD.PRINCIPAL_DOC,
     PDD.DOC_DATE,
@@ -285,14 +234,11 @@ SELECT
     PDD.DOC_METHOD,
     PDD.DOC_QUANTITY,
     PDD.DOC_MEASURE,
-
-    -- ── Hours ───────────────────────────────────────────────────────
     COALESCE(TH.TOTAL_HRS, 0)                             AS TOTAL_HRS,
     NULL::FLOAT                                           AS DIRECT,
     COALESCE(NDC.NO_DTAU_CONTACTS, 0)                     AS NO_DTAU_CONTACTS,
     NULL::VARCHAR                                         AS RELATIONSHIP_TO_SELF,
 
-    -- ── Validity ────────────────────────────────────────────────────
     CASE
         WHEN FORM.VADC_EPISODE_ID IS NULL
             THEN 'VADC Questionnaire must be attached to be valid'
@@ -355,7 +301,7 @@ FROM {{ ref('prep_model_episode') }}                      AS EP
 LEFT JOIN {{ ref('prep_model_vadc_form') }}               AS FORM
     ON EP.EPISODE_ID = FORM.EPISODE_ID
 
-LEFT JOIN {{ ref('prep_model_client') }}           AS CL
+LEFT JOIN {{ ref('prep_model_client') }}                  AS CL
     ON EP.UR = CL.UR
 
 LEFT JOIN outcome_latest                                  AS OUTC
@@ -381,19 +327,19 @@ LEFT JOIN last_fr                                         AS LFR
     ON EP.UR = LFR.UR
 
 LEFT JOIN no_ref_ins                                      AS NRI
-    ON FORM.VADC_EPISODE_ID = NRI.VADC_EPISODE_ID
+    ON CAST(FORM.VADC_EPISODE_ID AS VARCHAR) = NRI.VADC_EPISODE_ID
 
 LEFT JOIN ref_in_detail                                   AS RID
-    ON FORM.VADC_EPISODE_ID = RID.VADC_EPISODE_ID
+    ON CAST(FORM.VADC_EPISODE_ID AS VARCHAR) = RID.VADC_EPISODE_ID
 
 LEFT JOIN ref_out_detail                                  AS ROD
-    ON FORM.VADC_EPISODE_ID = ROD.VADC_EPISODE_ID
+    ON CAST(FORM.VADC_EPISODE_ID AS VARCHAR) = ROD.VADC_EPISODE_ID
 
 LEFT JOIN primary_doc                                     AS PDC
-    ON OUTC.VADC_OUTCOME_ID = PDC.VADC_OUTCOME_ID
+    ON CAST(OUTC.VADC_OUTCOME_ID AS VARCHAR) = PDC.VADC_OUTCOME_ID
 
 LEFT JOIN primary_doc_detail                              AS PDD
-    ON OUTC.VADC_OUTCOME_ID = PDD.VADC_OUTCOME_ID
+    ON CAST(OUTC.VADC_OUTCOME_ID AS VARCHAR) = PDD.VADC_OUTCOME_ID
 
 WHERE EP.PROGRAM_STREAM_CODE ILIKE 'AD%'
    OR EP.PROGRAM_STREAM_CODE ILIKE 'AOD%'
