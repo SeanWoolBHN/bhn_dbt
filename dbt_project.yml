@@ -63,11 +63,6 @@ snapshots:
 
 models:
   BHN_Updated_DW:
-    01_raw:
-      +database: 01_RAW_DB
-      xception_reporting:
-        +materialized: view
-        +schema: XCEPTION_REPORTING
     03_prep:
       +database: 03_PREP_DB
       stg:
@@ -82,10 +77,11 @@ models:
       model:
         +materialized: view
         +schema: MODEL
+    04_rpt:
+      +database: 04_RPT_DB
+      ref:
+        +materialized: view          
+        +schema: RPT
       xception_reporting:
         +materialized: view
         +schema: XCEPTION_REPORTING
-    04_rpt:
-      +database: 04_RPT_DB
-      +materialized: view          
-      +schema: RPT
